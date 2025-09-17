@@ -231,7 +231,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-6G6LGOOB.js";
+} from "./chunk-7IV2XZGV.js";
 import {
   __async,
   __commonJS,
@@ -22393,6 +22393,18 @@ function contains(value, list) {
   }
   return false;
 }
+function findIndexInList(value, list) {
+  let index = -1;
+  if (list) {
+    for (let i = 0; i < list.length; i++) {
+      if (list[i] === value) {
+        index = i;
+        break;
+      }
+    }
+  }
+  return index;
+}
 function findLastIndex(arr, callback) {
   let index = -1;
   if (isNotEmpty(arr)) {
@@ -29713,6 +29725,18 @@ function getRule(selector, properties) {
   }
   return "";
 }
+var $dt = (tokenPath) => {
+  var _a;
+  const theme29 = config_default.getTheme();
+  const variable = dtwt(theme29, tokenPath, void 0, "variable");
+  const name = (_a = variable == null ? void 0 : variable.match(/--[\w-]+/g)) == null ? void 0 : _a[0];
+  const value = dtwt(theme29, tokenPath, void 0, "value");
+  return {
+    name,
+    variable,
+    value
+  };
+};
 var dt = (...args) => {
   return dtwt(config_default.getTheme(), ...args);
 };
@@ -39909,10 +39933,7 @@ var sampleWordM = `
 // src/app/views/page-assistant/services/url-data.service.ts
 var parserHtml = __toESM(require_html());
 var UrlDataService = class _UrlDataService {
-  uploadState;
-  constructor(uploadState) {
-    this.uploadState = uploadState;
-  }
+  uploadState = inject(UploadStateService);
   //Block unknown hosts
   allowedHosts = /* @__PURE__ */ new Set([
     "cra-design.github.io",
@@ -40007,7 +40028,7 @@ var UrlDataService = class _UrlDataService {
     html = html.replace(/^<p>/, "").replace(/<\/p>$/, "").trim();
     const doc = new DOMParser().parseFromString(html, "text/html");
     doc.querySelectorAll("p").forEach((p) => {
-      let children = p.children;
+      const children = p.children;
       if (children.length === 1 && children[0].matches("div, section, ul, ol, table, h1, h2, h3, h4, h5, h6")) {
         p.replaceWith(...p.childNodes);
       }
@@ -40022,21 +40043,23 @@ var UrlDataService = class _UrlDataService {
     });
     return doc.body.outerHTML;
   }
+  fetchUrl(url, type) {
+    return __async(this, null, function* () {
+      try {
+        const response = yield fetch(url);
+        return type === "json" ? response.json() : response.text();
+      } catch (error) {
+        console.error(`Error fetching URL: ${url}`, error);
+        return type === "json" ? {} : "";
+      }
+    });
+  }
   //Resolve AJAX-loaded content
   processAjaxReplacements(doc) {
     return __async(this, null, function* () {
       let found = false;
       const baseUrl = "https://www.canada.ca";
-      const fetchUrl = (url, type) => __async(null, null, function* () {
-        try {
-          const response = yield fetch(url);
-          return type === "json" ? response.json() : response.text();
-        } catch (error) {
-          console.error(`Error fetching URL: ${url}`, error);
-          return type === "json" ? {} : "";
-        }
-      });
-      const processElements = () => __async(null, null, function* () {
+      const processElements = () => __async(this, null, function* () {
         const ajaxElements = doc.querySelectorAll('[data-ajax-replace^="/"], [data-ajax-after^="/"], [data-ajax-append^="/"], [data-ajax-before^="/"], [data-ajax-prepend^="/"]');
         if (!ajaxElements.length)
           return;
@@ -40047,8 +40070,7 @@ var UrlDataService = class _UrlDataService {
         for (const element of ajaxElements) {
           const tag = element.tagName.toLowerCase();
           const attributes = element.attributes;
-          for (let i = 0; i < attributes.length; i++) {
-            const attr = attributes[i];
+          for (const attr of Array.from(attributes)) {
             const attrName = attr.name;
             const ajaxUrl = attr.value;
             if (!attrName.startsWith("data-ajax-") || !ajaxUrl.startsWith("/")) {
@@ -40056,7 +40078,7 @@ var UrlDataService = class _UrlDataService {
             }
             const [url, anchor] = ajaxUrl.split("#");
             const fullUrl = `${baseUrl}${url}`;
-            const fetchedHtml = yield fetchUrl(fullUrl, "text");
+            const fetchedHtml = yield this.fetchUrl(fullUrl, "text");
             if (!fetchedHtml)
               continue;
             const ajaxDoc = new DOMParser().parseFromString(fetchedHtml, "text/html");
@@ -40098,35 +40120,32 @@ var UrlDataService = class _UrlDataService {
     return __async(this, null, function* () {
       let found = false;
       const baseUrl = "https://www.canada.ca";
-      const fetchUrl = (url, type) => __async(null, null, function* () {
-        try {
-          const response = yield fetch(url);
-          return type === "json" ? response.json() : response.text();
-        } catch (error) {
-          console.error(`Error fetching URL: ${url}`, error);
-          return type === "json" ? {} : "";
-        }
-      });
       const parseJsonUrl = (url) => {
         const [baseUrl2, jsonKey = ""] = url.split("#");
         return { url: baseUrl2, jsonKey: jsonKey.slice(1) };
       };
       const parseJsonConfig = (config) => {
         try {
-          return JSON.parse(config.replace(/&quot;/g, '"'));
+          const parsed = JSON.parse(config.replace(/&quot;/g, '"'));
+          return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : null;
         } catch (error) {
           console.error("Error parsing JSON config:", error);
           return null;
         }
       };
       const resolveJsonPath = (obj, path) => {
-        return path.split("/").reduce((acc, key) => acc && acc[key] !== void 0 ? acc[key] : void 0, obj);
+        return path.split("/").reduce((acc, key) => {
+          if (acc && typeof acc === "object" && key in acc) {
+            return acc[key];
+          }
+          return void 0;
+        }, obj);
       };
       const jsonElements = doc.querySelectorAll("[data-wb-jsonmanager]");
       if (!jsonElements.length)
         return found;
       const jsonDataMap = /* @__PURE__ */ new Map();
-      yield Promise.all(Array.from(jsonElements).map((element) => __async(null, null, function* () {
+      yield Promise.all(Array.from(jsonElements).map((element) => __async(this, null, function* () {
         const jsonConfigAttr = element.getAttribute("data-wb-jsonmanager");
         if (!jsonConfigAttr)
           return;
@@ -40136,7 +40155,7 @@ var UrlDataService = class _UrlDataService {
         const { url, jsonKey } = parseJsonUrl(jsonConfig["url"]);
         const fullUrl = `${baseUrl}${url}`;
         try {
-          const jsonData = yield fetchUrl(fullUrl, "json");
+          const jsonData = yield this.fetchUrl(fullUrl, "json");
           const content = resolveJsonPath(jsonData, jsonKey);
           jsonDataMap.set(jsonConfig["name"], content);
         } catch (error) {
@@ -40309,7 +40328,7 @@ var UrlDataService = class _UrlDataService {
   getBreadcrumb(doc) {
     const breadcrumbItems = doc.querySelectorAll(".breadcrumb li a");
     const breadcrumbArray = [];
-    breadcrumbItems.forEach((el, index) => {
+    breadcrumbItems.forEach((el) => {
       breadcrumbArray.push({
         label: el.textContent?.trim() || "",
         url: el.getAttribute("href") || ""
@@ -40364,7 +40383,7 @@ var UrlDataService = class _UrlDataService {
     });
   }
   static \u0275fac = function UrlDataService_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _UrlDataService)(\u0275\u0275inject(UploadStateService));
+    return new (__ngFactoryType__ || _UrlDataService)();
   };
   static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _UrlDataService, factory: _UrlDataService.\u0275fac, providedIn: "root" });
 };
@@ -40374,7 +40393,7 @@ var UrlDataService = class _UrlDataService {
     args: [{
       providedIn: "root"
     }]
-  }], () => [{ type: UploadStateService }], null);
+  }], null, null);
 })();
 
 // node_modules/primeng/fesm2022/primeng-utils.mjs
@@ -45058,9 +45077,9 @@ function UploadUrlComponent_p_button_24_Template(rf, ctx) {
   }
 }
 var UploadUrlComponent = class _UploadUrlComponent {
-  urlDataService;
-  uploadState;
-  translate;
+  urlDataService = inject(UrlDataService);
+  uploadState = inject(UploadStateService);
+  translate = inject(TranslateService);
   //Import data from parent component
   mode = "original";
   showSampleDataButton = true;
@@ -45075,12 +45094,6 @@ var UploadUrlComponent = class _UploadUrlComponent {
   error = "";
   loading = false;
   showHelp = false;
-  //This runs first, use it to inject services & other dependencies (delete if not needed)
-  constructor(urlDataService, uploadState, translate) {
-    this.urlDataService = urlDataService;
-    this.uploadState = uploadState;
-    this.translate = translate;
-  }
   getHtmlContent() {
     return __async(this, null, function* () {
       const unknownError = this.translate.instant("page.upload.error.unknown");
@@ -45112,7 +45125,13 @@ var UploadUrlComponent = class _UploadUrlComponent {
         }
         this.uploadComplete.emit();
       } catch (err) {
-        this.error = `${tryError} ${err.message || err || unknownError}`;
+        if (err instanceof Error) {
+          this.error = `${tryError} ${err.message}`;
+        } else if (typeof err === "string") {
+          this.error = `${tryError} ${err}`;
+        } else {
+          this.error = `${unknownError}`;
+        }
       } finally {
         this.loading = false;
       }
@@ -45126,7 +45145,7 @@ var UploadUrlComponent = class _UploadUrlComponent {
     });
   }
   static \u0275fac = function UploadUrlComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _UploadUrlComponent)(\u0275\u0275directiveInject(UrlDataService), \u0275\u0275directiveInject(UploadStateService), \u0275\u0275directiveInject(TranslateService));
+    return new (__ngFactoryType__ || _UploadUrlComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _UploadUrlComponent, selectors: [["ca-upload-url"]], inputs: { mode: "mode", showSampleDataButton: "showSampleDataButton" }, outputs: { uploadComplete: "uploadComplete" }, decls: 25, vars: 24, consts: [["form", "ngForm"], ["urlField", "ngModel"], ["novalidate", "", 3, "ngSubmit"], [1, "border-none", "p-0", "m-0"], [1, "font-bold", "p-0"], ["icon", "pi pi-question-circle", "styleClass", "-m-3 nohover", "severity", "help", 3, "onClick", "rounded", "text", "ariaLabel"], ["class", "text-sm mt-2", 3, "innerHTML", 4, "ngIf"], [1, "mt-3"], ["for", "userInput", 1, "font-semibold"], [1, "pi", "pi-globe"], ["id", "userInput", "pInputText", "", "type", "url", "name", "userInput", "required", "", "pattern", "https?://.+", "autocomplete", "url", "fluid", "", 1, "w-full", 3, "ngModelChange", "ngModel", "placeholder"], ["class", "text-red-500 text-xs mt-0", 4, "ngIf"], ["severity", "error", 3, "text", 4, "ngIf"], [1, "flex", "gap-2", "flex-wrap", "mt-3"], ["type", "submit", "icon", "pi pi-save", "severity", "primary", 3, "label", "loading", "disabled"], ["icon", "pi pi-file", "severity", "secondary", 3, "label", "onClick", 4, "ngIf"], [1, "text-sm", "mt-2", 3, "innerHTML"], [1, "text-red-500", "text-xs", "mt-0"], [4, "ngIf"], ["severity", "error", 3, "text"], ["icon", "pi pi-file", "severity", "secondary", 3, "onClick", "label"]], template: function UploadUrlComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -45271,7 +45290,7 @@ var UploadUrlComponent = class _UploadUrlComponent {
 \r
   </fieldset>\r
 </form>`, styles: ["/* angular:styles/component:css;0fa652a1c86377aee4ef825a2bb99ad0e448461d03666f6bb8c80d6b3ad3fe3e;C:/Users/rosaz/translation-assistant/content-assistant/src/app/views/page-assistant/components/upload/upload-url.component.ts */\n:host {\n  display: block;\n}\n::ng-deep button.p-button.nohover:hover {\n  background-color: transparent !important;\n}\n::ng-deep button.p-button.nohover {\n  border: none !important;\n}\n/*# sourceMappingURL=upload-url.component.css.map */\n"] }]
-  }], () => [{ type: UrlDataService }, { type: UploadStateService }, { type: TranslateService }], { mode: [{
+  }], null, { mode: [{
     type: Input
   }], showSampleDataButton: [{
     type: Input
@@ -45280,7 +45299,7 @@ var UploadUrlComponent = class _UploadUrlComponent {
   }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(UploadUrlComponent, { className: "UploadUrlComponent", filePath: "src/app/views/page-assistant/components/upload/upload-url.component.ts", lineNumber: 49 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(UploadUrlComponent, { className: "UploadUrlComponent", filePath: "src/app/views/page-assistant/components/upload/upload-url.component.ts", lineNumber: 48 });
 })();
 
 // node_modules/primeng/fesm2022/primeng-textarea.mjs
@@ -45662,9 +45681,9 @@ function UploadPasteComponent_p_button_17_Template(rf, ctx) {
   }
 }
 var UploadPasteComponent = class _UploadPasteComponent {
-  urlDataService;
-  uploadState;
-  translate;
+  urlDataService = inject(UrlDataService);
+  uploadState = inject(UploadStateService);
+  translate = inject(TranslateService);
   //Import data from parent component
   mode = "original";
   showSampleDataButton = true;
@@ -45678,12 +45697,6 @@ var UploadPasteComponent = class _UploadPasteComponent {
   userInput = "";
   error = "";
   loading = false;
-  //This runs first, use it to inject services & other dependencies (delete if not needed)
-  constructor(urlDataService, uploadState, translate) {
-    this.urlDataService = urlDataService;
-    this.uploadState = uploadState;
-    this.translate = translate;
-  }
   getPasteContent() {
     return __async(this, null, function* () {
       const unknownError = this.translate.instant("page.upload.error.unknown");
@@ -45713,7 +45726,13 @@ var UploadPasteComponent = class _UploadPasteComponent {
         }
         this.uploadComplete.emit();
       } catch (err) {
-        this.error = `${tryError} ${err.message || err || unknownError}`;
+        if (err instanceof Error) {
+          this.error = `${tryError} ${err.message}`;
+        } else if (typeof err === "string") {
+          this.error = `${tryError} ${err}`;
+        } else {
+          this.error = `${unknownError}`;
+        }
       } finally {
         this.loading = false;
       }
@@ -45727,7 +45746,7 @@ var UploadPasteComponent = class _UploadPasteComponent {
     });
   }
   static \u0275fac = function UploadPasteComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _UploadPasteComponent)(\u0275\u0275directiveInject(UrlDataService), \u0275\u0275directiveInject(UploadStateService), \u0275\u0275directiveInject(TranslateService));
+    return new (__ngFactoryType__ || _UploadPasteComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _UploadPasteComponent, selectors: [["ca-upload-paste"]], inputs: { mode: "mode", showSampleDataButton: "showSampleDataButton" }, outputs: { uploadComplete: "uploadComplete" }, decls: 18, vars: 15, consts: [["form", "ngForm"], ["inputField", "ngModel"], ["novalidate", "", 3, "ngSubmit"], [1, "border-none", "p-0", "m-0"], [1, "font-bold", "p-0"], [1, "mt-3"], ["for", "source", 1, "font-semibold"], ["type", "text", "id", "source", "pTextarea", "", "rows", "3", "name", "userInput", "required", "", "fluid", "", 1, "w-full", 3, "ngModelChange", "ngModel"], ["class", "text-red-500 text-xs mt-0", 4, "ngIf"], ["severity", "error", 3, "text", 4, "ngIf"], [1, "flex", "gap-2", "flex-wrap", "mt-3"], ["type", "submit", "icon", "pi pi-save", "severity", "primary", 3, "label", "loading", "disabled"], ["icon", "pi pi-file", "severity", "secondary", 3, "label", "onClick", 4, "ngIf"], [1, "text-red-500", "text-xs", "mt-0"], [4, "ngIf"], ["severity", "error", 3, "text"], ["icon", "pi pi-file", "severity", "secondary", 3, "onClick", "label"]], template: function UploadPasteComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -45829,7 +45848,7 @@ var UploadPasteComponent = class _UploadPasteComponent {
 \r
   </fieldset>\r
 </form>`, styles: ["/* angular:styles/component:css;219558ef63f119a92210704329b58a3cdceaa4fb296db559e672f74512827dc7;C:/Users/rosaz/translation-assistant/content-assistant/src/app/views/page-assistant/components/upload/upload-paste.component.ts */\n:host {\n  display: block;\n}\n/*# sourceMappingURL=upload-paste.component.css.map */\n"] }]
-  }], () => [{ type: UrlDataService }, { type: UploadStateService }, { type: TranslateService }], { mode: [{
+  }], null, { mode: [{
     type: Input
   }], showSampleDataButton: [{
     type: Input
@@ -45838,7 +45857,7 @@ var UploadPasteComponent = class _UploadPasteComponent {
   }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(UploadPasteComponent, { className: "UploadPasteComponent", filePath: "src/app/views/page-assistant/components/upload/upload-paste.component.ts", lineNumber: 30 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(UploadPasteComponent, { className: "UploadPasteComponent", filePath: "src/app/views/page-assistant/components/upload/upload-paste.component.ts", lineNumber: 29 });
 })();
 
 // node_modules/primeng/fesm2022/primeng-progressbar.mjs
@@ -48503,6 +48522,7 @@ var FileUploadModule = class _FileUploadModule {
 })();
 
 // src/app/views/page-assistant/components/upload/upload-word.component.ts
+var _c014 = ["fileUploadRef"];
 function UploadWordComponent_ng_template_6_Template(rf, ctx) {
 }
 function UploadWordComponent_ng_template_8_Template(rf, ctx) {
@@ -48592,6 +48612,10 @@ function UploadWordComponent_ng_template_12_Template(rf, ctx) {
       \u0275\u0275nextContext();
       const fileUploadRef_r6 = \u0275\u0275reference(5);
       return \u0275\u0275resetView(fileUploadRef_r6.choose());
+    })("keydown", function UploadWordComponent_ng_template_12_Template_div_keydown_0_listener($event) {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r2 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r2.uploadOnKeydown($event));
     });
     \u0275\u0275element(1, "i", 17);
     \u0275\u0275elementStart(2, "p", 18);
@@ -48623,20 +48647,15 @@ function UploadWordComponent_ng_template_12_Template(rf, ctx) {
   }
 }
 var UploadWordComponent = class _UploadWordComponent {
-  urlDataService;
-  uploadState;
-  translate;
+  urlDataService = inject(UrlDataService);
+  uploadState = inject(UploadStateService);
+  translate = inject(TranslateService);
   //Import data from parent component
   mode = "original";
   showSampleDataButton = true;
   production = environment.production;
   //Export upload complete
   uploadComplete = new EventEmitter();
-  constructor(urlDataService, uploadState, translate) {
-    this.urlDataService = urlDataService;
-    this.uploadState = uploadState;
-    this.translate = translate;
-  }
   //Initialize stuff
   error = "";
   loading = false;
@@ -48680,7 +48699,7 @@ var UploadWordComponent = class _UploadWordComponent {
       try {
         const mammoth = yield import("./chunk-DTBDOXZB.js");
         const result = yield mammoth.convertToHtml({ arrayBuffer });
-        var html = result.value.trim();
+        let html = result.value.trim();
         if (!html) {
           this.error = docError;
           return;
@@ -48688,7 +48707,13 @@ var UploadWordComponent = class _UploadWordComponent {
         html = yield this.urlDataService.formatHtml(html, "word");
         this.extractedHtml = html;
       } catch (err) {
-        this.error = `${tryError} ${err.message || err || unknownError}`;
+        if (err instanceof Error) {
+          this.error = `${tryError} ${err.message}`;
+        } else if (typeof err === "string") {
+          this.error = `${tryError} ${err}`;
+        } else {
+          this.error = `${unknownError}`;
+        }
       } finally {
         this.loading = false;
       }
@@ -48720,10 +48745,25 @@ var UploadWordComponent = class _UploadWordComponent {
       this.uploadComplete.emit();
     });
   }
+  //Choose file on enter or space (for accesibility since we don't have a button)
+  fileUploadRef;
+  uploadOnKeydown(event2) {
+    if (event2.key === "Enter" || event2.key === " ") {
+      this.fileUploadRef?.choose();
+    }
+  }
   static \u0275fac = function UploadWordComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _UploadWordComponent)(\u0275\u0275directiveInject(UrlDataService), \u0275\u0275directiveInject(UploadStateService), \u0275\u0275directiveInject(TranslateService));
+    return new (__ngFactoryType__ || _UploadWordComponent)();
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _UploadWordComponent, selectors: [["ca-upload-word"]], inputs: { mode: "mode", showSampleDataButton: "showSampleDataButton" }, outputs: { uploadComplete: "uploadComplete" }, decls: 14, vars: 4, consts: [["fileUploadRef", ""], ["header", ""], ["content", ""], ["file", ""], ["empty", ""], [1, "border-none", "p-0", "m-0"], [1, "font-bold", "mb-3", "p-0"], ["name", "word[]", "accept", ".docx", "auto", "true", "maxFileSize", "1000000", "mode", "advanced", "styleClass", "border-none", 3, "uploadHandler", "customUpload"], [1, "flex", "flex-column", "align-items-center", "justify-content-center", "p-3", "border-solid", "border-round", "border-200", "surface-100"], [1, "text-xl"], [1, "pi", "pi-file-word", "text-blue-500", "text-2xl", "mr-1"], ["severity", "error", 3, "text", 4, "ngIf"], [1, "flex", "gap-2", "flex-wrap", "mt-3"], ["type", "submit", "icon", "pi pi-save", "severity", "primary", 3, "onClick", "label", "loading", "disabled"], ["icon", "pi pi-file", "severity", "secondary", 3, "onClick", "label"], ["severity", "error", 3, "text"], [1, "flex", "flex-column", "align-items-center", "justify-content-center", "p-3", "border-dashed", "border-round", "border-200", "surface-100", "hover:surface-200", "hover:border-primary-400", "transition-colors", "transition-duration-500", "cursor-pointer", 3, "click"], [1, "pi", "pi-upload", "border-2", "border-circle", "border-300", "p-4", "text-5xl", "text-color-secondary"], [1, "m-0", "mt-3"], ["icon", "pi pi-file", "severity", "secondary", 3, "label", "onClick", 4, "ngIf"]], template: function UploadWordComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _UploadWordComponent, selectors: [["ca-upload-word"]], viewQuery: function UploadWordComponent_Query(rf, ctx) {
+    if (rf & 1) {
+      \u0275\u0275viewQuery(_c014, 5);
+    }
+    if (rf & 2) {
+      let _t;
+      \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.fileUploadRef = _t.first);
+    }
+  }, inputs: { mode: "mode", showSampleDataButton: "showSampleDataButton" }, outputs: { uploadComplete: "uploadComplete" }, decls: 14, vars: 4, consts: [["fileUploadRef", ""], ["header", ""], ["content", ""], ["file", ""], ["empty", ""], [1, "border-none", "p-0", "m-0"], [1, "font-bold", "mb-3", "p-0"], ["name", "word[]", "accept", ".docx", "auto", "true", "maxFileSize", "1000000", "mode", "advanced", "styleClass", "border-none", 3, "uploadHandler", "customUpload"], [1, "flex", "flex-column", "align-items-center", "justify-content-center", "p-3", "border-solid", "border-round", "border-200", "surface-100"], [1, "text-xl"], [1, "pi", "pi-file-word", "text-blue-500", "text-2xl", "mr-1"], ["severity", "error", 3, "text", 4, "ngIf"], [1, "flex", "gap-2", "flex-wrap", "mt-3"], ["type", "submit", "icon", "pi pi-save", "severity", "primary", 3, "onClick", "label", "loading", "disabled"], ["icon", "pi pi-file", "severity", "secondary", 3, "onClick", "label"], ["severity", "error", 3, "text"], ["tabindex", "0", "role", "button", 1, "flex", "flex-column", "align-items-center", "justify-content-center", "p-3", "border-dashed", "border-round", "border-200", "surface-100", "hover:surface-200", "hover:border-primary-400", "transition-colors", "transition-duration-500", "cursor-pointer", 3, "click", "keydown"], [1, "pi", "pi-upload", "border-2", "border-circle", "border-300", "p-4", "text-5xl", "text-color-secondary"], [1, "m-0", "mt-3"], ["icon", "pi pi-file", "severity", "secondary", 3, "label", "onClick", 4, "ngIf"]], template: function UploadWordComponent_Template(rf, ctx) {
     if (rf & 1) {
       const _r1 = \u0275\u0275getCurrentView();
       \u0275\u0275elementStart(0, "fieldset", 5)(1, "legend", 6);
@@ -48804,7 +48844,9 @@ var UploadWordComponent = class _UploadWordComponent {
             <div class="flex flex-column align-items-center justify-content-center p-3\r
                     border-dashed border-round border-200 surface-100\r
                     hover:surface-200 hover:border-primary-400 transition-colors transition-duration-500 cursor-pointer"\r
-                 (click)="fileUploadRef.choose()">\r
+                 (click)="fileUploadRef.choose()"\r
+                 (keydown)="uploadOnKeydown($event)"\r
+                 tabindex="0" role="button">\r
                 <i class="pi pi-upload border-2 border-circle border-300 p-4 text-5xl text-color-secondary"></i>\r
                 <p class="m-0 mt-3">{{ 'page.upload.word.instruction' | translate }}</p>\r
             </div>\r
@@ -48823,12 +48865,15 @@ var UploadWordComponent = class _UploadWordComponent {
     </p-fileupload>\r
 \r
 </fieldset>`, styles: ["/* angular:styles/component:css;19ceb5ac9df98086b129e963aa1391530b725e22715988600140fc11941cb360;C:/Users/rosaz/translation-assistant/content-assistant/src/app/views/page-assistant/components/upload/upload-word.component.ts */\n:host {\n  display: block;\n}\n:host ::ng-deep .p-fileupload-header {\n  background: transparent;\n  box-shadow: none;\n  padding: 0;\n  border: none;\n}\n:host ::ng-deep .p-fileupload-content {\n  background: transparent;\n  box-shadow: none;\n  padding: 0;\n  border: none;\n}\n:host ::ng-deep .p-fileupload .p-progressbar {\n  margin: 0 !important;\n  padding: 0 !important;\n  height: 0 !important;\n  display: none !important;\n  border: none !important;\n}\n::ng-deep .p-fileupload {\n  --p-fileupload-content-gap: 0.0rem;\n}\n/*# sourceMappingURL=upload-word.component.css.map */\n"] }]
-  }], () => [{ type: UrlDataService }, { type: UploadStateService }, { type: TranslateService }], { mode: [{
+  }], null, { mode: [{
     type: Input
   }], showSampleDataButton: [{
     type: Input
   }], uploadComplete: [{
     type: Output
+  }], fileUploadRef: [{
+    type: ViewChild,
+    args: ["fileUploadRef"]
   }] });
 })();
 (() => {
@@ -48836,7 +48881,7 @@ var UploadWordComponent = class _UploadWordComponent {
 })();
 
 // node_modules/primeng/fesm2022/primeng-iftalabel.mjs
-var _c014 = ["*"];
+var _c015 = ["*"];
 var theme17 = ({
   dt: dt2
 }) => `
@@ -48948,7 +48993,7 @@ var IftaLabel = class _IftaLabel extends BaseComponent {
     selectors: [["p-iftalabel"], ["p-iftaLabel"], ["p-ifta-label"]],
     hostAttrs: [1, "p-iftalabel"],
     features: [\u0275\u0275ProvidersFeature([IftaLabelStyle]), \u0275\u0275InheritDefinitionFeature],
-    ngContentSelectors: _c014,
+    ngContentSelectors: _c015,
     decls: 1,
     vars: 0,
     template: function IftaLabel_Template(rf, ctx) {
@@ -49001,7 +49046,7 @@ var IftaLabelModule = class _IftaLabelModule {
 })();
 
 // node_modules/primeng/fesm2022/primeng-checkbox.mjs
-var _c015 = ["checkboxicon"];
+var _c016 = ["checkboxicon"];
 var _c110 = ["input"];
 var _c29 = () => ({
   "p-checkbox-input": true
@@ -49506,7 +49551,7 @@ var Checkbox = class _Checkbox extends BaseComponent {
     selectors: [["p-checkbox"], ["p-checkBox"], ["p-check-box"]],
     contentQueries: function Checkbox_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        \u0275\u0275contentQuery(dirIndex, _c015, 4);
+        \u0275\u0275contentQuery(dirIndex, _c016, 4);
         \u0275\u0275contentQuery(dirIndex, PrimeTemplate, 4);
       }
       if (rf & 2) {
@@ -49779,7 +49824,7 @@ var CheckboxModule = class _CheckboxModule {
 })();
 
 // node_modules/primeng/fesm2022/primeng-accordion.mjs
-var _c016 = ["*"];
+var _c017 = ["*"];
 var _c111 = ["toggleicon"];
 var _c210 = (a0) => ({
   active: a0
@@ -50244,7 +50289,7 @@ var AccordionPanel = class _AccordionPanel extends BaseComponent {
       value: "valueChange"
     },
     features: [\u0275\u0275InheritDefinitionFeature],
-    ngContentSelectors: _c016,
+    ngContentSelectors: _c017,
     decls: 1,
     vars: 0,
     template: function AccordionPanel_Template(rf, ctx) {
@@ -50426,7 +50471,7 @@ var AccordionHeader = class _AccordionHeader extends BaseComponent {
       }
     },
     features: [\u0275\u0275HostDirectivesFeature([Ripple]), \u0275\u0275InheritDefinitionFeature],
-    ngContentSelectors: _c016,
+    ngContentSelectors: _c017,
     decls: 3,
     vars: 1,
     consts: [[4, "ngTemplateOutlet", "ngTemplateOutletContext"], [4, "ngIf"], [3, "class", "ngClass", 4, "ngIf"], [3, "ngClass", 4, "ngIf"], [3, "ngClass"]],
@@ -50527,7 +50572,7 @@ var AccordionContent = class _AccordionContent extends BaseComponent {
       }
     },
     features: [\u0275\u0275InheritDefinitionFeature],
-    ngContentSelectors: _c016,
+    ngContentSelectors: _c017,
     decls: 2,
     vars: 9,
     consts: [[1, "p-accordioncontent-content"]],
@@ -51407,7 +51452,7 @@ var Accordion = class _Accordion extends BaseComponent {
       onOpen: "onOpen"
     },
     features: [\u0275\u0275ProvidersFeature([AccordionStyle]), \u0275\u0275InheritDefinitionFeature],
-    ngContentSelectors: _c016,
+    ngContentSelectors: _c017,
     decls: 1,
     vars: 0,
     template: function Accordion_Template(rf, ctx) {
@@ -51511,7 +51556,7 @@ var AccordionModule = class _AccordionModule {
 })();
 
 // node_modules/primeng/fesm2022/primeng-inputnumber.mjs
-var _c017 = ["clearicon"];
+var _c018 = ["clearicon"];
 var _c113 = ["incrementbuttonicon"];
 var _c211 = ["decrementbuttonicon"];
 var _c310 = ["input"];
@@ -53303,7 +53348,7 @@ var InputNumber = class _InputNumber extends BaseComponent {
     selectors: [["p-inputNumber"], ["p-inputnumber"], ["p-input-number"]],
     contentQueries: function InputNumber_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        \u0275\u0275contentQuery(dirIndex, _c017, 4);
+        \u0275\u0275contentQuery(dirIndex, _c018, 4);
         \u0275\u0275contentQuery(dirIndex, _c113, 4);
         \u0275\u0275contentQuery(dirIndex, _c211, 4);
         \u0275\u0275contentQuery(dirIndex, PrimeTemplate, 4);
@@ -53845,7 +53890,7 @@ var InputNumberModule = class _InputNumberModule {
 })();
 
 // node_modules/primeng/fesm2022/primeng-datepicker.mjs
-var _c018 = ["date"];
+var _c019 = ["date"];
 var _c114 = ["header"];
 var _c212 = ["footer"];
 var _c311 = ["disabledDate"];
@@ -58752,7 +58797,7 @@ var DatePicker = class _DatePicker extends BaseComponent {
     selectors: [["p-datePicker"], ["p-datepicker"], ["p-date-picker"]],
     contentQueries: function DatePicker_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        \u0275\u0275contentQuery(dirIndex, _c018, 4);
+        \u0275\u0275contentQuery(dirIndex, _c019, 4);
         \u0275\u0275contentQuery(dirIndex, _c114, 4);
         \u0275\u0275contentQuery(dirIndex, _c212, 4);
         \u0275\u0275contentQuery(dirIndex, _c311, 4);
@@ -59840,7 +59885,7 @@ var DatePickerModule = class _DatePickerModule {
 })();
 
 // node_modules/primeng/fesm2022/primeng-iconfield.mjs
-var _c019 = ["*"];
+var _c020 = ["*"];
 var theme22 = ({
   dt: dt2
 }) => `
@@ -59951,7 +59996,7 @@ var IconField = class _IconField extends BaseComponent {
       styleClass: "styleClass"
     },
     features: [\u0275\u0275ProvidersFeature([IconFieldStyle]), \u0275\u0275InheritDefinitionFeature],
-    ngContentSelectors: _c019,
+    ngContentSelectors: _c020,
     decls: 1,
     vars: 0,
     template: function IconField_Template(rf, ctx) {
@@ -60019,7 +60064,7 @@ var IconFieldModule = class _IconFieldModule {
 })();
 
 // node_modules/primeng/fesm2022/primeng-inputicon.mjs
-var _c020 = ["*"];
+var _c021 = ["*"];
 var classes23 = {
   root: "p-inputicon"
 };
@@ -60072,7 +60117,7 @@ var InputIcon = class _InputIcon extends BaseComponent {
       styleClass: "styleClass"
     },
     features: [\u0275\u0275ProvidersFeature([InputIconStyle]), \u0275\u0275InheritDefinitionFeature],
-    ngContentSelectors: _c020,
+    ngContentSelectors: _c021,
     decls: 1,
     vars: 0,
     template: function InputIcon_Template(rf, ctx) {
@@ -60136,7 +60181,7 @@ var InputIconModule = class _InputIconModule {
 })();
 
 // node_modules/primeng/fesm2022/primeng-overlay.mjs
-var _c021 = ["content"];
+var _c022 = ["content"];
 var _c116 = ["overlay"];
 var _c213 = ["*"];
 var _c312 = (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13) => ({
@@ -60855,7 +60900,7 @@ var Overlay = class _Overlay extends BaseComponent {
     selectors: [["p-overlay"]],
     contentQueries: function Overlay_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        \u0275\u0275contentQuery(dirIndex, _c021, 4);
+        \u0275\u0275contentQuery(dirIndex, _c022, 4);
         \u0275\u0275contentQuery(dirIndex, PrimeTemplate, 4);
       }
       if (rf & 2) {
@@ -60867,7 +60912,7 @@ var Overlay = class _Overlay extends BaseComponent {
     viewQuery: function Overlay_Query(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275viewQuery(_c116, 5);
-        \u0275\u0275viewQuery(_c021, 5);
+        \u0275\u0275viewQuery(_c022, 5);
       }
       if (rf & 2) {
         let _t;
@@ -61098,7 +61143,7 @@ var OverlayModule = class _OverlayModule {
 })();
 
 // node_modules/primeng/fesm2022/primeng-scroller.mjs
-var _c022 = ["content"];
+var _c023 = ["content"];
 var _c117 = ["item"];
 var _c214 = ["loader"];
 var _c313 = ["loadericon"];
@@ -62443,7 +62488,7 @@ var Scroller = class _Scroller extends BaseComponent {
     selectors: [["p-scroller"], ["p-virtualscroller"], ["p-virtual-scroller"], ["p-virtualScroller"]],
     contentQueries: function Scroller_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        \u0275\u0275contentQuery(dirIndex, _c022, 4);
+        \u0275\u0275contentQuery(dirIndex, _c023, 4);
         \u0275\u0275contentQuery(dirIndex, _c117, 4);
         \u0275\u0275contentQuery(dirIndex, _c214, 4);
         \u0275\u0275contentQuery(dirIndex, _c313, 4);
@@ -62461,7 +62506,7 @@ var Scroller = class _Scroller extends BaseComponent {
     viewQuery: function Scroller_Query(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275viewQuery(_c49, 5);
-        \u0275\u0275viewQuery(_c022, 5);
+        \u0275\u0275viewQuery(_c023, 5);
       }
       if (rf & 2) {
         let _t;
@@ -62750,7 +62795,7 @@ var ScrollerModule = class _ScrollerModule {
 })();
 
 // node_modules/primeng/fesm2022/primeng-select.mjs
-var _c023 = (a0) => ({
+var _c024 = (a0) => ({
   height: a0
 });
 var _c119 = (a0, a1, a2) => ({
@@ -63272,7 +63317,7 @@ function Select_ng_template_9_p_scroller_6_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r2 = \u0275\u0275nextContext(2);
-    \u0275\u0275styleMap(\u0275\u0275pureFunction1(8, _c023, ctx_r2.scrollHeight));
+    \u0275\u0275styleMap(\u0275\u0275pureFunction1(8, _c024, ctx_r2.scrollHeight));
     \u0275\u0275property("items", ctx_r2.visibleOptions())("itemSize", ctx_r2.virtualScrollItemSize || ctx_r2._itemSize)("autoSize", true)("lazy", ctx_r2.lazy)("options", ctx_r2.virtualScrollOptions);
     \u0275\u0275advance(4);
     \u0275\u0275property("ngIf", ctx_r2.loaderTemplate || ctx_r2._loaderTemplate);
@@ -63330,7 +63375,7 @@ function Select_ng_template_9_ng_template_8_ng_template_2_ng_container_0_Templat
     const scrollerOptions_r20 = \u0275\u0275nextContext().options;
     const ctx_r2 = \u0275\u0275nextContext(2);
     \u0275\u0275advance();
-    \u0275\u0275property("ngStyle", \u0275\u0275pureFunction1(5, _c023, scrollerOptions_r20.itemSize + "px"));
+    \u0275\u0275property("ngStyle", \u0275\u0275pureFunction1(5, _c024, scrollerOptions_r20.itemSize + "px"));
     \u0275\u0275attribute("id", ctx_r2.id + "_" + ctx_r2.getOptionIndex(i_r19, scrollerOptions_r20));
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", !ctx_r2.groupTemplate && !ctx_r2._groupTemplate);
@@ -63412,7 +63457,7 @@ function Select_ng_template_9_ng_template_8_li_3_Template(rf, ctx) {
   if (rf & 2) {
     const scrollerOptions_r20 = \u0275\u0275nextContext().options;
     const ctx_r2 = \u0275\u0275nextContext(2);
-    \u0275\u0275property("ngStyle", \u0275\u0275pureFunction1(2, _c023, scrollerOptions_r20.itemSize + "px"));
+    \u0275\u0275property("ngStyle", \u0275\u0275pureFunction1(2, _c024, scrollerOptions_r20.itemSize + "px"));
     \u0275\u0275advance();
     \u0275\u0275conditional(!ctx_r2.emptyFilterTemplate && !ctx_r2._emptyFilterTemplate && !ctx_r2.emptyTemplate ? 1 : 2);
   }
@@ -63449,7 +63494,7 @@ function Select_ng_template_9_ng_template_8_li_4_Template(rf, ctx) {
   if (rf & 2) {
     const scrollerOptions_r20 = \u0275\u0275nextContext().options;
     const ctx_r2 = \u0275\u0275nextContext(2);
-    \u0275\u0275property("ngStyle", \u0275\u0275pureFunction1(2, _c023, scrollerOptions_r20.itemSize + "px"));
+    \u0275\u0275property("ngStyle", \u0275\u0275pureFunction1(2, _c024, scrollerOptions_r20.itemSize + "px"));
     \u0275\u0275advance();
     \u0275\u0275conditional(!ctx_r2.emptyTemplate && !ctx_r2._emptyTemplate ? 1 : 2);
   }
@@ -63907,7 +63952,7 @@ var SelectItem = class _SelectItem extends BaseComponent {
         \u0275\u0275elementEnd();
       }
       if (rf & 2) {
-        \u0275\u0275property("id", ctx.id)("ngStyle", \u0275\u0275pureFunction1(14, _c023, ctx.itemSize + "px"))("ngClass", \u0275\u0275pureFunction3(16, _c119, ctx.selected && !ctx.checkmark, ctx.disabled, ctx.focused));
+        \u0275\u0275property("id", ctx.id)("ngStyle", \u0275\u0275pureFunction1(14, _c024, ctx.itemSize + "px"))("ngClass", \u0275\u0275pureFunction3(16, _c119, ctx.selected && !ctx.checkmark, ctx.disabled, ctx.focused));
         \u0275\u0275attribute("aria-label", ctx.label)("aria-setsize", ctx.ariaSetSize)("aria-posinset", ctx.ariaPosInset)("aria-selected", ctx.selected)("data-p-focused", ctx.focused)("data-p-highlight", ctx.selected)("data-p-disabled", ctx.disabled);
         \u0275\u0275advance();
         \u0275\u0275property("ngIf", ctx.checkmark);
@@ -66355,7 +66400,7 @@ var SelectModule = class _SelectModule {
 })();
 
 // node_modules/primeng/fesm2022/primeng-paginator.mjs
-var _c024 = ["dropdownicon"];
+var _c025 = ["dropdownicon"];
 var _c120 = ["firstpagelinkicon"];
 var _c217 = ["previouspagelinkicon"];
 var _c315 = ["lastpagelinkicon"];
@@ -67379,7 +67424,7 @@ var Paginator = class _Paginator extends BaseComponent {
     selectors: [["p-paginator"]],
     contentQueries: function Paginator_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        \u0275\u0275contentQuery(dirIndex, _c024, 4);
+        \u0275\u0275contentQuery(dirIndex, _c025, 4);
         \u0275\u0275contentQuery(dirIndex, _c120, 4);
         \u0275\u0275contentQuery(dirIndex, _c217, 4);
         \u0275\u0275contentQuery(dirIndex, _c315, 4);
@@ -67717,7 +67762,7 @@ var PaginatorModule = class _PaginatorModule {
 })();
 
 // node_modules/primeng/fesm2022/primeng-selectbutton.mjs
-var _c025 = ["item"];
+var _c026 = ["item"];
 var _c121 = (a0, a1) => ({
   $implicit: a0,
   index: a1
@@ -68079,7 +68124,7 @@ var SelectButton = class _SelectButton extends BaseComponent {
     selectors: [["p-selectButton"], ["p-selectbutton"], ["p-select-button"]],
     contentQueries: function SelectButton_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        \u0275\u0275contentQuery(dirIndex, _c025, 4);
+        \u0275\u0275contentQuery(dirIndex, _c026, 4);
         \u0275\u0275contentQuery(dirIndex, PrimeTemplate, 4);
       }
       if (rf & 2) {
@@ -68281,7 +68326,7 @@ var SelectButtonModule = class _SelectButtonModule {
 })();
 
 // node_modules/primeng/fesm2022/primeng-table.mjs
-var _c026 = ["header"];
+var _c027 = ["header"];
 var _c126 = ["headergrouped"];
 var _c218 = ["body"];
 var _c316 = ["loadingbody"];
@@ -73213,7 +73258,7 @@ var Table = class _Table extends BaseComponent {
     selectors: [["p-table"]],
     contentQueries: function Table_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        \u0275\u0275contentQuery(dirIndex, _c026, 4);
+        \u0275\u0275contentQuery(dirIndex, _c027, 4);
         \u0275\u0275contentQuery(dirIndex, _c126, 4);
         \u0275\u0275contentQuery(dirIndex, _c218, 4);
         \u0275\u0275contentQuery(dirIndex, _c316, 4);
@@ -77815,7 +77860,7 @@ var ColumnFilter = class _ColumnFilter extends BaseComponent {
     selectors: [["p-columnFilter"]],
     contentQueries: function ColumnFilter_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        \u0275\u0275contentQuery(dirIndex, _c026, 4);
+        \u0275\u0275contentQuery(dirIndex, _c027, 4);
         \u0275\u0275contentQuery(dirIndex, _c542, 4);
         \u0275\u0275contentQuery(dirIndex, _c511, 4);
         \u0275\u0275contentQuery(dirIndex, _c552, 4);
@@ -78613,6 +78658,7 @@ export {
   isNotEmpty,
   resolveFieldData,
   equals2 as equals,
+  findIndexInList,
   findLastIndex,
   resolve,
   isPrintableCharacter,
@@ -78630,6 +78676,7 @@ export {
   TranslationKeys,
   TreeDragDropService,
   definePreset,
+  $dt,
   BaseStyle,
   PrimeNG,
   providePrimeNG,
@@ -78647,6 +78694,7 @@ export {
   AutoFocusModule,
   RadioButton,
   RadioButtonModule,
+  environment,
   Badge,
   BadgeModule,
   BaseIcon,
@@ -78694,9 +78742,11 @@ export {
   IftaLabel,
   IftaLabelModule,
   zindexutils,
+  transformToBoolean,
   Tooltip,
   TooltipModule,
   Toast,
+  ToastModule,
   IconField,
   InputIcon,
   Overlay,
@@ -78756,4 +78806,4 @@ export {
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-FM5O5A5T.js.map
+//# sourceMappingURL=chunk-TZBHCSEB.js.map

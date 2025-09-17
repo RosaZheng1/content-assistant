@@ -6,6 +6,8 @@ import {
   AsyncPipe,
   AutoFocus,
   AutoFocusModule,
+  Badge,
+  BadgeModule,
   BaseComponent,
   BaseStyle,
   BlankIcon,
@@ -20,6 +22,7 @@ import {
   ChevronDownIcon,
   CommonModule,
   ConfirmationService,
+  ConnectedOverlayScrollHandler,
   DOCUMENT,
   DefaultValueAccessor,
   DomRendererFactory2,
@@ -35,6 +38,8 @@ import {
   IftaLabel,
   IftaLabelModule,
   InputGroup,
+  InputGroupAddon,
+  InputGroupAddonModule,
   InputGroupModule,
   InputIcon,
   InputText,
@@ -57,6 +62,7 @@ import {
   NgTemplateOutlet,
   Overlay,
   OverlayModule,
+  OverlayService,
   PlusIcon,
   PrimeNG,
   PrimeTemplate,
@@ -77,12 +83,14 @@ import {
   Table,
   TableModule,
   Textarea,
+  TextareaModule,
   ThemeService,
   TimesCircleIcon,
   TimesIcon,
   Title,
   TitleStrategy,
   Toast,
+  ToastModule,
   ToggleButton,
   ToggleButtonModule,
   Toolbar,
@@ -100,27 +108,37 @@ import {
   UploadWordComponent,
   UrlDataService,
   WebViewType,
+  absolutePosition,
+  addClass,
   bootstrapApplication,
   deepEquals,
   definePreset,
+  environment,
   equals,
+  find,
+  findIndexInList,
   findLastIndex,
   findSingle,
   focus,
   getFirstFocusableElement,
   getFocusableElements,
   getLastFocusableElement,
+  getOffset,
   isEmpty,
+  isIOS,
   isNotEmpty,
   isPrintableCharacter,
+  isTouchDevice,
   provideHttpClient,
   providePrimeNG,
   provideRouter,
   resolveFieldData,
   scrollInView,
+  transformToBoolean,
   unblockBodyScroll,
-  uuid
-} from "./chunk-FM5O5A5T.js";
+  uuid,
+  zindexutils
+} from "./chunk-TZBHCSEB.js";
 import {
   ANIMATION_MODULE_TYPE,
   BehaviorSubject,
@@ -155,13 +173,17 @@ import {
   booleanAttribute,
   catchError,
   computed,
+  contentChild,
+  contentChildren,
   effect,
   forwardRef,
   from,
   importProvidersFrom,
   inject,
+  input,
   makeEnvironmentProviders,
   map,
+  model,
   numberAttribute,
   of,
   performanceMarkFeature,
@@ -187,6 +209,7 @@ import {
   ɵɵclassProp,
   ɵɵconditional,
   ɵɵcontentQuery,
+  ɵɵcontentQuerySignal,
   ɵɵdefineComponent,
   ɵɵdefineDirective,
   ɵɵdefineInjectable,
@@ -219,9 +242,11 @@ import {
   ɵɵpureFunction1,
   ɵɵpureFunction2,
   ɵɵpureFunction3,
+  ɵɵqueryAdvance,
   ɵɵqueryRefresh,
   ɵɵreference,
   ɵɵresetView,
+  ɵɵresolveDocument,
   ɵɵrestoreView,
   ɵɵsanitizeHtml,
   ɵɵsanitizeUrl,
@@ -237,7 +262,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-6G6LGOOB.js";
+} from "./chunk-7IV2XZGV.js";
 import {
   __async,
   __spreadProps,
@@ -290,12 +315,10 @@ var TranslateHttpLoader = class _TranslateHttpLoader {
 
 // src/app/common/custom-title-strategy.ts
 var CustomTitleStrategy = class _CustomTitleStrategy extends TitleStrategy {
-  translate;
-  title;
-  constructor(translate, title) {
+  translate = inject(TranslateService);
+  title = inject(Title);
+  constructor() {
     super();
-    this.translate = translate;
-    this.title = title;
   }
   updateTitle(snapshot) {
     const titleKey = this.buildTitle(snapshot);
@@ -306,7 +329,7 @@ var CustomTitleStrategy = class _CustomTitleStrategy extends TitleStrategy {
     }
   }
   static \u0275fac = function CustomTitleStrategy_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _CustomTitleStrategy)(\u0275\u0275inject(TranslateService), \u0275\u0275inject(Title));
+    return new (__ngFactoryType__ || _CustomTitleStrategy)();
   };
   static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _CustomTitleStrategy, factory: _CustomTitleStrategy.\u0275fac, providedIn: "root" });
 };
@@ -314,7 +337,7 @@ var CustomTitleStrategy = class _CustomTitleStrategy extends TitleStrategy {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CustomTitleStrategy, [{
     type: Injectable,
     args: [{ providedIn: "root" }]
-  }], () => [{ type: TranslateService }, { type: Title }], null);
+  }], () => [], null);
 })();
 
 // node_modules/@angular/platform-browser/fesm2022/animations/async.mjs
@@ -351,7 +374,7 @@ var AsyncAnimationRendererFactory = class _AsyncAnimationRendererFactory {
    * @internal
    */
   loadImpl() {
-    const loadFn = () => this.moduleImpl ?? import("./chunk-3OQKL2GE.js").then((m) => m);
+    const loadFn = () => this.moduleImpl ?? import("./chunk-YQNFOA3U.js").then((m) => m);
     let moduleImplPromise;
     if (this.loadingSchedulerFn) {
       moduleImplPromise = this.loadingSchedulerFn(loadFn);
@@ -7184,7 +7207,7 @@ var NotFoundComponent = class _NotFoundComponent {
 function PageUploadComponent_ca_upload_url_26_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "ca-upload-url", 14);
+    \u0275\u0275elementStart(0, "ca-upload-url", 16);
     \u0275\u0275listener("uploadComplete", function PageUploadComponent_ca_upload_url_26_Template_ca_upload_url_uploadComplete_0_listener() {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
@@ -7196,7 +7219,7 @@ function PageUploadComponent_ca_upload_url_26_Template(rf, ctx) {
 function PageUploadComponent_ca_upload_paste_27_Template(rf, ctx) {
   if (rf & 1) {
     const _r3 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "ca-upload-paste", 14);
+    \u0275\u0275elementStart(0, "ca-upload-paste", 16);
     \u0275\u0275listener("uploadComplete", function PageUploadComponent_ca_upload_paste_27_Template_ca_upload_paste_uploadComplete_0_listener() {
       \u0275\u0275restoreView(_r3);
       const ctx_r1 = \u0275\u0275nextContext();
@@ -7208,7 +7231,7 @@ function PageUploadComponent_ca_upload_paste_27_Template(rf, ctx) {
 function PageUploadComponent_ca_upload_word_28_Template(rf, ctx) {
   if (rf & 1) {
     const _r4 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "ca-upload-word", 14);
+    \u0275\u0275elementStart(0, "ca-upload-word", 16);
     \u0275\u0275listener("uploadComplete", function PageUploadComponent_ca_upload_word_28_Template_ca_upload_word_uploadComplete_0_listener() {
       \u0275\u0275restoreView(_r4);
       const ctx_r1 = \u0275\u0275nextContext();
@@ -7218,12 +7241,8 @@ function PageUploadComponent_ca_upload_word_28_Template(rf, ctx) {
   }
 }
 var PageUploadComponent = class _PageUploadComponent {
-  uploadState;
-  router;
-  constructor(uploadState, router) {
-    this.uploadState = uploadState;
-    this.router = router;
-  }
+  uploadState = inject(UploadStateService);
+  router = inject(Router);
   ngOnInit() {
     const data = this.uploadState.getUploadData();
     if (data) {
@@ -7240,9 +7259,9 @@ var PageUploadComponent = class _PageUploadComponent {
     this.router.navigate(["page-assistant/compare"]);
   }
   static \u0275fac = function PageUploadComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _PageUploadComponent)(\u0275\u0275directiveInject(UploadStateService), \u0275\u0275directiveInject(Router));
+    return new (__ngFactoryType__ || _PageUploadComponent)();
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _PageUploadComponent, selectors: [["ca-page-upload"]], decls: 29, vars: 13, consts: [["id", "wb-cont"], [1, "flex", "flex-wrap"], [1, "flex", "mr-4", "mb-4"], [1, "border-none", "p-0", "m-0"], [1, "font-bold", "mb-3"], [1, "flex", "flex-column", "gap-3"], [1, "flex", "align-items-center"], ["name", "uploadType", "value", "url", 3, "onClick", "ngModelChange", "ngModel"], [1, "ml-2"], ["name", "uploadType", "value", "paste", 3, "onClick", "ngModelChange", "ngModel"], ["name", "uploadType", "value", "word", 3, "onClick", "ngModelChange", "ngModel"], [1, "flex"], [3, "ngSwitch"], [3, "uploadComplete", 4, "ngSwitchCase"], [3, "uploadComplete"]], template: function PageUploadComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _PageUploadComponent, selectors: [["ca-page-upload"]], decls: 29, vars: 13, consts: [["id", "wb-cont"], [1, "flex", "flex-wrap"], [1, "flex", "mr-4", "mb-4"], [1, "border-none", "p-0", "m-0"], [1, "font-bold", "mb-3"], [1, "flex", "flex-column", "gap-3"], ["for", "url", 1, "flex", "align-items-center"], ["id", "url", "name", "uploadType", "value", "url", 3, "onClick", "ngModelChange", "ngModel"], [1, "ml-2"], ["for", "paste", 1, "flex", "align-items-center"], ["id", "paste", "name", "uploadType", "value", "paste", 3, "onClick", "ngModelChange", "ngModel"], ["for", "word", 1, "flex", "align-items-center"], ["id", "word", "name", "uploadType", "value", "word", 3, "onClick", "ngModelChange", "ngModel"], [1, "flex"], [3, "ngSwitch"], [3, "uploadComplete", 4, "ngSwitchCase"], [3, "uploadComplete"]], template: function PageUploadComponent_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "h1", 0);
       \u0275\u0275text(1);
@@ -7267,7 +7286,7 @@ var PageUploadComponent = class _PageUploadComponent {
       \u0275\u0275elementStart(14, "span", 8);
       \u0275\u0275text(15, "URL");
       \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(16, "label", 6)(17, "p-radioButton", 9);
+      \u0275\u0275elementStart(16, "label", 9)(17, "p-radioButton", 10);
       \u0275\u0275listener("onClick", function PageUploadComponent_Template_p_radioButton_onClick_17_listener() {
         return ctx.onUploadTypeChange("paste");
       });
@@ -7279,7 +7298,7 @@ var PageUploadComponent = class _PageUploadComponent {
       \u0275\u0275elementStart(18, "span", 8);
       \u0275\u0275text(19, "Copy & Paste");
       \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(20, "label", 6)(21, "p-radioButton", 10);
+      \u0275\u0275elementStart(20, "label", 11)(21, "p-radioButton", 12);
       \u0275\u0275listener("onClick", function PageUploadComponent_Template_p_radioButton_onClick_21_listener() {
         return ctx.onUploadTypeChange("word");
       });
@@ -7291,9 +7310,9 @@ var PageUploadComponent = class _PageUploadComponent {
       \u0275\u0275elementStart(22, "span", 8);
       \u0275\u0275text(23, "Word doc (converts to HTML)");
       \u0275\u0275elementEnd()()()()();
-      \u0275\u0275elementStart(24, "div", 11);
-      \u0275\u0275elementContainerStart(25, 12);
-      \u0275\u0275template(26, PageUploadComponent_ca_upload_url_26_Template, 1, 0, "ca-upload-url", 13)(27, PageUploadComponent_ca_upload_paste_27_Template, 1, 0, "ca-upload-paste", 13)(28, PageUploadComponent_ca_upload_word_28_Template, 1, 0, "ca-upload-word", 13);
+      \u0275\u0275elementStart(24, "div", 13);
+      \u0275\u0275elementContainerStart(25, 14);
+      \u0275\u0275template(26, PageUploadComponent_ca_upload_url_26_Template, 1, 0, "ca-upload-url", 15)(27, PageUploadComponent_ca_upload_paste_27_Template, 1, 0, "ca-upload-paste", 15)(28, PageUploadComponent_ca_upload_word_28_Template, 1, 0, "ca-upload-word", 15);
       \u0275\u0275elementContainerEnd();
       \u0275\u0275elementEnd()();
     }
@@ -7339,21 +7358,21 @@ var PageUploadComponent = class _PageUploadComponent {
             <legend class="font-bold mb-3">Choose upload type:</legend>\r
 \r
             <div class="flex flex-column gap-3">\r
-                <label class="flex align-items-center">\r
-                    <p-radioButton name="uploadType" value="url" (onClick)="onUploadTypeChange('url')"\r
-                        [(ngModel)]="selectedUploadType"></p-radioButton>\r
+                <label for="url" class="flex align-items-center">\r
+                    <p-radioButton id="url" name="uploadType" value="url" (onClick)="onUploadTypeChange('url')"\r
+                                   [(ngModel)]="selectedUploadType"></p-radioButton>\r
                     <span class="ml-2">URL</span>\r
                 </label>\r
 \r
-                <label class="flex align-items-center">\r
-                    <p-radioButton name="uploadType" value="paste" (onClick)="onUploadTypeChange('paste')"\r
-                        [(ngModel)]="selectedUploadType"></p-radioButton>\r
+                <label for="paste" class="flex align-items-center">\r
+                    <p-radioButton id="paste" name="uploadType" value="paste" (onClick)="onUploadTypeChange('paste')"\r
+                                   [(ngModel)]="selectedUploadType"></p-radioButton>\r
                     <span class="ml-2">Copy & Paste</span>\r
                 </label>\r
 \r
-                <label class="flex align-items-center">\r
-                    <p-radioButton name="uploadType" value="word" (onClick)="onUploadTypeChange('word')"\r
-                        [(ngModel)]="selectedUploadType"></p-radioButton>\r
+                <label for="word" class="flex align-items-center">\r
+                    <p-radioButton id="word" name="uploadType" value="word" (onClick)="onUploadTypeChange('word')"\r
+                                   [(ngModel)]="selectedUploadType"></p-radioButton>\r
                     <span class="ml-2">Word doc (converts to HTML)</span>\r
                 </label>\r
             </div>\r
@@ -7370,7 +7389,7 @@ var PageUploadComponent = class _PageUploadComponent {
         </ng-container>\r
     </div>\r
 </div>` }]
-  }], () => [{ type: UploadStateService }, { type: Router }], null);
+  }], null, null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(PageUploadComponent, { className: "PageUploadComponent", filePath: "src/app/views/page-assistant/components/upload.component.ts", lineNumber: 30 });
@@ -7682,20 +7701,12 @@ function ShareComponent_div_7_Template(rf, ctx) {
   }
 }
 var ShareComponent = class _ShareComponent {
-  route;
-  urlDataService;
-  uploadState;
-  translate;
-  router;
-  locationStrategy;
-  constructor(route, urlDataService, uploadState, translate, router, locationStrategy) {
-    this.route = route;
-    this.urlDataService = urlDataService;
-    this.uploadState = uploadState;
-    this.translate = translate;
-    this.router = router;
-    this.locationStrategy = locationStrategy;
-  }
+  route = inject(ActivatedRoute);
+  urlDataService = inject(UrlDataService);
+  uploadState = inject(UploadStateService);
+  translate = inject(TranslateService);
+  router = inject(Router);
+  locationStrategy = inject(LocationStrategy);
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
       const url = params["url"];
@@ -7710,9 +7721,10 @@ var ShareComponent = class _ShareComponent {
   compareUrl = null;
   baseHref = null;
   getShareLink(url, compareUrl) {
-    const params = {};
-    params.url = url;
-    params.compareUrl = compareUrl;
+    const params = {
+      url,
+      compareUrl
+    };
     const treeLink = this.router.createUrlTree(["page-assistant/share"], { queryParams: params });
     const shareLink = `${window.location.origin}${this.baseHref}${this.router.serializeUrl(treeLink).replace(/^\//, "")}`;
     return shareLink;
@@ -7743,14 +7755,20 @@ var ShareComponent = class _ShareComponent {
         });
         this.router.navigate(["page-assistant/compare"]);
       } catch (err) {
-        this.error = `${tryError} ${err.message || err || unknownError}`;
+        if (err instanceof Error) {
+          this.error = `${tryError} ${err.message}`;
+        } else if (typeof err === "string") {
+          this.error = `${tryError} ${err}`;
+        } else {
+          this.error = `${unknownError}`;
+        }
       } finally {
         this.loading = false;
       }
     });
   }
   static \u0275fac = function ShareComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ShareComponent)(\u0275\u0275directiveInject(ActivatedRoute), \u0275\u0275directiveInject(UrlDataService), \u0275\u0275directiveInject(UploadStateService), \u0275\u0275directiveInject(TranslateService), \u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(LocationStrategy));
+    return new (__ngFactoryType__ || _ShareComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ShareComponent, selectors: [["ca-share"]], decls: 8, vars: 8, consts: [["id", "wb-cont"], [4, "ngIf"], ["class", "flex justify-content-center", 4, "ngIf"], [1, "flex", "flex-column", "gap-3"], ["pInputText", "", "id", "url", "autocomplete", "off", "fluid", "", 3, "ngModelChange", "ngModel"], ["for", "url"], ["pInputText", "", "id", "compare", "autocomplete", "off", "fluid", "", 3, "ngModelChange", "ngModel"], ["for", "compare"], [3, "href"], ["href", "page-assistant/share?url=https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses.html&compareUrl=https://cra-design.github.io/gst-hst-business/en/topics/gst-hst-businesses.html"], [1, "flex", "justify-content-center"], ["ariaLabel", "loading"]], template: function ShareComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -7804,10 +7822,516 @@ var ShareComponent = class _ShareComponent {
       </div>
       <div class="flex justify-content-center" *ngIf="loading"><p-progress-spinner ariaLabel="loading" /></div>
   ` }]
-  }], () => [{ type: ActivatedRoute }, { type: UrlDataService }, { type: UploadStateService }, { type: TranslateService }, { type: Router }, { type: LocationStrategy }], null);
+  }], null, null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ShareComponent, { className: "ShareComponent", filePath: "src/app/views/page-assistant/components/share.component.ts", lineNumber: 47 });
+})();
+
+// src/app/services/local-storage.service.ts
+var LocalStorageService = class _LocalStorageService {
+  saveData(key, value) {
+    localStorage.setItem(key, value);
+    console.log(`Saved ` + key + `: ` + value);
+  }
+  getData(key) {
+    return localStorage.getItem(key);
+  }
+  removeData(key) {
+    localStorage.removeItem(key);
+    console.log(`Removed ` + key);
+  }
+  clearData() {
+    localStorage.clear();
+    console.log(`Removed all stored values`);
+  }
+  static \u0275fac = function LocalStorageService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _LocalStorageService)();
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _LocalStorageService, factory: _LocalStorageService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(LocalStorageService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], null, null);
+})();
+
+// src/app/services/api-key.service.ts
+var ApiKeyService = class _ApiKeyService {
+  localStorageService;
+  STORAGE_KEY = "apiKey";
+  // Using same key as the rest of the app
+  apiKeySubject;
+  apiKey$;
+  hasApiKey$;
+  constructor(localStorageService) {
+    this.localStorageService = localStorageService;
+    const storedKey = this.getStoredKey();
+    this.apiKeySubject = new BehaviorSubject(storedKey);
+    this.apiKey$ = this.apiKeySubject.asObservable();
+    this.hasApiKey$ = new BehaviorSubject(!!storedKey);
+  }
+  getStoredKey() {
+    return this.localStorageService.getData(this.STORAGE_KEY);
+  }
+  setKey(key) {
+    this.localStorageService.saveData(this.STORAGE_KEY, key);
+    this.apiKeySubject.next(key);
+    this.hasApiKey$.next(true);
+  }
+  getCurrentKey() {
+    return this.apiKeySubject.value;
+  }
+  clearKey() {
+    this.localStorageService.removeData(this.STORAGE_KEY);
+    this.apiKeySubject.next(null);
+    this.hasApiKey$.next(false);
+  }
+  static \u0275fac = function ApiKeyService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _ApiKeyService)(\u0275\u0275inject(LocalStorageService));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _ApiKeyService, factory: _ApiKeyService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ApiKeyService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], () => [{ type: LocalStorageService }], null);
+})();
+
+// src/app/services/image-processor.ts
+var ImageProcessorService = class _ImageProcessorService {
+  http;
+  apiKeyService;
+  MAX_IMAGE_SIZE = 1024;
+  // Max width/height for resizing
+  OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
+  // --- UPDATED: New Translation Model and specific prompt ---
+  TRANSLATION_MODEL_FOR_CRA = "mistralai/mistral-small-3.2-24b-instruct:free";
+  // Using Mistral Small for reliable free translation
+  constructor(http, apiKeyService) {
+    this.http = http;
+    this.apiKeyService = apiKeyService;
+  }
+  /**
+   * Main method to analyze an image file using OpenRouter's vision API.
+   * @param file The image file to analyze.
+   * @param selectedVisionModel The OpenRouter vision model ID (e.g., 'qwen/qwen2.5-vl-32b-instruct:free').
+   * @param identifier A unique identifier for logging (e.g., file name).
+   * @param isPdfPage Whether this image is from a PDF page (for different prompting).
+   * @returns An Observable emitting the analysis result.
+   */
+  analyzeImage(file, selectedVisionModel, identifier, isPdfPage = false) {
+    console.log("ImageProcessorService.analyzeImage called with:", file.name, selectedVisionModel);
+    const apiKey = this.apiKeyService.getCurrentKey();
+    if (!apiKey) {
+      console.error("No API key found");
+      return throwError(() => new Error("OpenRouter API Key is missing. Please provide it."));
+    }
+    console.log("API key found, loading image...");
+    return this.loadImage(file).pipe(map((img) => {
+      const base64Data = this.resizeAndConvertToBase64(img, this.MAX_IMAGE_SIZE);
+      return { img, base64Data };
+    }), switchMap(({ img, base64Data }) => this.getVisionAnalysis(base64Data, selectedVisionModel, apiKey, identifier, isPdfPage).pipe(map((visionResult) => {
+      if (visionResult.error) {
+        throw new Error(visionResult.error);
+      }
+      return __spreadProps(__spreadValues({}, visionResult), { imageBase64: base64Data });
+    }))), switchMap((visionResult) => {
+      if (visionResult.error || !visionResult.english) {
+        return from([visionResult]);
+      }
+      return this.translateToFrench(visionResult.english, apiKey, identifier).pipe(map((frenchText) => ({
+        english: visionResult.english,
+        french: frenchText,
+        error: null,
+        // Clear any vision error if translation proceeds
+        imageBase64: visionResult.imageBase64
+        // Keep the image
+      })), catchError((translateError) => {
+        console.error(`Translation error for ${identifier}:`, translateError);
+        return from([{
+          english: visionResult.english,
+          french: `[Translation Error: ${translateError.message || "Unknown error"}]`,
+          error: translateError.message,
+          imageBase64: visionResult.imageBase64
+        }]);
+      }));
+    }), catchError((error) => {
+      console.error(`Error in image analysis pipeline for ${identifier}:`, error);
+      if (error.message === "KEY_LIMIT_EXCEEDED") {
+        return from([{
+          english: null,
+          french: null,
+          error: "KEY_LIMIT_EXCEEDED",
+          imageBase64: null
+        }]);
+      }
+      return from([{
+        english: null,
+        french: null,
+        error: error.message || "Unknown error",
+        imageBase64: null
+      }]);
+    }));
+  }
+  loadImage(file) {
+    return new Observable((observer) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          observer.next(img);
+          observer.complete();
+        };
+        img.onerror = (err) => {
+          observer.error(new Error(`Failed to load image '${file.name}'.`));
+        };
+        img.src = e.target?.result;
+      };
+      reader.onerror = (err) => {
+        observer.error(new Error(`Failed to read file '${file.name}'.`));
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  resizeAndConvertToBase64(img, maxSize) {
+    const canvas = document.createElement("canvas");
+    let width = img.width;
+    let height = img.height;
+    if (width > maxSize || height > maxSize) {
+      if (width > height) {
+        height = Math.round(height * (maxSize / width));
+        width = maxSize;
+      } else {
+        width = Math.round(width * (maxSize / height));
+        height = maxSize;
+      }
+    }
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      throw new Error("Could not get 2D context from canvas for image resizing.");
+    }
+    ctx.drawImage(img, 0, 0, width, height);
+    return canvas.toDataURL("image/png");
+  }
+  getVisionAnalysis(base64Data, selectedVisionModel, apiKey, identifier, isPdfPage = false) {
+    console.log("getVisionAnalysis called for:", identifier, "model:", selectedVisionModel, "isPdfPage:", isPdfPage);
+    let prompt;
+    let max_tokens;
+    if (isPdfPage) {
+      prompt = "Provide a comprehensive, well-structured description of this document page. Format your response with clear sections and bullet points where appropriate.\n\nInclude:\n\u2022 All visible text content (quotes, headings, paragraphs)\n\u2022 Document structure and layout\n\u2022 Forms, fields, and what information they request\n\u2022 Tables and their contents\n\u2022 Any important visual elements or logos\n\nUse line breaks between sections for readability. If there are multiple sections or forms, clearly separate them.\nBe thorough and detailed to help someone understand the full content without seeing the page.";
+      max_tokens = 2e3;
+    } else {
+      prompt = "Create a short, concise alt text for this image suitable for a website. DO NOT start with phrases like 'The image depicts', 'The image shows', or similar. Instead, directly describe the main subject in 15-20 words maximum. Focus only on the key elements necessary for accessibility. Use simple, direct language without unnecessary words.";
+      max_tokens = 50;
+    }
+    let messages;
+    if (selectedVisionModel.includes("qwen") || selectedVisionModel.includes("llama")) {
+      messages = [{
+        "role": "user",
+        "content": [
+          { "type": "text", "text": prompt },
+          { "type": "image_url", "image_url": { "url": base64Data } }
+        ]
+      }];
+    } else {
+      messages = [{
+        "role": "user",
+        "content": [
+          { "type": "image_url", "image_url": { "url": base64Data } },
+          { "type": "text", "text": prompt }
+        ]
+      }];
+    }
+    const payload = {
+      model: selectedVisionModel,
+      messages,
+      max_tokens,
+      temperature: 0.3,
+      top_p: 0.85
+    };
+    const headers = new HttpHeaders({
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    });
+    return this.http.post(this.OPENROUTER_API_URL, payload, { headers }).pipe(timeout(6e4), map((response) => {
+      const englishText = response?.choices?.[0]?.message?.content?.trim();
+      if (!englishText) {
+        console.warn(`No content or unexpected structure from vision model for ${identifier}. Response:`, response);
+        throw new Error("No content returned from vision model.");
+      }
+      return { english: englishText, french: null, error: null };
+    }), catchError((error) => {
+      let errorMessage = `Vision API Error (${error.status || "Network Error"}): ${error.statusText || "Unknown Error"}`;
+      if (error.error && error.error.error && error.error.error.message) {
+        errorMessage += ` - ${error.error.error.message}`;
+      } else if (typeof error.error === "string") {
+        errorMessage += ` - ${error.error}`;
+      }
+      if (error.status === 403 && errorMessage.toLowerCase().includes("key limit exceeded")) {
+        errorMessage = "KEY_LIMIT_EXCEEDED";
+      }
+      console.error(`Error in vision API call for ${identifier}:`, errorMessage, error);
+      return from([{ english: null, french: null, error: errorMessage }]);
+    }));
+  }
+  translateToFrench(text2, apiKey, identifier) {
+    if (!text2) {
+      console.log(`Skipping translation for empty text: ${identifier}`);
+      return from([""]);
+    }
+    const systemPrompt = `You are a professional translator for the Canada Revenue Agency (CRA).
+                          Your task is to translate the following English text into clear, concise, and accurate Canadian French,
+                          using official CRA terminology and tone where applicable.
+                          CRITICAL INSTRUCTION: Provide ONLY the direct translation. DO NOT include any explanations, notes,
+                          disclaimers, or additional commentary of any kind. DO NOT include phrases like 'Here is the translation:'.
+                          DO NOT wrap your response in quotes. Simply translate the text directly.`;
+    const messages = [
+      { "role": "system", "content": systemPrompt },
+      { "role": "user", "content": text2 }
+    ];
+    const payload = {
+      model: this.TRANSLATION_MODEL_FOR_CRA,
+      messages,
+      temperature: 0.1,
+      max_tokens: Math.max(500, Math.ceil(text2.length * 2.5)),
+      top_p: 0.9
+    };
+    const headers = new HttpHeaders({
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    });
+    return this.http.post(this.OPENROUTER_API_URL, payload, { headers }).pipe(
+      timeout(9e4),
+      // Increased timeout to 90 seconds for PDF content
+      retry({ count: 1, delay: 2e3 }),
+      // Retry once after 2 seconds on failure
+      map((response) => {
+        console.log(`Translation response for ${identifier}:`, response);
+        if (!response || !response.choices || !Array.isArray(response.choices) || response.choices.length === 0) {
+          console.error(`Invalid response structure from translation model for ${identifier}:`, response);
+          throw new Error("Invalid response structure from translation model.");
+        }
+        let translation = response.choices[0]?.message?.content;
+        if (!translation || typeof translation !== "string") {
+          console.error(`No content in translation response for ${identifier}. Full response:`, JSON.stringify(response, null, 2));
+          throw new Error("Translation model returned empty content.");
+        }
+        translation = translation.trim();
+        if (!translation) {
+          console.error(`Translation content is empty after trimming for ${identifier}`);
+          throw new Error("Translation model returned empty content after trimming.");
+        }
+        translation = translation.replace(/^Voici la traduction\s*:\s*/i, "");
+        translation = translation.replace(/^Translation\s*:\s*/i, "");
+        translation = translation.replace(/^Here is the translation\s*:\s*/i, "");
+        return translation;
+      }),
+      catchError((error) => {
+        let errorMessage = `Translation API Error (${error.status || "Network Error"}): ${error.statusText || "Unknown Error"}`;
+        if (error.error && error.error.error && error.error.error.message) {
+          errorMessage += ` - ${error.error.error.message}`;
+        }
+        if (error.status === 403 && error.error?.error?.message?.toLowerCase().includes("key limit exceeded")) {
+          errorMessage = "KEY_LIMIT_EXCEEDED";
+        }
+        console.error(`Error translating text for ${identifier}:`, errorMessage, error);
+        return throwError(() => new Error(errorMessage));
+      })
+    );
+  }
+  escapeHtml(unsafe) {
+    if (unsafe === null || typeof unsafe !== "string")
+      return "";
+    return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+  formatDescription(text2) {
+    if (!text2)
+      return "";
+    let formatted = this.escapeHtml(text2);
+    formatted = formatted.replace(/\n\s*\n/g, "</p><p>");
+    formatted = formatted.replace(/\n/g, "<br>");
+    if (!formatted.startsWith("<p>") && formatted.trim() !== "") {
+      formatted = "<p>" + formatted;
+    }
+    if (!formatted.endsWith("</p>") && formatted.trim() !== "") {
+      formatted = formatted + "</p>";
+    }
+    formatted = formatted.replace(/<p>(\s*[-*•][\s\S]*?)<\/p>/g, "<ul><li>$1</li></ul>");
+    formatted = formatted.replace(/<br>\s*([-*•])\s+/g, "</li><li>");
+    formatted = formatted.replace(/<p>(\s*\d+\.[\s\S]*?)<\/p>/g, "<ol><li>$1</li></ol>");
+    formatted = formatted.replace(/<br>\s*(\d+\.)\s+/g, "</li><li>");
+    formatted = formatted.replace(/<p>([A-Z][A-Z\s]+[A-Z]:?)<\/p>/g, "<h4>$1</h4>");
+    formatted = formatted.replace(/<p>\s*(<br\s*\/?>)?\s*<\/p>/gi, "");
+    formatted = formatted.replace(/<p><br\s*\/?>/gi, "<p>");
+    formatted = formatted.replace(/<br\s*\/?>\s*<\/p>/gi, "</p>");
+    return formatted.trim();
+  }
+  static \u0275fac = function ImageProcessorService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _ImageProcessorService)(\u0275\u0275inject(HttpClient), \u0275\u0275inject(ApiKeyService));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _ImageProcessorService, factory: _ImageProcessorService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ImageProcessorService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], () => [{ type: HttpClient }, { type: ApiKeyService }], null);
+})();
+
+// src/app/services/image-assistant-state.service.ts
+var ImageAssistantStateService = class _ImageAssistantStateService {
+  stateSubject = new BehaviorSubject({
+    results: {},
+    filesInProgress: 0,
+    processedCount: 0,
+    progressText: "",
+    showProgressArea: false
+  });
+  state$ = this.stateSubject.asObservable();
+  constructor() {
+  }
+  getCurrentState() {
+    return this.stateSubject.value;
+  }
+  updateState(updates) {
+    const currentState = this.stateSubject.value;
+    this.stateSubject.next(__spreadValues(__spreadValues({}, currentState), updates));
+  }
+  addResult(fileName, result) {
+    const currentState = this.stateSubject.value;
+    const newResults = __spreadProps(__spreadValues({}, currentState.results), { [fileName]: result });
+    this.updateState({ results: newResults });
+  }
+  updateResult(fileName, updates) {
+    const currentState = this.stateSubject.value;
+    if (currentState.results[fileName]) {
+      const updatedResult = __spreadValues(__spreadValues({}, currentState.results[fileName]), updates);
+      const newResults = __spreadProps(__spreadValues({}, currentState.results), { [fileName]: updatedResult });
+      this.updateState({ results: newResults });
+    }
+  }
+  resetState() {
+    this.stateSubject.next({
+      results: {},
+      filesInProgress: 0,
+      processedCount: 0,
+      progressText: "",
+      showProgressArea: false
+    });
+  }
+  incrementProcessedCount() {
+    const currentState = this.stateSubject.value;
+    this.updateState({ processedCount: currentState.processedCount + 1 });
+  }
+  static \u0275fac = function ImageAssistantStateService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _ImageAssistantStateService)();
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _ImageAssistantStateService, factory: _ImageAssistantStateService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ImageAssistantStateService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], () => [], null);
+})();
+
+// src/app/services/pdf-converter.service.ts
+var PdfConverterService = class _PdfConverterService {
+  pdfjsLib;
+  isInitialized = false;
+  constructor() {
+  }
+  /**
+   * Lazy load and initialize pdfjs-dist
+   */
+  initializePdfJs() {
+    return __async(this, null, function* () {
+      if (this.isInitialized) {
+        return;
+      }
+      const pdfjs = yield import("./chunk-XCH5NBXG.js");
+      this.pdfjsLib = pdfjs;
+      const { GlobalWorkerOptions } = yield import("./chunk-XCH5NBXG.js");
+      const baseElement = document.querySelector("base");
+      const baseHref = baseElement?.getAttribute("href") || "/";
+      GlobalWorkerOptions.workerSrc = `${baseHref}pdfjs/pdf.worker.min.mjs`.replace(/\/+/g, "/");
+      this.isInitialized = true;
+    });
+  }
+  /**
+   * Converts a PDF file to an array of image data URLs (one per page)
+   * @param file The PDF file to convert
+   * @returns Promise with array of base64 image data URLs
+   */
+  convertPdfToImages(file) {
+    return __async(this, null, function* () {
+      yield this.initializePdfJs();
+      const arrayBuffer = yield file.arrayBuffer();
+      const pdf = yield this.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const images = [];
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = yield pdf.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        if (!context) {
+          throw new Error("Failed to get canvas context");
+        }
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        const renderContext = {
+          canvasContext: context,
+          viewport
+        };
+        yield page.render(renderContext).promise;
+        const imageDataUrl = canvas.toDataURL("image/png");
+        images.push(imageDataUrl);
+      }
+      return images;
+    });
+  }
+  /**
+   * Creates a File object from a data URL
+   * @param dataUrl The data URL of the image
+   * @param filename The filename for the created File
+   * @returns A File object
+   */
+  dataUrlToFile(dataUrl, filename) {
+    const arr = dataUrl.split(",");
+    const mime = arr[0].match(/:(.*?);/)?.[1] || "image/png";
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  }
+  static \u0275fac = function PdfConverterService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _PdfConverterService)();
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _PdfConverterService, factory: _PdfConverterService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(PdfConverterService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], () => [], null);
 })();
 
 // src/app/views/image-assistant/components/file-upload/file-upload.component.ts
@@ -7815,9 +8339,9 @@ var FileUploadComponent = class _FileUploadComponent {
   filesSelected = new EventEmitter();
   isDragOver = false;
   onFileSelected(event) {
-    const input = event.target;
-    if (input.files && input.files.length > 0) {
-      this.filesSelected.emit(input.files);
+    const input2 = event.target;
+    if (input2.files && input2.files.length > 0) {
+      this.filesSelected.emit(input2.files);
     }
   }
   onDragOver(event) {
@@ -7848,14 +8372,19 @@ var FileUploadComponent = class _FileUploadComponent {
   static \u0275fac = function FileUploadComponent_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _FileUploadComponent)();
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _FileUploadComponent, selectors: [["ca-file-upload"]], outputs: { filesSelected: "filesSelected" }, decls: 15, vars: 11, consts: [[1, "file-upload-container", 3, "click", "dragover", "dragleave", "drop"], [1, "upload-icon"], [1, "pi", "pi-upload"], [1, "mb-2"], [1, "text-color-secondary", "text-sm"], ["type", "file", "id", "file-input", "name", "files", "multiple", "", "accept", ".png,.jpg,.jpeg,.pdf", 3, "change"]], template: function FileUploadComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _FileUploadComponent, selectors: [["ca-file-upload"]], outputs: { filesSelected: "filesSelected" }, decls: 16, vars: 14, consts: [["tabindex", "0", "role", "button", 1, "file-upload-container", 3, "click", "keydown.enter", "keydown.space", "dragover", "dragleave", "drop"], [1, "upload-icon"], [1, "pi", "pi-upload"], [1, "mb-2"], [1, "text-color-secondary", "text-sm"], ["type", "file", "id", "file-input", "name", "files", "multiple", "", "accept", ".png,.jpg,.jpeg,.pdf", 3, "change"]], template: function FileUploadComponent_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "fieldset")(1, "legend");
       \u0275\u0275text(2);
       \u0275\u0275pipe(3, "translate");
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(4, "div", 0);
+      \u0275\u0275pipe(5, "translate");
       \u0275\u0275listener("click", function FileUploadComponent_Template_div_click_4_listener() {
+        return ctx.triggerFileInput();
+      })("keydown.enter", function FileUploadComponent_Template_div_keydown_enter_4_listener() {
+        return ctx.triggerFileInput();
+      })("keydown.space", function FileUploadComponent_Template_div_keydown_space_4_listener() {
         return ctx.triggerFileInput();
       })("dragover", function FileUploadComponent_Template_div_dragover_4_listener($event) {
         return ctx.onDragOver($event);
@@ -7864,32 +8393,33 @@ var FileUploadComponent = class _FileUploadComponent {
       })("drop", function FileUploadComponent_Template_div_drop_4_listener($event) {
         return ctx.onDrop($event);
       });
-      \u0275\u0275elementStart(5, "div", 1);
-      \u0275\u0275element(6, "i", 2);
+      \u0275\u0275elementStart(6, "div", 1);
+      \u0275\u0275element(7, "i", 2);
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(7, "p", 3)(8, "strong");
-      \u0275\u0275text(9);
-      \u0275\u0275pipe(10, "translate");
+      \u0275\u0275elementStart(8, "p", 3)(9, "strong");
+      \u0275\u0275text(10);
+      \u0275\u0275pipe(11, "translate");
       \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(11, "p", 4);
-      \u0275\u0275text(12);
-      \u0275\u0275pipe(13, "translate");
+      \u0275\u0275elementStart(12, "p", 4);
+      \u0275\u0275text(13);
+      \u0275\u0275pipe(14, "translate");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(14, "input", 5);
-      \u0275\u0275listener("change", function FileUploadComponent_Template_input_change_14_listener($event) {
+      \u0275\u0275elementStart(15, "input", 5);
+      \u0275\u0275listener("change", function FileUploadComponent_Template_input_change_15_listener($event) {
         return ctx.onFileSelected($event);
       });
       \u0275\u0275elementEnd()()();
     }
     if (rf & 2) {
       \u0275\u0275advance(2);
-      \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 5, "image.upload.legend"));
+      \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 6, "image.upload.legend"));
       \u0275\u0275advance(2);
       \u0275\u0275classProp("dragover", ctx.isDragOver);
-      \u0275\u0275advance(5);
-      \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(10, 7, "image.upload.title"));
+      \u0275\u0275attribute("aria-label", \u0275\u0275pipeBind1(5, 8, "image.upload.title"));
+      \u0275\u0275advance(6);
+      \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(11, 10, "image.upload.title"));
       \u0275\u0275advance(3);
-      \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(13, 9, "image.upload.accept"), " ");
+      \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(14, 12, "image.upload.accept"), " ");
     }
   }, dependencies: [CommonModule, TranslateModule, TranslatePipe], styles: ["\n\n.file-upload-container[_ngcontent-%COMP%] {\n  border: 2px dashed #ccc;\n  border-radius: 8px;\n  padding: 2rem;\n  text-align: center;\n  cursor: pointer;\n  transition: all 0.3s ease;\n  margin-top: 1rem;\n}\n.file-upload-container[_ngcontent-%COMP%]:hover {\n  border-color: #a7a72e;\n  background-color: #f5f5f5;\n}\n.file-upload-container.dragover[_ngcontent-%COMP%] {\n  border-color: #a7a72e;\n  background-color: #f0f0f0;\n}\ninput[type=file][_ngcontent-%COMP%] {\n  display: none;\n}\n.upload-icon[_ngcontent-%COMP%] {\n  font-size: 3rem;\n  color: #a7a72e;\n  margin-bottom: 1rem;\n}\nfieldset[_ngcontent-%COMP%] {\n  border: none;\n  padding: 0;\n  margin: 0;\n}\nlegend[_ngcontent-%COMP%] {\n  font-weight: bold;\n  margin-bottom: 0.5rem;\n}\n/*# sourceMappingURL=file-upload.component.css.map */"] });
 };
@@ -7901,7 +8431,12 @@ var FileUploadComponent = class _FileUploadComponent {
   <div \r
     class="file-upload-container" \r
     [class.dragover]="isDragOver"\r
+    tabindex="0"\r
+    role="button"\r
+    [attr.aria-label]="'image.upload.title' | translate"\r
     (click)="triggerFileInput()"\r
+    (keydown.enter)="triggerFileInput()"\r
+    (keydown.space)="triggerFileInput()"\r
     (dragover)="onDragOver($event)"\r
     (dragleave)="onDragLeave($event)"\r
     (drop)="onDrop($event)">\r
@@ -9623,7 +10158,7 @@ var Dropdown = class _Dropdown extends BaseComponent {
   lastHiddenFocusableElementOnOverlay;
   // @todo to be refactored
   get hostClass() {
-    const classes8 = this._componentStyle.classes.root({
+    const classes12 = this._componentStyle.classes.root({
       instance: this
     }).map((cls) => {
       if (typeof cls === "string") {
@@ -9632,7 +10167,7 @@ var Dropdown = class _Dropdown extends BaseComponent {
         return Object.keys(cls).filter((key) => cls[key]).join(" ");
       }
     }).join(" ");
-    return classes8 + " " + this.styleClass;
+    return classes12 + " " + this.styleClass;
   }
   get hostStyle() {
     return this.style;
@@ -11420,8 +11955,8 @@ var SharedModelSelectorComponent = class _SharedModelSelectorComponent {
   }
   initializeModels() {
     if (this.models && this.models.length > 0) {
-      this.localModels = this.models.map((model) => __spreadProps(__spreadValues({}, model), {
-        name: this.translate.instant(model.name)
+      this.localModels = this.models.map((model2) => __spreadProps(__spreadValues({}, model2), {
+        name: this.translate.instant(model2.name)
       }));
     }
   }
@@ -11910,369 +12445,6 @@ var DividerModule = class _DividerModule {
   }], null, null);
 })();
 
-// src/app/services/local-storage.service.ts
-var LocalStorageService = class _LocalStorageService {
-  constructor() {
-  }
-  saveData(key, value) {
-    localStorage.setItem(key, value);
-    console.log(`Saved ` + key + `: ` + value);
-  }
-  getData(key) {
-    return localStorage.getItem(key);
-  }
-  removeData(key) {
-    localStorage.removeItem(key);
-    console.log(`Removed ` + key);
-  }
-  clearData() {
-    localStorage.clear();
-    console.log(`Removed all stored values`);
-  }
-  static \u0275fac = function LocalStorageService_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _LocalStorageService)();
-  };
-  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _LocalStorageService, factory: _LocalStorageService.\u0275fac, providedIn: "root" });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(LocalStorageService, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], () => [], null);
-})();
-
-// src/app/services/api-key.service.ts
-var ApiKeyService = class _ApiKeyService {
-  localStorageService;
-  STORAGE_KEY = "apiKey";
-  // Using same key as the rest of the app
-  apiKeySubject;
-  apiKey$;
-  hasApiKey$;
-  constructor(localStorageService) {
-    this.localStorageService = localStorageService;
-    const storedKey = this.getStoredKey();
-    this.apiKeySubject = new BehaviorSubject(storedKey);
-    this.apiKey$ = this.apiKeySubject.asObservable();
-    this.hasApiKey$ = new BehaviorSubject(!!storedKey);
-  }
-  getStoredKey() {
-    return this.localStorageService.getData(this.STORAGE_KEY);
-  }
-  setKey(key) {
-    this.localStorageService.saveData(this.STORAGE_KEY, key);
-    this.apiKeySubject.next(key);
-    this.hasApiKey$.next(true);
-  }
-  getCurrentKey() {
-    return this.apiKeySubject.value;
-  }
-  clearKey() {
-    this.localStorageService.removeData(this.STORAGE_KEY);
-    this.apiKeySubject.next(null);
-    this.hasApiKey$.next(false);
-  }
-  static \u0275fac = function ApiKeyService_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ApiKeyService)(\u0275\u0275inject(LocalStorageService));
-  };
-  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _ApiKeyService, factory: _ApiKeyService.\u0275fac, providedIn: "root" });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ApiKeyService, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], () => [{ type: LocalStorageService }], null);
-})();
-
-// src/app/services/image-processor.ts
-var ImageProcessorService = class _ImageProcessorService {
-  http;
-  apiKeyService;
-  MAX_IMAGE_SIZE = 1024;
-  // Max width/height for resizing
-  OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
-  // --- UPDATED: New Translation Model and specific prompt ---
-  TRANSLATION_MODEL_FOR_CRA = "mistralai/mistral-small-3.2-24b-instruct:free";
-  // Using Mistral Small for reliable free translation
-  constructor(http, apiKeyService) {
-    this.http = http;
-    this.apiKeyService = apiKeyService;
-  }
-  /**
-   * Main method to analyze an image file using OpenRouter's vision API.
-   * @param file The image file to analyze.
-   * @param selectedVisionModel The OpenRouter vision model ID (e.g., 'qwen/qwen2.5-vl-32b-instruct:free').
-   * @param identifier A unique identifier for logging (e.g., file name).
-   * @param isPdfPage Whether this image is from a PDF page (for different prompting).
-   * @returns An Observable emitting the analysis result.
-   */
-  analyzeImage(file, selectedVisionModel, identifier, isPdfPage = false) {
-    console.log("ImageProcessorService.analyzeImage called with:", file.name, selectedVisionModel);
-    const apiKey = this.apiKeyService.getCurrentKey();
-    if (!apiKey) {
-      console.error("No API key found");
-      return throwError(() => new Error("OpenRouter API Key is missing. Please provide it."));
-    }
-    console.log("API key found, loading image...");
-    return this.loadImage(file).pipe(map((img) => {
-      const base64Data = this.resizeAndConvertToBase64(img, this.MAX_IMAGE_SIZE);
-      return { img, base64Data };
-    }), switchMap(({ img, base64Data }) => this.getVisionAnalysis(base64Data, selectedVisionModel, apiKey, identifier, isPdfPage).pipe(map((visionResult) => {
-      if (visionResult.error) {
-        throw new Error(visionResult.error);
-      }
-      return __spreadProps(__spreadValues({}, visionResult), { imageBase64: base64Data });
-    }))), switchMap((visionResult) => {
-      if (visionResult.error || !visionResult.english) {
-        return from([visionResult]);
-      }
-      return this.translateToFrench(visionResult.english, apiKey, identifier).pipe(map((frenchText) => ({
-        english: visionResult.english,
-        french: frenchText,
-        error: null,
-        // Clear any vision error if translation proceeds
-        imageBase64: visionResult.imageBase64
-        // Keep the image
-      })), catchError((translateError) => {
-        console.error(`Translation error for ${identifier}:`, translateError);
-        return from([{
-          english: visionResult.english,
-          french: `[Translation Error: ${translateError.message || "Unknown error"}]`,
-          error: translateError.message,
-          imageBase64: visionResult.imageBase64
-        }]);
-      }));
-    }), catchError((error) => {
-      console.error(`Error in image analysis pipeline for ${identifier}:`, error);
-      if (error.message === "KEY_LIMIT_EXCEEDED") {
-        return from([{
-          english: null,
-          french: null,
-          error: "KEY_LIMIT_EXCEEDED",
-          imageBase64: null
-        }]);
-      }
-      return from([{
-        english: null,
-        french: null,
-        error: error.message || "Unknown error",
-        imageBase64: null
-      }]);
-    }));
-  }
-  loadImage(file) {
-    return new Observable((observer) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          observer.next(img);
-          observer.complete();
-        };
-        img.onerror = (err) => {
-          observer.error(new Error(`Failed to load image '${file.name}'.`));
-        };
-        img.src = e.target?.result;
-      };
-      reader.onerror = (err) => {
-        observer.error(new Error(`Failed to read file '${file.name}'.`));
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-  resizeAndConvertToBase64(img, maxSize) {
-    const canvas = document.createElement("canvas");
-    let width = img.width;
-    let height = img.height;
-    if (width > maxSize || height > maxSize) {
-      if (width > height) {
-        height = Math.round(height * (maxSize / width));
-        width = maxSize;
-      } else {
-        width = Math.round(width * (maxSize / height));
-        height = maxSize;
-      }
-    }
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) {
-      throw new Error("Could not get 2D context from canvas for image resizing.");
-    }
-    ctx.drawImage(img, 0, 0, width, height);
-    return canvas.toDataURL("image/png");
-  }
-  getVisionAnalysis(base64Data, selectedVisionModel, apiKey, identifier, isPdfPage = false) {
-    console.log("getVisionAnalysis called for:", identifier, "model:", selectedVisionModel, "isPdfPage:", isPdfPage);
-    let prompt;
-    let max_tokens;
-    if (isPdfPage) {
-      prompt = "Provide a comprehensive, well-structured description of this document page. Format your response with clear sections and bullet points where appropriate.\n\nInclude:\n\u2022 All visible text content (quotes, headings, paragraphs)\n\u2022 Document structure and layout\n\u2022 Forms, fields, and what information they request\n\u2022 Tables and their contents\n\u2022 Any important visual elements or logos\n\nUse line breaks between sections for readability. If there are multiple sections or forms, clearly separate them.\nBe thorough and detailed to help someone understand the full content without seeing the page.";
-      max_tokens = 2e3;
-    } else {
-      prompt = "Create a short, concise alt text for this image suitable for a website. DO NOT start with phrases like 'The image depicts', 'The image shows', or similar. Instead, directly describe the main subject in 15-20 words maximum. Focus only on the key elements necessary for accessibility. Use simple, direct language without unnecessary words.";
-      max_tokens = 50;
-    }
-    let messages;
-    if (selectedVisionModel.includes("qwen") || selectedVisionModel.includes("llama")) {
-      messages = [{
-        "role": "user",
-        "content": [
-          { "type": "text", "text": prompt },
-          { "type": "image_url", "image_url": { "url": base64Data } }
-        ]
-      }];
-    } else {
-      messages = [{
-        "role": "user",
-        "content": [
-          { "type": "image_url", "image_url": { "url": base64Data } },
-          { "type": "text", "text": prompt }
-        ]
-      }];
-    }
-    const payload = {
-      model: selectedVisionModel,
-      messages,
-      max_tokens,
-      temperature: 0.3,
-      top_p: 0.85
-    };
-    const headers = new HttpHeaders({
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
-    });
-    return this.http.post(this.OPENROUTER_API_URL, payload, { headers }).pipe(timeout(6e4), map((response) => {
-      const englishText = response?.choices?.[0]?.message?.content?.trim();
-      if (!englishText) {
-        console.warn(`No content or unexpected structure from vision model for ${identifier}. Response:`, response);
-        throw new Error("No content returned from vision model.");
-      }
-      return { english: englishText, french: null, error: null };
-    }), catchError((error) => {
-      let errorMessage = `Vision API Error (${error.status || "Network Error"}): ${error.statusText || "Unknown Error"}`;
-      if (error.error && error.error.error && error.error.error.message) {
-        errorMessage += ` - ${error.error.error.message}`;
-      } else if (typeof error.error === "string") {
-        errorMessage += ` - ${error.error}`;
-      }
-      if (error.status === 403 && errorMessage.toLowerCase().includes("key limit exceeded")) {
-        errorMessage = "KEY_LIMIT_EXCEEDED";
-      }
-      console.error(`Error in vision API call for ${identifier}:`, errorMessage, error);
-      return from([{ english: null, french: null, error: errorMessage }]);
-    }));
-  }
-  translateToFrench(text2, apiKey, identifier) {
-    if (!text2) {
-      console.log(`Skipping translation for empty text: ${identifier}`);
-      return from([""]);
-    }
-    const systemPrompt = `You are a professional translator for the Canada Revenue Agency (CRA).
-                          Your task is to translate the following English text into clear, concise, and accurate Canadian French,
-                          using official CRA terminology and tone where applicable.
-                          CRITICAL INSTRUCTION: Provide ONLY the direct translation. DO NOT include any explanations, notes,
-                          disclaimers, or additional commentary of any kind. DO NOT include phrases like 'Here is the translation:'.
-                          DO NOT wrap your response in quotes. Simply translate the text directly.`;
-    const messages = [
-      { "role": "system", "content": systemPrompt },
-      { "role": "user", "content": text2 }
-    ];
-    const payload = {
-      model: this.TRANSLATION_MODEL_FOR_CRA,
-      messages,
-      temperature: 0.1,
-      max_tokens: Math.max(500, Math.ceil(text2.length * 2.5)),
-      top_p: 0.9
-    };
-    const headers = new HttpHeaders({
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
-    });
-    return this.http.post(this.OPENROUTER_API_URL, payload, { headers }).pipe(
-      timeout(9e4),
-      // Increased timeout to 90 seconds for PDF content
-      retry({ count: 1, delay: 2e3 }),
-      // Retry once after 2 seconds on failure
-      map((response) => {
-        console.log(`Translation response for ${identifier}:`, response);
-        if (!response || !response.choices || !Array.isArray(response.choices) || response.choices.length === 0) {
-          console.error(`Invalid response structure from translation model for ${identifier}:`, response);
-          throw new Error("Invalid response structure from translation model.");
-        }
-        let translation = response.choices[0]?.message?.content;
-        if (!translation || typeof translation !== "string") {
-          console.error(`No content in translation response for ${identifier}. Full response:`, JSON.stringify(response, null, 2));
-          throw new Error("Translation model returned empty content.");
-        }
-        translation = translation.trim();
-        if (!translation) {
-          console.error(`Translation content is empty after trimming for ${identifier}`);
-          throw new Error("Translation model returned empty content after trimming.");
-        }
-        translation = translation.replace(/^Voici la traduction\s*:\s*/i, "");
-        translation = translation.replace(/^Translation\s*:\s*/i, "");
-        translation = translation.replace(/^Here is the translation\s*:\s*/i, "");
-        return translation;
-      }),
-      catchError((error) => {
-        let errorMessage = `Translation API Error (${error.status || "Network Error"}): ${error.statusText || "Unknown Error"}`;
-        if (error.error && error.error.error && error.error.error.message) {
-          errorMessage += ` - ${error.error.error.message}`;
-        }
-        if (error.status === 403 && error.error?.error?.message?.toLowerCase().includes("key limit exceeded")) {
-          errorMessage = "KEY_LIMIT_EXCEEDED";
-        }
-        console.error(`Error translating text for ${identifier}:`, errorMessage, error);
-        return throwError(() => new Error(errorMessage));
-      })
-    );
-  }
-  escapeHtml(unsafe) {
-    if (unsafe === null || typeof unsafe !== "string")
-      return "";
-    return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-  }
-  formatDescription(text2) {
-    if (!text2)
-      return "";
-    let formatted = this.escapeHtml(text2);
-    formatted = formatted.replace(/\n\s*\n/g, "</p><p>");
-    formatted = formatted.replace(/\n/g, "<br>");
-    if (!formatted.startsWith("<p>") && formatted.trim() !== "") {
-      formatted = "<p>" + formatted;
-    }
-    if (!formatted.endsWith("</p>") && formatted.trim() !== "") {
-      formatted = formatted + "</p>";
-    }
-    formatted = formatted.replace(/<p>(\s*[-*•][\s\S]*?)<\/p>/g, "<ul><li>$1</li></ul>");
-    formatted = formatted.replace(/<br>\s*([-*•])\s+/g, "</li><li>");
-    formatted = formatted.replace(/<p>(\s*\d+\.[\s\S]*?)<\/p>/g, "<ol><li>$1</li></ol>");
-    formatted = formatted.replace(/<br>\s*(\d+\.)\s+/g, "</li><li>");
-    formatted = formatted.replace(/<p>([A-Z][A-Z\s]+[A-Z]:?)<\/p>/g, "<h4>$1</h4>");
-    formatted = formatted.replace(/<p>\s*(<br\s*\/?>)?\s*<\/p>/gi, "");
-    formatted = formatted.replace(/<p><br\s*\/?>/gi, "<p>");
-    formatted = formatted.replace(/<br\s*\/?>\s*<\/p>/gi, "</p>");
-    return formatted.trim();
-  }
-  static \u0275fac = function ImageProcessorService_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ImageProcessorService)(\u0275\u0275inject(HttpClient), \u0275\u0275inject(ApiKeyService));
-  };
-  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _ImageProcessorService, factory: _ImageProcessorService.\u0275fac, providedIn: "root" });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ImageProcessorService, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], () => [{ type: HttpClient }, { type: ApiKeyService }], null);
-})();
-
 // src/app/views/image-assistant/components/image-result/image-result.component.ts
 var _c03 = (a0) => ({ fileName: a0 });
 var _c17 = () => ({ width: "30px", height: "30px" });
@@ -12515,13 +12687,9 @@ function ImageResultComponent_ng_template_3_Template(rf, ctx) {
   }
 }
 var ImageResultComponent = class _ImageResultComponent {
-  translate;
-  imageProcessor;
   result;
-  constructor(translate, imageProcessor) {
-    this.translate = translate;
-    this.imageProcessor = imageProcessor;
-  }
+  translate = inject(TranslateService);
+  imageProcessor = inject(ImageProcessorService);
   toggleFullText() {
     this.result.showFullText = !this.result.showFullText;
   }
@@ -12554,7 +12722,7 @@ var ImageResultComponent = class _ImageResultComponent {
     return (text2 || "").length > 150;
   }
   static \u0275fac = function ImageResultComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ImageResultComponent)(\u0275\u0275directiveInject(TranslateService), \u0275\u0275directiveInject(ImageProcessorService));
+    return new (__ngFactoryType__ || _ImageResultComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ImageResultComponent, selectors: [["ca-image-result"]], inputs: { result: "result" }, decls: 4, vars: 0, consts: [[1, "result-container"], ["pTemplate", "header"], ["pTemplate", "content"], ["severity", "error", 3, "text", 4, "ngIf"], ["class", "processing-message", 4, "ngIf"], [4, "ngIf"], ["severity", "error", 3, "text"], [1, "processing-message"], ["strokeWidth", "4"], ["class", "result-image", 3, "src", "alt", 4, "ngIf"], [1, "result-columns"], [1, "result-column"], [1, "collapsible-container"], [3, "innerHTML", 4, "ngIf"], ["styleClass", "p-button-text p-button-sm", 3, "label", "click", 4, "ngIf"], ["icon", "pi pi-copy", "styleClass", "p-button-secondary p-button-sm copy-button", 3, "label", "click", 4, "ngIf"], [1, "result-image", 3, "src", "alt"], [3, "innerHTML"], ["styleClass", "p-button-text p-button-sm", 3, "click", "label"], ["icon", "pi pi-copy", "styleClass", "p-button-secondary p-button-sm copy-button", 3, "click", "label"]], template: function ImageResultComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -12681,7 +12849,7 @@ var ImageResultComponent = class _ImageResultComponent {
     </ng-template>\r
   </p-card>\r
 </div>`, styles: ["/* angular:styles/component:css;1645e8db0489e01d241bf83ede0fef27d6588e9d7870f9c030b5919ea8047f7f;C:/Users/rosaz/translation-assistant/content-assistant/src/app/views/image-assistant/components/image-result/image-result.component.ts */\n.result-container {\n  margin-bottom: 2rem;\n}\n.result-image {\n  max-height: 200px;\n  width: auto;\n  border: 1px solid #eee;\n  margin-bottom: 1rem;\n  display: block;\n  border-radius: 4px;\n}\n.result-columns {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 2rem;\n}\n@media (max-width: 768px) {\n  .result-columns {\n    grid-template-columns: 1fr;\n    gap: 1rem;\n  }\n}\n.result-column {\n  background-color: #f8f9fa;\n  padding: 1rem;\n  border-radius: 8px;\n}\n.collapsible-container {\n  margin: 0.5rem 0;\n}\n.processing-message {\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n}\n.copy-button {\n  margin-top: 0.5rem;\n}\n/*# sourceMappingURL=image-result.component.css.map */\n"] }]
-  }], () => [{ type: TranslateService }, { type: ImageProcessorService }], { result: [{
+  }], null, { result: [{
     type: Input
   }] });
 })();
@@ -12733,11 +12901,8 @@ function CsvDownloadComponent_div_0_Template(rf, ctx) {
   }
 }
 var CsvDownloadComponent = class _CsvDownloadComponent {
-  translate;
   results = {};
-  constructor(translate) {
-    this.translate = translate;
-  }
+  translate = inject(TranslateService);
   hasResults() {
     return Object.keys(this.results).length > 0;
   }
@@ -12767,7 +12932,7 @@ var CsvDownloadComponent = class _CsvDownloadComponent {
     URL.revokeObjectURL(url);
   }
   static \u0275fac = function CsvDownloadComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _CsvDownloadComponent)(\u0275\u0275directiveInject(TranslateService));
+    return new (__ngFactoryType__ || _CsvDownloadComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _CsvDownloadComponent, selectors: [["ca-csv-download"]], inputs: { results: "results" }, decls: 1, vars: 1, consts: [["class", "csv-download-container", 4, "ngIf"], [1, "csv-download-container"], ["icon", "pi pi-download", "styleClass", "my-2", 3, "label", "onClick", 4, "ngIf"], [4, "ngIf"], ["icon", "pi pi-download", "styleClass", "my-2", 3, "onClick", "label"]], template: function CsvDownloadComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -12794,157 +12959,12 @@ var CsvDownloadComponent = class _CsvDownloadComponent {
     {{ 'image.csv.noData' | translate }}\r
   </p>\r
 </div>`, styles: ["/* angular:styles/component:css;1c997a74d74a98c53de94cd1b23dcec12d9454b472a147986b6d5799e58fa7ae;C:/Users/rosaz/translation-assistant/content-assistant/src/app/views/image-assistant/components/csv-download/csv-download.component.ts */\n.csv-download-container {\n  margin-top: 2rem;\n  padding: 1rem;\n  background-color: var(--surface-100);\n  border-radius: 8px;\n}\n/*# sourceMappingURL=csv-download.component.css.map */\n"] }]
-  }], () => [{ type: TranslateService }], { results: [{
+  }], null, { results: [{
     type: Input
   }] });
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(CsvDownloadComponent, { className: "CsvDownloadComponent", filePath: "src/app/views/image-assistant/components/csv-download/csv-download.component.ts", lineNumber: 21 });
-})();
-
-// src/app/services/image-assistant-state.service.ts
-var ImageAssistantStateService = class _ImageAssistantStateService {
-  stateSubject = new BehaviorSubject({
-    results: {},
-    filesInProgress: 0,
-    processedCount: 0,
-    progressText: "",
-    showProgressArea: false
-  });
-  state$ = this.stateSubject.asObservable();
-  constructor() {
-  }
-  getCurrentState() {
-    return this.stateSubject.value;
-  }
-  updateState(updates) {
-    const currentState = this.stateSubject.value;
-    this.stateSubject.next(__spreadValues(__spreadValues({}, currentState), updates));
-  }
-  addResult(fileName, result) {
-    const currentState = this.stateSubject.value;
-    const newResults = __spreadProps(__spreadValues({}, currentState.results), { [fileName]: result });
-    this.updateState({ results: newResults });
-  }
-  updateResult(fileName, updates) {
-    const currentState = this.stateSubject.value;
-    if (currentState.results[fileName]) {
-      const updatedResult = __spreadValues(__spreadValues({}, currentState.results[fileName]), updates);
-      const newResults = __spreadProps(__spreadValues({}, currentState.results), { [fileName]: updatedResult });
-      this.updateState({ results: newResults });
-    }
-  }
-  resetState() {
-    this.stateSubject.next({
-      results: {},
-      filesInProgress: 0,
-      processedCount: 0,
-      progressText: "",
-      showProgressArea: false
-    });
-  }
-  incrementProcessedCount() {
-    const currentState = this.stateSubject.value;
-    this.updateState({ processedCount: currentState.processedCount + 1 });
-  }
-  static \u0275fac = function ImageAssistantStateService_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ImageAssistantStateService)();
-  };
-  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _ImageAssistantStateService, factory: _ImageAssistantStateService.\u0275fac, providedIn: "root" });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ImageAssistantStateService, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], () => [], null);
-})();
-
-// src/app/services/pdf-converter.service.ts
-var PdfConverterService = class _PdfConverterService {
-  pdfjsLib;
-  isInitialized = false;
-  constructor() {
-  }
-  /**
-   * Lazy load and initialize pdfjs-dist
-   */
-  initializePdfJs() {
-    return __async(this, null, function* () {
-      if (this.isInitialized) {
-        return;
-      }
-      const pdfjs = yield import("./chunk-XCH5NBXG.js");
-      this.pdfjsLib = pdfjs;
-      const { GlobalWorkerOptions } = yield import("./chunk-XCH5NBXG.js");
-      const baseElement = document.querySelector("base");
-      const baseHref = baseElement?.getAttribute("href") || "/";
-      GlobalWorkerOptions.workerSrc = `${baseHref}pdfjs/pdf.worker.min.mjs`.replace(/\/+/g, "/");
-      this.isInitialized = true;
-    });
-  }
-  /**
-   * Converts a PDF file to an array of image data URLs (one per page)
-   * @param file The PDF file to convert
-   * @returns Promise with array of base64 image data URLs
-   */
-  convertPdfToImages(file) {
-    return __async(this, null, function* () {
-      yield this.initializePdfJs();
-      const arrayBuffer = yield file.arrayBuffer();
-      const pdf = yield this.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      const images = [];
-      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = yield pdf.getPage(pageNum);
-        const viewport = page.getViewport({ scale: 2 });
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        if (!context) {
-          throw new Error("Failed to get canvas context");
-        }
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-        const renderContext = {
-          canvasContext: context,
-          viewport
-        };
-        yield page.render(renderContext).promise;
-        const imageDataUrl = canvas.toDataURL("image/png");
-        images.push(imageDataUrl);
-      }
-      return images;
-    });
-  }
-  /**
-   * Creates a File object from a data URL
-   * @param dataUrl The data URL of the image
-   * @param filename The filename for the created File
-   * @returns A File object
-   */
-  dataUrlToFile(dataUrl, filename) {
-    const arr = dataUrl.split(",");
-    const mime = arr[0].match(/:(.*?);/)?.[1] || "image/png";
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, { type: mime });
-  }
-  static \u0275fac = function PdfConverterService_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _PdfConverterService)();
-  };
-  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _PdfConverterService, factory: _PdfConverterService.\u0275fac, providedIn: "root" });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(PdfConverterService, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], () => [], null);
 })();
 
 // src/app/views/image-assistant/image-assistant.component.ts
@@ -13027,15 +13047,6 @@ function ImageAssistantComponent_ng_container_19_Template(rf, ctx) {
   }
 }
 var ImageAssistantComponent = class _ImageAssistantComponent {
-  apiKeyService;
-  imageProcessorService;
-  stateService;
-  translate;
-  cdr;
-  route;
-  router;
-  pdfConverterService;
-  messageService;
   // Processing State
   selectedVisionModel = "qwen/qwen2.5-vl-32b-instruct:free";
   filesToProcess = [];
@@ -13056,16 +13067,16 @@ var ImageAssistantComponent = class _ImageAssistantComponent {
     }
   ];
   subscriptions = [];
-  constructor(apiKeyService, imageProcessorService, stateService, translate, cdr, route, router, pdfConverterService, messageService) {
-    this.apiKeyService = apiKeyService;
-    this.imageProcessorService = imageProcessorService;
-    this.stateService = stateService;
-    this.translate = translate;
-    this.cdr = cdr;
-    this.route = route;
-    this.router = router;
-    this.pdfConverterService = pdfConverterService;
-    this.messageService = messageService;
+  apiKeyService = inject(ApiKeyService);
+  imageProcessorService = inject(ImageProcessorService);
+  stateService = inject(ImageAssistantStateService);
+  translate = inject(TranslateService);
+  cdr = inject(ChangeDetectorRef);
+  route = inject(ActivatedRoute);
+  router = inject(Router);
+  pdfConverterService = inject(PdfConverterService);
+  messageService = inject(MessageService);
+  constructor() {
     this.state$ = this.stateService.state$;
   }
   ngOnInit() {
@@ -13085,12 +13096,12 @@ var ImageAssistantComponent = class _ImageAssistantComponent {
     this.processingStartTime = performance.now();
     this.filesToProcess = [];
     let actualFileCount = 0;
-    for (let i = 0; i < files.length; i++) {
+    for (const file of files) {
       this.filesToProcess.push({
-        file: files[i],
-        displayName: files[i].name
+        file,
+        displayName: file.name
       });
-      if (files[i].type !== "application/pdf") {
+      if (file.type !== "application/pdf") {
         actualFileCount++;
       }
     }
@@ -13103,8 +13114,8 @@ var ImageAssistantComponent = class _ImageAssistantComponent {
     });
     this.processNextFile();
   }
-  onModelChange(model) {
-    this.selectedVisionModel = model;
+  onModelChange(model2) {
+    this.selectedVisionModel = model2;
     alert(this.translate.instant("image.model.changeAlert"));
     this.stateService.resetState();
   }
@@ -13211,6 +13222,7 @@ var ImageAssistantComponent = class _ImageAssistantComponent {
         }
       } catch (error) {
         console.error(`Error processing file ${displayName}:`, error);
+        const errorMessage = error instanceof Error ? error.message : this.translate.instant("image.error.failedToProcess");
         if (file.type !== "application/pdf") {
           this.stateService.updateResult(displayName, {
             status: "error",
@@ -13218,7 +13230,7 @@ var ImageAssistantComponent = class _ImageAssistantComponent {
               imageBase64: null,
               english: null,
               french: null,
-              error: error.message || this.translate.instant("image.error.failedToProcess")
+              error: errorMessage
             }
           });
           this.stateService.incrementProcessedCount();
@@ -13259,7 +13271,7 @@ var ImageAssistantComponent = class _ImageAssistantComponent {
     });
   }
   static \u0275fac = function ImageAssistantComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ImageAssistantComponent)(\u0275\u0275directiveInject(ApiKeyService), \u0275\u0275directiveInject(ImageProcessorService), \u0275\u0275directiveInject(ImageAssistantStateService), \u0275\u0275directiveInject(TranslateService), \u0275\u0275directiveInject(ChangeDetectorRef), \u0275\u0275directiveInject(ActivatedRoute), \u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(PdfConverterService), \u0275\u0275directiveInject(MessageService));
+    return new (__ngFactoryType__ || _ImageAssistantComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ImageAssistantComponent, selectors: [["ca-image-assistant"]], features: [\u0275\u0275ProvidersFeature([MessageService])], decls: 21, vars: 24, consts: [["id", "wb-cont"], [1, "api-key-status", "mb-4"], ["class", "text-green-600", 4, "ngIf"], ["class", "text-orange-600", 4, "ngIf"], [3, "modelChange", "selectedModel", "models", "label", "cardTitle", "showCard", "showTranslateOption"], [3, "filesSelected"], [4, "ngIf"], [1, "text-green-600"], [1, "pi", "pi-check-circle"], [1, "text-orange-600"], [1, "pi", "pi-exclamation-circle"], [3, "progressText", "processedCount", "totalFiles", "showProgress"], ["class", "results-section", 4, "ngIf"], [1, "results-section"], [3, "result", 4, "ngFor", "ngForOf"], [3, "results"], [1, "mt-3"], ["icon", "pi pi-refresh", "severity", "secondary", 3, "click", "label", "pTooltip"], [3, "result"]], template: function ImageAssistantComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -13305,7 +13317,7 @@ var ImageAssistantComponent = class _ImageAssistantComponent {
       \u0275\u0275advance(2);
       \u0275\u0275property("ngIf", \u0275\u0275pipeBind1(13, 18, ctx.apiKeyService.hasApiKey$));
       \u0275\u0275advance(2);
-      \u0275\u0275property("ngIf", !\u0275\u0275pipeBind1(15, 20, ctx.apiKeyService.hasApiKey$));
+      \u0275\u0275property("ngIf", \u0275\u0275pipeBind1(15, 20, ctx.apiKeyService.hasApiKey$) === false);
       \u0275\u0275advance(3);
       \u0275\u0275property("selectedModel", ctx.selectedVisionModel)("models", ctx.visionModels)("label", "image.model.label")("cardTitle", "image.model.title")("showCard", true)("showTranslateOption", false);
       \u0275\u0275advance(2);
@@ -13356,7 +13368,7 @@ var ImageAssistantComponent = class _ImageAssistantComponent {
     <span *ngIf="apiKeyService.hasApiKey$ | async" class="text-green-600">\r
       <i class="pi pi-check-circle"></i> {{ 'page.apiKey.active' | translate }}\r
     </span>\r
-    <span *ngIf="!(apiKeyService.hasApiKey$ | async)" class="text-orange-600">\r
+    <span *ngIf="(apiKeyService.hasApiKey$ | async) === false" class="text-orange-600">\r
       <i class="pi pi-exclamation-circle"></i> {{ 'page.apiKey.notSet' | translate }}\r
     </span>\r
   </div>\r
@@ -13414,7 +13426,7 @@ var ImageAssistantComponent = class _ImageAssistantComponent {
     </div>\r
   </ng-container>\r
 </section>`, styles: ["/* angular:styles/component:css;09dc9166e46b9e7aabdb069b1dc488d36e7e0913816855e9dc9912d983b17aa9;C:/Users/rosaz/translation-assistant/content-assistant/src/app/views/image-assistant/image-assistant.component.ts */\n.results-section {\n  margin-top: 2rem;\n}\n/*# sourceMappingURL=image-assistant.component.css.map */\n"] }]
-  }], () => [{ type: ApiKeyService }, { type: ImageProcessorService }, { type: ImageAssistantStateService }, { type: TranslateService }, { type: ChangeDetectorRef }, { type: ActivatedRoute }, { type: Router }, { type: PdfConverterService }, { type: MessageService }], null);
+  }], () => [], null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ImageAssistantComponent, { className: "ImageAssistantComponent", filePath: "src/app/views/image-assistant/image-assistant.component.ts", lineNumber: 47 });
@@ -16331,7 +16343,7 @@ var render = function(iconDefinition) {
     maskId = null,
     title = null,
     titleId = null,
-    classes: classes8 = [],
+    classes: classes12 = [],
     attributes = {},
     styles: styles2 = {}
   } = params;
@@ -16376,7 +16388,7 @@ var render = function(iconDefinition) {
       extra: {
         attributes,
         styles: styles2,
-        classes: classes8
+        classes: classes12
       }
     });
   });
@@ -16478,7 +16490,7 @@ var Layers = {
       layer(assembler) {
         let params = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
         const {
-          classes: classes8 = []
+          classes: classes12 = []
         } = params;
         return domVariants({
           type: "layer"
@@ -16496,7 +16508,7 @@ var Layers = {
           return [{
             tag: "span",
             attributes: {
-              class: ["".concat(config.cssPrefix, "-layers"), ...classes8].join(" ")
+              class: ["".concat(config.cssPrefix, "-layers"), ...classes12].join(" ")
             },
             children
           }];
@@ -16512,7 +16524,7 @@ var LayersCounter = {
         let params = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
         const {
           title = null,
-          classes: classes8 = [],
+          classes: classes12 = [],
           attributes = {},
           styles: styles2 = {}
         } = params;
@@ -16530,7 +16542,7 @@ var LayersCounter = {
             extra: {
               attributes,
               styles: styles2,
-              classes: ["".concat(config.cssPrefix, "-layers-counter"), ...classes8]
+              classes: ["".concat(config.cssPrefix, "-layers-counter"), ...classes12]
             }
           });
         });
@@ -16546,7 +16558,7 @@ var LayersText = {
         const {
           transform = meaninglessTransform,
           title = null,
-          classes: classes8 = [],
+          classes: classes12 = [],
           attributes = {},
           styles: styles2 = {}
         } = params;
@@ -16565,7 +16577,7 @@ var LayersText = {
             extra: {
               attributes,
               styles: styles2,
-              classes: ["".concat(config.cssPrefix, "-layers-text"), ...classes8]
+              classes: ["".concat(config.cssPrefix, "-layers-text"), ...classes12]
             }
           });
         });
@@ -17140,7 +17152,7 @@ var faWarnIfIconSpecMissing = () => {
 var isKnownRotateValue = (rotate) => rotate != null && (rotate === 90 || rotate === 180 || rotate === 270 || rotate === "90" || rotate === "180" || rotate === "270");
 var faClassList = (props) => {
   const knownRotateValue = isKnownRotateValue(props.rotate);
-  const classes8 = {
+  const classes12 = {
     [`fa-${props.animation}`]: props.animation != null && !props.animation.startsWith("spin"),
     "fa-spin": props.animation === "spin" || props.animation === "spin-reverse",
     "fa-spin-pulse": props.animation === "spin-pulse" || props.animation === "spin-pulse-reverse",
@@ -17161,7 +17173,7 @@ var faClassList = (props) => {
     [`fa-pull-${props.pull}`]: props.pull !== null,
     [`fa-stack-${props.stackItemSize}`]: props.stackItemSize != null
   };
-  return Object.keys(classes8).map((key) => classes8[key] ? key : null).filter((key) => key);
+  return Object.keys(classes12).map((key) => classes12[key] ? key : null).filter((key) => key);
 };
 var cssInserted = /* @__PURE__ */ new WeakSet();
 var autoCssId = "fa-auto-css";
@@ -18091,8 +18103,8 @@ Return the French document in HTML format that exactly follows the structure of 
         "deepseek/deepseek-r1:free"
       ];
       let finalResponse = null;
-      for (const model of models) {
-        const aiResponse = yield this.getORData(model, requestJson, 0);
+      for (const model2 of models) {
+        const aiResponse = yield this.getORData(model2, requestJson, 0);
         if (aiResponse?.choices?.[0]?.message?.content) {
           finalResponse = this.removeCodeFences(aiResponse.choices[0].message.content);
           console.log("AI response received.");
@@ -18105,7 +18117,7 @@ Return the French document in HTML format that exactly follows the structure of 
   /**
    * Fetches data from OpenRouter API
    */
-  getORData(model, requestJson, temperature = 0) {
+  getORData(model2, requestJson, temperature = 0) {
     return __async(this, null, function* () {
       const apiKey = this.apiKeyService.getCurrentKey();
       if (!apiKey)
@@ -18117,7 +18129,7 @@ Return the French document in HTML format that exactly follows the structure of 
         "X-Title": "Content Assistant"
         // optional but nice
       });
-      const payload = { model, messages: requestJson, temperature };
+      const payload = { model: model2, messages: requestJson, temperature };
       try {
         const resp = yield this.http.post(this.openRouterApiUrl, payload, {
           headers,
@@ -18136,7 +18148,7 @@ Return the French document in HTML format that exactly follows the structure of 
       } catch (err) {
         const status = err?.status;
         const bodySnippet = typeof err?.error === "string" ? err.error.slice(0, 500) : JSON.stringify(err?.error);
-        console.error(`OpenRouter HTTP error (model: ${model}) status=${status}: ${bodySnippet}`);
+        console.error(`OpenRouter HTTP error (model: ${model2}) status=${status}: ${bodySnippet}`);
         return void 0;
       }
     });
@@ -18480,8 +18492,8 @@ var TranslationAssistantComponent = class _TranslationAssistantComponent {
     this.previewText = "";
     this.showSecondUpload = false;
     this.sourceError = "";
-    const input = event.target;
-    this.selectedFile = input.files?.[0] ?? null;
+    const input2 = event.target;
+    this.selectedFile = input2.files?.[0] ?? null;
     if (this.selectedFile) {
       this.buildEnglishHtmlStored(this.selectedFile).catch(console.error);
     }
@@ -19365,8 +19377,8 @@ var InventoryAssistantComponent = class _InventoryAssistantComponent {
   /**
    * Splits a multi-line string into a clean array of trimmed, non-empty URLs.
    */
-  getCleanUrls(input) {
-    return input.split("\n").map((url) => url.trim()).filter((url) => url.length > 0);
+  getCleanUrls(input2) {
+    return input2.split("\n").map((url) => url.trim()).filter((url) => url.length > 0);
   }
   /**
    * Processes a single URL, extracting metadata and updating the results buffer.
@@ -19456,9 +19468,9 @@ var InventoryAssistantComponent = class _InventoryAssistantComponent {
   /**
    * Extract metadata for preview URLs using local CSV data.
    */
-  fetchPreviewMetadata(input) {
+  fetchPreviewMetadata(input2) {
     return __async(this, null, function* () {
-      const urls = this.getCleanUrls(input);
+      const urls = this.getCleanUrls(input2);
       if (!urls.length)
         return;
       this.loading = true;
@@ -20397,11 +20409,11 @@ var Chip = class _Chip extends BaseComponent {
     }
   }
   containerClass() {
-    let classes8 = "p-chip p-component";
+    let classes12 = "p-chip p-component";
     if (this.styleClass) {
-      classes8 += ` ${this.styleClass}`;
+      classes12 += ` ${this.styleClass}`;
     }
-    return classes8;
+    return classes12;
   }
   close(event) {
     this.visible = false;
@@ -21142,17 +21154,17 @@ var Tag = class _Tag extends BaseComponent {
     });
   }
   containerClass() {
-    let classes8 = "p-tag p-component";
+    let classes12 = "p-tag p-component";
     if (this.severity) {
-      classes8 += ` p-tag-${this.severity}`;
+      classes12 += ` p-tag-${this.severity}`;
     }
     if (this.rounded) {
-      classes8 += " p-tag-rounded";
+      classes12 += " p-tag-rounded";
     }
     if (this.styleClass) {
-      classes8 += ` ${this.styleClass}`;
+      classes12 += ` ${this.styleClass}`;
     }
-    return classes8;
+    return classes12;
   }
   static \u0275fac = /* @__PURE__ */ (() => {
     let \u0275Tag_BaseFactory;
@@ -21740,12 +21752,11 @@ var MetadataResultComponent = class _MetadataResultComponent {
 })();
 
 // src/app/views/metadata-assistant/components/csv-export/csv-export.component.ts
-var _c011 = (a0) => ({ count: a0 });
 function CsvExportComponent_div_0_ng_template_2_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 27);
-    \u0275\u0275element(1, "i", 28);
-    \u0275\u0275elementStart(2, "h3", 29);
+    \u0275\u0275elementStart(0, "div", 17);
+    \u0275\u0275element(1, "i", 18);
+    \u0275\u0275elementStart(2, "h3", 19);
     \u0275\u0275text(3);
     \u0275\u0275pipe(4, "translate");
     \u0275\u0275elementEnd()();
@@ -21773,70 +21784,6 @@ function CsvExportComponent_div_0_div_16_Template(rf, ctx) {
     \u0275\u0275textInterpolate(ctx_r1.getTranslatedResultsCount());
   }
 }
-function CsvExportComponent_div_0_th_37_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "th", 17);
-    \u0275\u0275text(1);
-    \u0275\u0275pipe(2, "translate");
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "metadata.csv.frenchDescription"));
-  }
-}
-function CsvExportComponent_div_0_tr_39_td_5_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "td", 30);
-    \u0275\u0275text(1);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const result_r3 = \u0275\u0275nextContext().$implicit;
-    \u0275\u0275styleProp("max-width", "250px");
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", result_r3.frenchTranslatedDescription || "-", " ");
-  }
-}
-function CsvExportComponent_div_0_tr_39_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "tr", 16)(1, "td", 30);
-    \u0275\u0275text(2);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "td", 30);
-    \u0275\u0275text(4);
-    \u0275\u0275elementEnd();
-    \u0275\u0275template(5, CsvExportComponent_div_0_tr_39_td_5_Template, 2, 3, "td", 31);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const result_r3 = ctx.$implicit;
-    const ctx_r1 = \u0275\u0275nextContext(2);
-    \u0275\u0275advance();
-    \u0275\u0275styleProp("max-width", "200px");
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", result_r3.url, " ");
-    \u0275\u0275advance();
-    \u0275\u0275styleProp("max-width", "250px");
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", result_r3.metaDescription, " ");
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ctx_r1.includeTranslations);
-  }
-}
-function CsvExportComponent_div_0_div_40_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 32);
-    \u0275\u0275text(1);
-    \u0275\u0275pipe(2, "translate");
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const ctx_r1 = \u0275\u0275nextContext(2);
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ... ", \u0275\u0275pipeBind2(2, 1, "metadata.csv.andMore", \u0275\u0275pureFunction1(4, _c011, ctx_r1.results.length - 2)), " ");
-  }
-}
 function CsvExportComponent_div_0_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -21854,86 +21801,34 @@ function CsvExportComponent_div_0_Template(rf, ctx) {
     \u0275\u0275text(15);
     \u0275\u0275elementEnd()();
     \u0275\u0275template(16, CsvExportComponent_div_0_div_16_Template, 6, 4, "div", 11);
-    \u0275\u0275elementStart(17, "div", 8)(18, "span", 9);
-    \u0275\u0275text(19);
-    \u0275\u0275pipe(20, "translate");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(21, "span", 10);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(17, "div", 12)(18, "p-button", 13);
+    \u0275\u0275listener("onClick", function CsvExportComponent_div_0_Template_p_button_onClick_18_listener() {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.exportToCsv());
+    });
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(19, "div", 14)(20, "small", 15);
+    \u0275\u0275element(21, "i", 16);
     \u0275\u0275text(22);
-    \u0275\u0275elementEnd()()()();
-    \u0275\u0275elementStart(23, "div", 12)(24, "h4", 13);
-    \u0275\u0275text(25);
-    \u0275\u0275pipe(26, "translate");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(27, "div", 14)(28, "table", 15)(29, "thead")(30, "tr", 16)(31, "th", 17);
-    \u0275\u0275text(32);
-    \u0275\u0275pipe(33, "translate");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(34, "th", 17);
-    \u0275\u0275text(35);
-    \u0275\u0275pipe(36, "translate");
-    \u0275\u0275elementEnd();
-    \u0275\u0275template(37, CsvExportComponent_div_0_th_37_Template, 3, 3, "th", 18);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(38, "tbody");
-    \u0275\u0275template(39, CsvExportComponent_div_0_tr_39_Template, 6, 7, "tr", 19);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275template(40, CsvExportComponent_div_0_div_40_Template, 3, 6, "div", 20);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(41, "div", 21)(42, "p-button", 22);
-    \u0275\u0275listener("onClick", function CsvExportComponent_div_0_Template_p_button_onClick_42_listener() {
-      \u0275\u0275restoreView(_r1);
-      const ctx_r1 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r1.exportToCsv());
-    });
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(43, "p-button", 23);
-    \u0275\u0275pipe(44, "translate");
-    \u0275\u0275pipe(45, "translate");
-    \u0275\u0275listener("onClick", function CsvExportComponent_div_0_Template_p_button_onClick_43_listener() {
-      \u0275\u0275restoreView(_r1);
-      const ctx_r1 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r1.exportToCsv());
-    });
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(46, "div", 24)(47, "small", 25);
-    \u0275\u0275element(48, "i", 26);
-    \u0275\u0275text(49);
-    \u0275\u0275pipe(50, "translate");
+    \u0275\u0275pipe(23, "translate");
     \u0275\u0275elementEnd()()()()();
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275advance(6);
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(7, 17, "metadata.csv.description"), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(7, 6, "metadata.csv.description"), " ");
     \u0275\u0275advance(6);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(13, 19, "metadata.csv.totalUrls"));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(13, 8, "metadata.csv.totalUrls"));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(ctx_r1.results.length);
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", ctx_r1.includeTranslations);
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(20, 21, "metadata.csv.columns"));
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(ctx_r1.includeTranslations ? 7 : 5);
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(26, 23, "metadata.csv.preview"));
-    \u0275\u0275advance(7);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(33, 25, "metadata.csv.url"));
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(36, 27, "metadata.csv.metaDescription"));
-    \u0275\u0275advance(2);
-    \u0275\u0275property("ngIf", ctx_r1.includeTranslations);
-    \u0275\u0275advance(2);
-    \u0275\u0275property("ngForOf", ctx_r1.results.slice(0, 2));
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ctx_r1.results.length > 2);
     \u0275\u0275advance(2);
     \u0275\u0275property("label", ctx_r1.getExportButtonLabel());
-    \u0275\u0275advance();
-    \u0275\u0275property("label", \u0275\u0275pipeBind1(44, 29, "metadata.csv.copyForExcel"))("outlined", true)("pTooltip", \u0275\u0275pipeBind1(45, 31, "metadata.csv.copyTooltip"));
-    \u0275\u0275advance(6);
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(50, 33, "metadata.csv.note"), " ");
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(23, 10, "metadata.csv.note"), " ");
   }
 }
 var CsvExportComponent = class _CsvExportComponent {
@@ -22019,14 +21914,14 @@ var CsvExportComponent = class _CsvExportComponent {
   static \u0275fac = function CsvExportComponent_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _CsvExportComponent)(\u0275\u0275directiveInject(TranslateService));
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _CsvExportComponent, selectors: [["ca-metadata-csv-export"]], inputs: { results: "results", includeTranslations: "includeTranslations" }, decls: 1, vars: 1, consts: [["class", "csv-export-container", 4, "ngIf"], [1, "csv-export-container"], ["pTemplate", "header"], [1, "export-content"], [1, "export-info", "mb-3"], [1, "text-sm", "text-500", "m-0"], [1, "export-stats", "mb-3", "p-3", "surface-100", "border-round"], [1, "flex", "align-items-center", "justify-content-between"], [1, "stat-item"], [1, "text-xs", "text-500", "block", "mb-1"], [1, "text-xl", "font-bold", "text-primary"], ["class", "stat-item", 4, "ngIf"], [1, "export-preview", "mb-3"], [1, "text-sm", "font-semibold", "mb-2"], [1, "preview-table", "p-2", "surface-50", "border-round"], [1, "w-full", "text-xs"], [1, "border-bottom-1", "surface-border"], [1, "text-left", "p-1"], ["class", "text-left p-1", 4, "ngIf"], ["class", "border-bottom-1 surface-border", 4, "ngFor", "ngForOf"], ["class", "text-center text-xs text-500 mt-2", 4, "ngIf"], [1, "export-actions", "flex", "gap-2"], ["icon", "pi pi-file-export", "severity", "primary", 3, "onClick", "label"], ["icon", "pi pi-copy", "severity", "secondary", 3, "onClick", "label", "outlined", "pTooltip"], [1, "export-note", "mt-3"], [1, "text-xs", "text-500"], [1, "pi", "pi-info-circle", "mr-1"], [1, "flex", "align-items-center", "p-3"], [1, "pi", "pi-download", "mr-2"], [1, "m-0"], [1, "p-1", "text-overflow-ellipsis", "white-space-nowrap", "overflow-hidden"], ["class", "p-1 text-overflow-ellipsis white-space-nowrap overflow-hidden", 3, "max-width", 4, "ngIf"], [1, "text-center", "text-xs", "text-500", "mt-2"]], template: function CsvExportComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _CsvExportComponent, selectors: [["ca-metadata-csv-export"]], inputs: { results: "results", includeTranslations: "includeTranslations" }, decls: 1, vars: 1, consts: [["class", "csv-export-container", 4, "ngIf"], [1, "csv-export-container"], ["pTemplate", "header"], [1, "export-content"], [1, "export-info", "mb-3"], [1, "text-sm", "text-500", "m-0"], [1, "export-stats", "mb-3", "p-3", "surface-100", "border-round"], [1, "flex", "align-items-center", "justify-content-between"], [1, "stat-item"], [1, "text-xs", "text-500", "block", "mb-1"], [1, "text-xl", "font-bold", "text-primary"], ["class", "stat-item", 4, "ngIf"], [1, "export-actions", "flex", "gap-2"], ["icon", "pi pi-file-export", "severity", "primary", 3, "onClick", "label"], [1, "export-note", "mt-3"], [1, "text-xs", "text-500"], [1, "pi", "pi-info-circle", "mr-1"], [1, "flex", "align-items-center", "p-3"], [1, "pi", "pi-download", "mr-2"], [1, "m-0"]], template: function CsvExportComponent_Template(rf, ctx) {
     if (rf & 1) {
-      \u0275\u0275template(0, CsvExportComponent_div_0_Template, 51, 35, "div", 0);
+      \u0275\u0275template(0, CsvExportComponent_div_0_Template, 24, 12, "div", 0);
     }
     if (rf & 2) {
       \u0275\u0275property("ngIf", ctx.results && ctx.results.length > 0);
     }
-  }, dependencies: [CommonModule, NgForOf, NgIf, TranslateModule, TranslatePipe, ButtonModule, Button, PrimeTemplate, CardModule, Card, TooltipModule, Tooltip], styles: ["\n\n.csv-export-container[_ngcontent-%COMP%] {\n  width: 100%;\n  margin-top: 1.5rem;\n}\n.export-content[_ngcontent-%COMP%] {\n  padding: 0;\n}\n.export-stats[_ngcontent-%COMP%] {\n  background: var(--surface-100);\n}\n.stat-item[_ngcontent-%COMP%] {\n  text-align: center;\n}\n.preview-table[_ngcontent-%COMP%] {\n  overflow-x: auto;\n}\n.preview-table[_ngcontent-%COMP%]   table[_ngcontent-%COMP%] {\n  font-size: 0.75rem;\n  table-layout: fixed;\n}\n.preview-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  font-weight: 600;\n  color: var(--text-color);\n  background: var(--surface-100);\n}\n.preview-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  color: var(--text-color-secondary);\n}\n.text-overflow-ellipsis[_ngcontent-%COMP%] {\n  text-overflow: ellipsis;\n}\n.white-space-nowrap[_ngcontent-%COMP%] {\n  white-space: nowrap;\n}\n.overflow-hidden[_ngcontent-%COMP%] {\n  overflow: hidden;\n}\n.export-actions[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.5rem;\n}\n.export-note[_ngcontent-%COMP%] {\n  padding-top: 0.5rem;\n  border-top: 1px solid var(--surface-200);\n}\n.text-primary[_ngcontent-%COMP%] {\n  color: var(--primary-color);\n}\n.border-bottom-1[_ngcontent-%COMP%] {\n  border-bottom-width: 1px;\n  border-bottom-style: solid;\n}\n.surface-border[_ngcontent-%COMP%] {\n  border-color: var(--surface-border);\n}\n/*# sourceMappingURL=csv-export.component.css.map */"] });
+  }, dependencies: [CommonModule, NgIf, TranslateModule, TranslatePipe, ButtonModule, Button, PrimeTemplate, CardModule, Card, TooltipModule], styles: ["\n\n.csv-export-container[_ngcontent-%COMP%] {\n  width: 100%;\n  margin-top: 1.5rem;\n}\n.export-content[_ngcontent-%COMP%] {\n  padding: 0;\n}\n.export-stats[_ngcontent-%COMP%] {\n  background: var(--surface-100);\n}\n.stat-item[_ngcontent-%COMP%] {\n  text-align: center;\n}\n.preview-table[_ngcontent-%COMP%] {\n  overflow-x: auto;\n}\n.preview-table[_ngcontent-%COMP%]   table[_ngcontent-%COMP%] {\n  font-size: 0.75rem;\n  table-layout: fixed;\n}\n.preview-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  font-weight: 600;\n  color: var(--text-color);\n  background: var(--surface-100);\n}\n.preview-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  color: var(--text-color-secondary);\n}\n.text-overflow-ellipsis[_ngcontent-%COMP%] {\n  text-overflow: ellipsis;\n}\n.white-space-nowrap[_ngcontent-%COMP%] {\n  white-space: nowrap;\n}\n.overflow-hidden[_ngcontent-%COMP%] {\n  overflow: hidden;\n}\n.export-actions[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.5rem;\n}\n.export-note[_ngcontent-%COMP%] {\n  padding-top: 0.5rem;\n  border-top: 1px solid var(--surface-200);\n}\n.text-primary[_ngcontent-%COMP%] {\n  color: var(--primary-color);\n}\n.border-bottom-1[_ngcontent-%COMP%] {\n  border-bottom-width: 1px;\n  border-bottom-style: solid;\n}\n.surface-border[_ngcontent-%COMP%] {\n  border-color: var(--surface-border);\n}\n/*# sourceMappingURL=csv-export.component.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CsvExportComponent, [{
@@ -22063,41 +21958,6 @@ var CsvExportComponent = class _CsvExportComponent {
             <span class="text-xs text-500 block mb-1">{{ 'metadata.csv.withTranslations' | translate }}</span>\r
             <span class="text-xl font-bold text-primary">{{ getTranslatedResultsCount() }}</span>\r
           </div>\r
-          <div class="stat-item">\r
-            <span class="text-xs text-500 block mb-1">{{ 'metadata.csv.columns' | translate }}</span>\r
-            <span class="text-xl font-bold text-primary">{{ includeTranslations ? 7 : 5 }}</span>\r
-          </div>\r
-        </div>\r
-      </div>\r
-\r
-      <div class="export-preview mb-3">\r
-        <h4 class="text-sm font-semibold mb-2">{{ 'metadata.csv.preview' | translate }}</h4>\r
-        <div class="preview-table p-2 surface-50 border-round">\r
-          <table class="w-full text-xs">\r
-            <thead>\r
-              <tr class="border-bottom-1 surface-border">\r
-                <th class="text-left p-1">{{ 'metadata.csv.url' | translate }}</th>\r
-                <th class="text-left p-1">{{ 'metadata.csv.metaDescription' | translate }}</th>\r
-                <th class="text-left p-1" *ngIf="includeTranslations">{{ 'metadata.csv.frenchDescription' | translate }}</th>\r
-              </tr>\r
-            </thead>\r
-            <tbody>\r
-              <tr *ngFor="let result of results.slice(0, 2)" class="border-bottom-1 surface-border">\r
-                <td class="p-1 text-overflow-ellipsis white-space-nowrap overflow-hidden" [style.max-width]="'200px'">\r
-                  {{ result.url }}\r
-                </td>\r
-                <td class="p-1 text-overflow-ellipsis white-space-nowrap overflow-hidden" [style.max-width]="'250px'">\r
-                  {{ result.metaDescription }}\r
-                </td>\r
-                <td class="p-1 text-overflow-ellipsis white-space-nowrap overflow-hidden" [style.max-width]="'250px'" *ngIf="includeTranslations">\r
-                  {{ result.frenchTranslatedDescription || '-' }}\r
-                </td>\r
-              </tr>\r
-            </tbody>\r
-          </table>\r
-          <div class="text-center text-xs text-500 mt-2" *ngIf="results.length > 2">\r
-            ... {{ 'metadata.csv.andMore' | translate: {count: results.length - 2} }}\r
-          </div>\r
         </div>\r
       </div>\r
 \r
@@ -22106,14 +21966,6 @@ var CsvExportComponent = class _CsvExportComponent {
           [label]="getExportButtonLabel()"\r
           icon="pi pi-file-export"\r
           severity="primary"\r
-          (onClick)="exportToCsv()">\r
-        </p-button>\r
-        <p-button \r
-          [label]="'metadata.csv.copyForExcel' | translate"\r
-          icon="pi pi-copy"\r
-          severity="secondary"\r
-          [outlined]="true"\r
-          [pTooltip]="'metadata.csv.copyTooltip' | translate"\r
           (onClick)="exportToCsv()">\r
         </p-button>\r
       </div>\r
@@ -22146,8 +21998,6 @@ var ALLOWED_HOSTS = /* @__PURE__ */ new Set([
   "www.canada.ca"
 ]);
 var MetadataAssistantService = class _MetadataAssistantService {
-  http;
-  apiKeyService;
   OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
   SCRAPING_TIMEOUT = 3e4;
   // 30 seconds
@@ -22155,13 +22005,18 @@ var MetadataAssistantService = class _MetadataAssistantService {
   // 60 seconds
   TRANSLATION_TIMEOUT = 9e4;
   // 90 seconds with retry
-  constructor(http, apiKeyService) {
-    this.http = http;
-    this.apiKeyService = apiKeyService;
-  }
+  // Default fallback models in order of preference
+  DEFAULT_FALLBACK_MODELS = [
+    "mistralai/mistral-small-3.2-24b-instruct:free",
+    "meta-llama/llama-3.3-70b-instruct:free",
+    "google/gemma-3-27b-it:free"
+  ];
+  http = inject(HttpClient);
+  apiKeyService = inject(ApiKeyService);
   processUrls(options) {
     const results = [];
-    return from(options.urls).pipe(switchMap((url) => this.processUrl(url, options.model, options.translateToFrench)), map((result) => {
+    const fallbackModels = options.fallbackModels || this.DEFAULT_FALLBACK_MODELS;
+    return from(options.urls).pipe(switchMap((url) => this.processUrl(url, options.model, options.translateToFrench, fallbackModels)), map((result) => {
       results.push(result);
       return results;
     }), catchError((error) => {
@@ -22169,19 +22024,21 @@ var MetadataAssistantService = class _MetadataAssistantService {
       return throwError(() => error);
     }));
   }
-  processUrl(url, model, translateToFrench) {
+  processUrl(url, model2, translateToFrench, fallbackModels) {
     return this.scrapeUrl(url).pipe(switchMap((scrapedContent) => {
       if (!scrapedContent || scrapedContent.length < 50) {
         return throwError(() => new Error("Content too short or invalid for processing"));
       }
       const language = this.detectLanguage(scrapedContent);
-      return this.generateMetadata(scrapedContent, model, language).pipe(switchMap((metadata) => {
+      return this.generateMetadataWithFallback(scrapedContent, model2, language, fallbackModels).pipe(switchMap((metadata) => {
         const result = {
           url,
           scrapedContent,
           metaDescription: metadata.description,
           metaKeywords: metadata.keywords,
-          language
+          language,
+          modelUsed: metadata.modelUsed,
+          fallbackUsed: metadata.fallbackUsed
         };
         if (translateToFrench && language === "en") {
           return this.translateMetadata(metadata).pipe(map((translated) => __spreadProps(__spreadValues({}, result), {
@@ -22199,7 +22056,7 @@ var MetadataAssistantService = class _MetadataAssistantService {
       if (!ALLOWED_HOSTS.has(parsedUrl.host)) {
         return throwError(() => new Error(`Host not allowed: ${parsedUrl.host}. Only government domains are supported.`));
       }
-    } catch (error) {
+    } catch {
       return throwError(() => new Error("Invalid URL format"));
     }
     return from(fetch(`${url}?_=${Date.now()}`, {
@@ -22213,7 +22070,7 @@ var MetadataAssistantService = class _MetadataAssistantService {
       return from(response.text());
     }), map((html) => this.extractTextContent(html)), catchError((error) => {
       console.error("Error scraping URL:", error);
-      if (error.message.includes("Host not allowed")) {
+      if (error.message?.includes("Host not allowed")) {
         return throwError(() => error);
       }
       return throwError(() => new Error(`Failed to scrape URL: ${error.message || "Unknown error"}`));
@@ -22381,7 +22238,41 @@ var MetadataAssistantService = class _MetadataAssistantService {
     const frenchRatio = frenchWordCount / Math.max(words.length, 1);
     return frenchRatio > 0.05 ? "fr" : "en";
   }
-  generateMetadata(content, model, language) {
+  generateMetadataWithFallback(content, primaryModel, language, fallbackModels) {
+    const modelsToTry = [primaryModel, ...fallbackModels.filter((m) => m !== primaryModel)];
+    return this.tryModelsInSequence(content, modelsToTry, language, 0, primaryModel);
+  }
+  tryModelsInSequence(content, models, language, attemptIndex, primaryModel) {
+    if (attemptIndex >= models.length) {
+      return throwError(() => new Error("All models failed due to rate limits or other errors"));
+    }
+    const currentModel = models[attemptIndex];
+    const fallbackUsed = attemptIndex > 0;
+    console.log(`Attempting metadata generation with model: ${currentModel} (attempt ${attemptIndex + 1}/${models.length})`);
+    return this.generateMetadata(content, currentModel, language).pipe(map((result) => __spreadProps(__spreadValues({}, result), {
+      modelUsed: currentModel,
+      fallbackUsed
+    })), catchError((error) => {
+      console.warn(`Model ${currentModel} failed:`, error.message);
+      if (this.isRateLimitError(error)) {
+        console.log(`Rate limit detected for ${currentModel}, trying next model...`);
+        return this.tryModelsInSequence(content, models, language, attemptIndex + 1, primaryModel);
+      }
+      if (attemptIndex < models.length - 1) {
+        console.log(`Error with ${currentModel}, trying next model...`);
+        return this.tryModelsInSequence(content, models, language, attemptIndex + 1, primaryModel);
+      }
+      return throwError(() => error);
+    }));
+  }
+  isRateLimitError(error) {
+    if (!error)
+      return false;
+    const errorMessage = error?.message || error?.toString() || "";
+    const errorLower = errorMessage.toLowerCase();
+    return errorLower.includes("rate limit") || errorLower.includes("quota exceeded") || errorLower.includes("too many requests") || errorLower.includes("429") || error?.status === 429;
+  }
+  generateMetadata(content, model2, language) {
     const apiKey = this.apiKeyService.getCurrentKey();
     if (!apiKey) {
       return throwError(() => new Error("API key not configured"));
@@ -22404,8 +22295,8 @@ Keywords:` : `En tant qu'expert en optimisation pour les moteurs de recherche, a
 ${content}
 
 Mots-cl\xE9s:`;
-    return this.callOpenRouter(descriptionPrompt, model, 200).pipe(switchMap((description) => {
-      return this.callOpenRouter(keywordsPrompt, model, 100).pipe(map((keywords) => ({
+    return this.callOpenRouter(descriptionPrompt, model2, 200).pipe(switchMap((description) => {
+      return this.callOpenRouter(keywordsPrompt, model2, 100).pipe(map((keywords) => ({
         description: this.cleanMetadataResponse(description),
         keywords: this.cleanKeywordsResponse(keywords)
       })));
@@ -22416,7 +22307,7 @@ Mots-cl\xE9s:`;
     if (!apiKey) {
       return throwError(() => new Error("API key not configured"));
     }
-    const translationModel = "mistralai/mistral-small:free";
+    const translationModel = "mistralai/mistral-small-3.2-24b-instruct:free";
     const descriptionPrompt = `You are a professional translator specializing in Canadian government content. Translate the following English meta description to French, maintaining the formal tone used by the Canada Revenue Agency (CRA). 
 
 Important CRA-specific terminology:
@@ -22452,7 +22343,7 @@ French keywords (comma-separated):`;
       })
     );
   }
-  callOpenRouter(prompt, model, maxTokens, timeoutMs = this.API_TIMEOUT) {
+  callOpenRouter(prompt, model2, maxTokens, timeoutMs = this.API_TIMEOUT) {
     const apiKey = this.apiKeyService.getCurrentKey();
     if (!apiKey) {
       return throwError(() => new Error("API key not configured"));
@@ -22464,7 +22355,7 @@ French keywords (comma-separated):`;
       "X-Title": "Content Assistant"
     });
     const payload = {
-      model,
+      model: model2,
       messages: [{ role: "user", content: prompt }],
       max_tokens: maxTokens,
       temperature: 0.3
@@ -22476,7 +22367,19 @@ French keywords (comma-separated):`;
       throw new Error("Invalid response from API");
     }), catchError((error) => {
       console.error("OpenRouter API error:", error);
-      return throwError(() => new Error("Failed to generate content"));
+      const httpError = error;
+      if (httpError.status === 429 || httpError.error?.error?.code === 429) {
+        return throwError(() => {
+          const rateLimitError = new Error("Rate limit exceeded");
+          rateLimitError.status = 429;
+          rateLimitError.originalError = error;
+          return rateLimitError;
+        });
+      }
+      const newError = new Error(httpError.error?.error?.message || httpError.message || "Failed to generate content");
+      newError.status = httpError.status;
+      newError.originalError = error;
+      return throwError(() => newError);
     }));
   }
   cleanMetadataResponse(response) {
@@ -22531,7 +22434,7 @@ French keywords (comma-separated):`;
     return keywords.join(", ");
   }
   static \u0275fac = function MetadataAssistantService_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _MetadataAssistantService)(\u0275\u0275inject(HttpClient), \u0275\u0275inject(ApiKeyService));
+    return new (__ngFactoryType__ || _MetadataAssistantService)();
   };
   static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _MetadataAssistantService, factory: _MetadataAssistantService.\u0275fac, providedIn: "root" });
 };
@@ -22541,7 +22444,7 @@ French keywords (comma-separated):`;
     args: [{
       providedIn: "root"
     }]
-  }], () => [{ type: HttpClient }, { type: ApiKeyService }], null);
+  }], null, null);
 })();
 
 // src/app/services/metadata-assistant-state.service.ts
@@ -22569,7 +22472,7 @@ var MetadataAssistantStateService = class _MetadataAssistantStateService {
     const currentState = this.getState();
     this.stateSubject.next(__spreadValues(__spreadValues({}, currentState), updates));
   }
-  startProcessing(urls, model, translateToFrench) {
+  startProcessing(urls, model2, translateToFrench) {
     this.updateState({
       isProcessing: true,
       currentStep: "scraping",
@@ -22578,7 +22481,7 @@ var MetadataAssistantStateService = class _MetadataAssistantStateService {
       processedUrls: 0,
       results: [],
       error: null,
-      selectedModel: model,
+      selectedModel: model2,
       translateToFrench
     });
   }
@@ -22619,8 +22522,8 @@ var MetadataAssistantStateService = class _MetadataAssistantStateService {
   reset() {
     this.stateSubject.next(this.initialState);
   }
-  setSelectedModel(model) {
-    this.updateState({ selectedModel: model });
+  setSelectedModel(model2) {
+    this.updateState({ selectedModel: model2 });
   }
   setTranslateToFrench(translate) {
     this.updateState({ translateToFrench: translate });
@@ -22650,7 +22553,7 @@ var MetadataAssistantStateService = class _MetadataAssistantStateService {
 })();
 
 // src/app/views/metadata-assistant/metadata-assistant.component.ts
-function MetadataAssistantComponent_span_12_Template(rf, ctx) {
+function MetadataAssistantComponent_span_13_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span", 7);
     \u0275\u0275element(1, "i", 8);
@@ -22663,7 +22566,7 @@ function MetadataAssistantComponent_span_12_Template(rf, ctx) {
     \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(3, 1, "page.apiKey.active"), " ");
   }
 }
-function MetadataAssistantComponent_span_14_Template(rf, ctx) {
+function MetadataAssistantComponent_span_15_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span", 9);
     \u0275\u0275element(1, "i", 10);
@@ -22676,12 +22579,12 @@ function MetadataAssistantComponent_span_14_Template(rf, ctx) {
     \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(3, 1, "page.apiKey.notSet"), " ");
   }
 }
-function MetadataAssistantComponent_section_16_div_10_Template(rf, ctx) {
+function MetadataAssistantComponent_section_17_div_10_Template(rf, ctx) {
   if (rf & 1) {
     const _r3 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "div", 20)(1, "p-button", 21);
     \u0275\u0275pipe(2, "translate");
-    \u0275\u0275listener("onClick", function MetadataAssistantComponent_section_16_div_10_Template_p_button_onClick_1_listener() {
+    \u0275\u0275listener("onClick", function MetadataAssistantComponent_section_17_div_10_Template_p_button_onClick_1_listener() {
       \u0275\u0275restoreView(_r3);
       const ctx_r1 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r1.reset());
@@ -22693,7 +22596,7 @@ function MetadataAssistantComponent_section_16_div_10_Template(rf, ctx) {
     \u0275\u0275property("label", \u0275\u0275pipeBind1(2, 2, "metadata.button.reset"))("outlined", true);
   }
 }
-function MetadataAssistantComponent_section_16_div_12_Template(rf, ctx) {
+function MetadataAssistantComponent_section_17_div_12_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div");
     \u0275\u0275element(1, "ca-progress-indicator", 22);
@@ -22705,7 +22608,7 @@ function MetadataAssistantComponent_section_16_div_12_Template(rf, ctx) {
     \u0275\u0275property("progressText", ctx_r1.getProgressText())("processedCount", ctx_r1.state.processedUrls)("totalFiles", ctx_r1.state.totalUrls)("showProgress", true)("showSpinner", ctx_r1.state.isProcessing);
   }
 }
-function MetadataAssistantComponent_section_16_div_13_Template(rf, ctx) {
+function MetadataAssistantComponent_section_17_div_13_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 14);
     \u0275\u0275element(1, "p-message", 23);
@@ -22717,7 +22620,7 @@ function MetadataAssistantComponent_section_16_div_13_Template(rf, ctx) {
     \u0275\u0275property("text", ctx_r1.state.error);
   }
 }
-function MetadataAssistantComponent_section_16_div_14_Template(rf, ctx) {
+function MetadataAssistantComponent_section_17_div_14_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 24);
     \u0275\u0275element(1, "ca-metadata-result", 25)(2, "ca-metadata-csv-export", 26);
@@ -22731,26 +22634,26 @@ function MetadataAssistantComponent_section_16_div_14_Template(rf, ctx) {
     \u0275\u0275property("results", ctx_r1.state.results)("includeTranslations", ctx_r1.state.translateToFrench);
   }
 }
-function MetadataAssistantComponent_section_16_Template(rf, ctx) {
+function MetadataAssistantComponent_section_17_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "section")(1, "div", 11)(2, "div", 12)(3, "ca-url-input", 13);
-    \u0275\u0275listener("urlsChange", function MetadataAssistantComponent_section_16_Template_ca_url_input_urlsChange_3_listener($event) {
+    \u0275\u0275listener("urlsChange", function MetadataAssistantComponent_section_17_Template_ca_url_input_urlsChange_3_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.onUrlsChange($event));
-    })("urlInputChange", function MetadataAssistantComponent_section_16_Template_ca_url_input_urlInputChange_3_listener($event) {
+    })("urlInputChange", function MetadataAssistantComponent_section_17_Template_ca_url_input_urlInputChange_3_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.onUrlInputChange($event));
     });
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "div", 14)(5, "ca-shared-model-selector", 15);
-    \u0275\u0275listener("modelChange", function MetadataAssistantComponent_section_16_Template_ca_shared_model_selector_modelChange_5_listener($event) {
+    \u0275\u0275listener("modelChange", function MetadataAssistantComponent_section_17_Template_ca_shared_model_selector_modelChange_5_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.onModelChange($event));
-    })("translateChange", function MetadataAssistantComponent_section_16_Template_ca_shared_model_selector_translateChange_5_listener($event) {
+    })("translateChange", function MetadataAssistantComponent_section_17_Template_ca_shared_model_selector_translateChange_5_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.onTranslateToggle($event));
@@ -22759,18 +22662,18 @@ function MetadataAssistantComponent_section_16_Template(rf, ctx) {
     \u0275\u0275elementStart(6, "div", 14)(7, "p-button", 16);
     \u0275\u0275pipe(8, "translate");
     \u0275\u0275pipe(9, "translate");
-    \u0275\u0275listener("onClick", function MetadataAssistantComponent_section_16_Template_p_button_onClick_7_listener() {
+    \u0275\u0275listener("onClick", function MetadataAssistantComponent_section_17_Template_p_button_onClick_7_listener() {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.startProcessing());
     });
     \u0275\u0275elementEnd()();
-    \u0275\u0275template(10, MetadataAssistantComponent_section_16_div_10_Template, 3, 4, "div", 17);
+    \u0275\u0275template(10, MetadataAssistantComponent_section_17_div_10_Template, 3, 4, "div", 17);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(11, "div", 12);
-    \u0275\u0275template(12, MetadataAssistantComponent_section_16_div_12_Template, 2, 5, "div", 5)(13, MetadataAssistantComponent_section_16_div_13_Template, 2, 1, "div", 18);
+    \u0275\u0275template(12, MetadataAssistantComponent_section_17_div_12_Template, 2, 5, "div", 5)(13, MetadataAssistantComponent_section_17_div_13_Template, 2, 1, "div", 18);
     \u0275\u0275elementEnd()();
-    \u0275\u0275template(14, MetadataAssistantComponent_section_16_div_14_Template, 3, 4, "div", 19);
+    \u0275\u0275template(14, MetadataAssistantComponent_section_17_div_14_Template, 3, 4, "div", 19);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -22791,7 +22694,7 @@ function MetadataAssistantComponent_section_16_Template(rf, ctx) {
     \u0275\u0275property("ngIf", ctx_r1.state.results.length > 0);
   }
 }
-function MetadataAssistantComponent_div_18_Template(rf, ctx) {
+function MetadataAssistantComponent_div_19_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 27);
     \u0275\u0275element(1, "p-message", 28);
@@ -22808,6 +22711,7 @@ var MetadataAssistantComponent = class _MetadataAssistantComponent {
   metadataService;
   stateService;
   apiKeyService;
+  messageService;
   destroy$ = new Subject();
   state = {
     isProcessing: false,
@@ -22840,11 +22744,12 @@ var MetadataAssistantComponent = class _MetadataAssistantComponent {
       description: "metadata.models.gemmaDescription"
     }
   ];
-  constructor(translate, metadataService, stateService, apiKeyService) {
+  constructor(translate, metadataService, stateService, apiKeyService, messageService) {
     this.translate = translate;
     this.metadataService = metadataService;
     this.stateService = stateService;
     this.apiKeyService = apiKeyService;
+    this.messageService = messageService;
   }
   ngOnInit() {
     this.stateService.state$.pipe(takeUntil(this.destroy$)).subscribe((state2) => {
@@ -22858,8 +22763,8 @@ var MetadataAssistantComponent = class _MetadataAssistantComponent {
   onUrlsChange(urls) {
     this.urls = urls;
   }
-  onUrlInputChange(input) {
-    this.urlInput = input;
+  onUrlInputChange(input2) {
+    this.urlInput = input2;
   }
   isValidUrl(url) {
     try {
@@ -22869,8 +22774,8 @@ var MetadataAssistantComponent = class _MetadataAssistantComponent {
       return false;
     }
   }
-  onModelChange(model) {
-    this.stateService.setSelectedModel(model);
+  onModelChange(model2) {
+    this.stateService.setSelectedModel(model2);
   }
   onTranslateToggle(translate) {
     this.stateService.setTranslateToFrench(translate);
@@ -22885,19 +22790,32 @@ var MetadataAssistantComponent = class _MetadataAssistantComponent {
       return;
     }
     this.stateService.startProcessing(this.urls, this.state.selectedModel, this.state.translateToFrench);
+    const fallbackModels = this.models.map((m) => m.value).filter((m) => m !== this.state.selectedModel);
     this.metadataService.processUrls({
       urls: this.urls,
       model: this.state.selectedModel,
-      translateToFrench: this.state.translateToFrench
+      translateToFrench: this.state.translateToFrench,
+      fallbackModels
     }).pipe(takeUntil(this.destroy$)).subscribe({
       next: (results) => {
         results.forEach((result) => {
           this.stateService.addResult(result);
+          if (result.fallbackUsed && result.modelUsed) {
+            this.messageService.add({
+              severity: "info",
+              summary: this.translate.instant("metadata.fallback.usingModel", { model: this.getModelDisplayName(result.modelUsed) }),
+              life: 4e3
+            });
+          }
         });
       },
       error: (error) => {
         console.error("Processing error:", error);
-        this.stateService.setError(error.message || this.translate.instant("metadata.errors.processingFailed"));
+        let errorMessage = error.message || this.translate.instant("metadata.errors.processingFailed");
+        if (error.message?.includes("All models failed")) {
+          errorMessage = this.translate.instant("metadata.errors.allModelsFailed");
+        }
+        this.stateService.setError(errorMessage);
       },
       complete: () => {
         this.stateService.completeProcessing();
@@ -22924,49 +22842,55 @@ var MetadataAssistantComponent = class _MetadataAssistantComponent {
     }
     return "";
   }
+  getModelDisplayName(modelValue) {
+    const model2 = this.models.find((m) => m.value === modelValue);
+    return model2 ? model2.name : modelValue;
+  }
   static \u0275fac = function MetadataAssistantComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _MetadataAssistantComponent)(\u0275\u0275directiveInject(TranslateService), \u0275\u0275directiveInject(MetadataAssistantService), \u0275\u0275directiveInject(MetadataAssistantStateService), \u0275\u0275directiveInject(ApiKeyService));
+    return new (__ngFactoryType__ || _MetadataAssistantComponent)(\u0275\u0275directiveInject(TranslateService), \u0275\u0275directiveInject(MetadataAssistantService), \u0275\u0275directiveInject(MetadataAssistantStateService), \u0275\u0275directiveInject(ApiKeyService), \u0275\u0275directiveInject(MessageService));
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _MetadataAssistantComponent, selectors: [["ca-metadata-assistant"]], decls: 20, vars: 21, consts: [[1, "metadata-assistant-container"], ["id", "wb-cont"], [1, "api-key-status", "mb-4"], ["class", "text-green-600", 4, "ngIf"], ["class", "text-orange-600", 4, "ngIf"], [4, "ngIf"], ["class", "mt-4", 4, "ngIf"], [1, "text-green-600"], [1, "pi", "pi-check-circle"], [1, "text-orange-600"], [1, "pi", "pi-exclamation-circle"], [1, "grid"], [1, "col-12", "lg:col-6"], [3, "urlsChange", "urlInputChange", "disabled"], [1, "mt-3"], [3, "modelChange", "translateChange", "selectedModel", "models", "label", "cardTitle", "showCard", "showTranslateOption", "translateToFrench", "disabled"], ["icon", "pi pi-sparkles", "severity", "primary", "styleClass", "w-full", 3, "onClick", "label", "disabled", "loading"], ["class", "mt-2", 4, "ngIf"], ["class", "mt-3", 4, "ngIf"], ["class", "results-section mt-4", 4, "ngIf"], [1, "mt-2"], ["icon", "pi pi-refresh", "severity", "secondary", "styleClass", "w-full", 3, "onClick", "label", "outlined"], [3, "progressText", "processedCount", "totalFiles", "showProgress", "showSpinner"], ["severity", "error", "styleClass", "w-full", 3, "text"], [1, "results-section", "mt-4"], [3, "results", "showTranslations"], [3, "results", "includeTranslations"], [1, "mt-4"], ["severity", "warn", "styleClass", "w-full", 3, "text"]], template: function MetadataAssistantComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _MetadataAssistantComponent, selectors: [["ca-metadata-assistant"]], features: [\u0275\u0275ProvidersFeature([MessageService])], decls: 21, vars: 21, consts: [[1, "metadata-assistant-container"], ["id", "wb-cont"], [1, "api-key-status", "mb-4"], ["class", "text-green-600", 4, "ngIf"], ["class", "text-orange-600", 4, "ngIf"], [4, "ngIf"], ["class", "mt-4", 4, "ngIf"], [1, "text-green-600"], [1, "pi", "pi-check-circle"], [1, "text-orange-600"], [1, "pi", "pi-exclamation-circle"], [1, "grid"], [1, "col-12", "lg:col-6"], [3, "urlsChange", "urlInputChange", "disabled"], [1, "mt-3"], [3, "modelChange", "translateChange", "selectedModel", "models", "label", "cardTitle", "showCard", "showTranslateOption", "translateToFrench", "disabled"], ["icon", "pi pi-sparkles", "severity", "primary", "styleClass", "w-full", 3, "onClick", "label", "disabled", "loading"], ["class", "mt-2", 4, "ngIf"], ["class", "mt-3", 4, "ngIf"], ["class", "results-section mt-4", 4, "ngIf"], [1, "mt-2"], ["icon", "pi pi-refresh", "severity", "secondary", "styleClass", "w-full", 3, "onClick", "label", "outlined"], [3, "progressText", "processedCount", "totalFiles", "showProgress", "showSpinner"], ["severity", "error", "styleClass", "w-full", 3, "text"], [1, "results-section", "mt-4"], [3, "results", "showTranslations"], [3, "results", "includeTranslations"], [1, "mt-4"], ["severity", "warn", "styleClass", "w-full", 3, "text"]], template: function MetadataAssistantComponent_Template(rf, ctx) {
     if (rf & 1) {
-      \u0275\u0275elementStart(0, "div", 0)(1, "h1", 1);
-      \u0275\u0275text(2);
-      \u0275\u0275pipe(3, "translate");
+      \u0275\u0275elementStart(0, "div", 0);
+      \u0275\u0275element(1, "p-toast");
+      \u0275\u0275elementStart(2, "h1", 1);
+      \u0275\u0275text(3);
+      \u0275\u0275pipe(4, "translate");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(4, "p");
-      \u0275\u0275text(5);
-      \u0275\u0275pipe(6, "translate");
+      \u0275\u0275elementStart(5, "p");
+      \u0275\u0275text(6);
+      \u0275\u0275pipe(7, "translate");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(7, "section", 2)(8, "div")(9, "strong");
-      \u0275\u0275text(10);
-      \u0275\u0275pipe(11, "translate");
+      \u0275\u0275elementStart(8, "section", 2)(9, "div")(10, "strong");
+      \u0275\u0275text(11);
+      \u0275\u0275pipe(12, "translate");
       \u0275\u0275elementEnd();
-      \u0275\u0275template(12, MetadataAssistantComponent_span_12_Template, 4, 3, "span", 3);
-      \u0275\u0275pipe(13, "async");
-      \u0275\u0275template(14, MetadataAssistantComponent_span_14_Template, 4, 3, "span", 4);
-      \u0275\u0275pipe(15, "async");
+      \u0275\u0275template(13, MetadataAssistantComponent_span_13_Template, 4, 3, "span", 3);
+      \u0275\u0275pipe(14, "async");
+      \u0275\u0275template(15, MetadataAssistantComponent_span_15_Template, 4, 3, "span", 4);
+      \u0275\u0275pipe(16, "async");
       \u0275\u0275elementEnd()();
-      \u0275\u0275template(16, MetadataAssistantComponent_section_16_Template, 15, 20, "section", 5);
-      \u0275\u0275pipe(17, "async");
-      \u0275\u0275template(18, MetadataAssistantComponent_div_18_Template, 3, 3, "div", 6);
-      \u0275\u0275pipe(19, "async");
+      \u0275\u0275template(17, MetadataAssistantComponent_section_17_Template, 15, 20, "section", 5);
+      \u0275\u0275pipe(18, "async");
+      \u0275\u0275template(19, MetadataAssistantComponent_div_19_Template, 3, 3, "div", 6);
+      \u0275\u0275pipe(20, "async");
       \u0275\u0275elementEnd();
     }
     if (rf & 2) {
-      \u0275\u0275advance(2);
-      \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 7, "metadata.title"));
       \u0275\u0275advance(3);
-      \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(6, 9, "metadata.description"));
+      \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(4, 7, "metadata.title"));
+      \u0275\u0275advance(3);
+      \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(7, 9, "metadata.description"));
       \u0275\u0275advance(5);
-      \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(11, 11, "page.apiKey.status"));
+      \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(12, 11, "page.apiKey.status"));
       \u0275\u0275advance(2);
-      \u0275\u0275property("ngIf", \u0275\u0275pipeBind1(13, 13, ctx.apiKeyService.hasApiKey$));
+      \u0275\u0275property("ngIf", \u0275\u0275pipeBind1(14, 13, ctx.apiKeyService.hasApiKey$));
       \u0275\u0275advance(2);
-      \u0275\u0275property("ngIf", !\u0275\u0275pipeBind1(15, 15, ctx.apiKeyService.hasApiKey$));
+      \u0275\u0275property("ngIf", !\u0275\u0275pipeBind1(16, 15, ctx.apiKeyService.hasApiKey$));
       \u0275\u0275advance(2);
-      \u0275\u0275property("ngIf", \u0275\u0275pipeBind1(17, 17, ctx.apiKeyService.hasApiKey$));
+      \u0275\u0275property("ngIf", \u0275\u0275pipeBind1(18, 17, ctx.apiKeyService.hasApiKey$));
       \u0275\u0275advance(2);
-      \u0275\u0275property("ngIf", !\u0275\u0275pipeBind1(19, 19, ctx.apiKeyService.hasApiKey$));
+      \u0275\u0275property("ngIf", !\u0275\u0275pipeBind1(20, 19, ctx.apiKeyService.hasApiKey$));
     }
   }, dependencies: [
     CommonModule,
@@ -22980,6 +22904,8 @@ var MetadataAssistantComponent = class _MetadataAssistantComponent {
     CardModule,
     MessageModule,
     Message,
+    ToastModule,
+    Toast,
     SharedModelSelectorComponent,
     ProgressIndicatorComponent,
     UrlInputComponent,
@@ -22997,12 +22923,14 @@ var MetadataAssistantComponent = class _MetadataAssistantComponent {
       ButtonModule,
       CardModule,
       MessageModule,
+      ToastModule,
       SharedModelSelectorComponent,
       ProgressIndicatorComponent,
       UrlInputComponent,
       MetadataResultComponent,
       CsvExportComponent
-    ], template: `<div class="metadata-assistant-container">\r
+    ], providers: [MessageService], template: `<div class="metadata-assistant-container">\r
+  <p-toast></p-toast>\r
   <h1 id="wb-cont">{{ 'metadata.title' | translate }}</h1>\r
   <p>{{ 'metadata.description' | translate }}</p>\r
 \r
@@ -23122,16 +23050,14 @@ var MetadataAssistantComponent = class _MetadataAssistantComponent {
     </p-message>\r
   </div>\r
 </div>`, styles: ["/* src/app/views/metadata-assistant/metadata-assistant.component.css */\n.metadata-assistant-container {\n  padding: 1rem;\n}\n.api-key-status {\n  margin-bottom: 1.5rem;\n}\n.results-section {\n  margin-top: 2rem;\n}\n/*# sourceMappingURL=metadata-assistant.component.css.map */\n"] }]
-  }], () => [{ type: TranslateService }, { type: MetadataAssistantService }, { type: MetadataAssistantStateService }, { type: ApiKeyService }], null);
+  }], () => [{ type: TranslateService }, { type: MetadataAssistantService }, { type: MetadataAssistantStateService }, { type: ApiKeyService }, { type: MessageService }], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(MetadataAssistantComponent, { className: "MetadataAssistantComponent", filePath: "src/app/views/metadata-assistant/metadata-assistant.component.ts", lineNumber: 37 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(MetadataAssistantComponent, { className: "MetadataAssistantComponent", filePath: "src/app/views/metadata-assistant/metadata-assistant.component.ts", lineNumber: 41 });
 })();
 
 // src/app/views/static/about.component.ts
 var AboutComponent = class _AboutComponent {
-  constructor() {
-  }
   static \u0275fac = function AboutComponent_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _AboutComponent)();
   };
@@ -23161,7 +23087,7 @@ var AboutComponent = class _AboutComponent {
     <h1 id="wb-cont">{{ 'title.about' | translate}}</h1>
     <p>{{'about.content' | translate }}</p>    
   ` }]
-  }], () => [], null);
+  }], null, null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AboutComponent, { className: "AboutComponent", filePath: "src/app/views/static/about.component.ts", lineNumber: 13 });
@@ -23202,19 +23128,11 @@ function TestComponent_ng_template_21_Template(rf, ctx) {
   }
 }
 var TestComponent = class _TestComponent {
-  urlDataService;
-  uploadState;
-  router;
-  translate;
-  //Initialize stuff here
-  //This runs first, use it to inject services & other dependencies (delete if not needed)
-  constructor(urlDataService, uploadState, router, translate) {
-    this.urlDataService = urlDataService;
-    this.uploadState = uploadState;
-    this.router = router;
-    this.translate = translate;
-  }
-  //Add any services you're using
+  //inject any services you're using
+  urlDataService = inject(UrlDataService);
+  uploadState = inject(UploadStateService);
+  router = inject(Router);
+  translate = inject(TranslateService);
   //Your functions go here
   //This runs once after the constuctor, delete if not needed.
   ngOnInit() {
@@ -23255,7 +23173,13 @@ var TestComponent = class _TestComponent {
         });
         this.router.navigate(["page-assistant/compare"]);
       } catch (err) {
-        this.error = `${tryError} ${err.message || err || unknownError}`;
+        if (err instanceof Error) {
+          this.error = `${tryError} ${err.message}`;
+        } else if (typeof err === "string") {
+          this.error = `${tryError} ${err}`;
+        } else {
+          this.error = `${unknownError}`;
+        }
       } finally {
         this.loading = false;
       }
@@ -23269,7 +23193,7 @@ var TestComponent = class _TestComponent {
     { title: "Return a payment - Canada Dental Benefit - Closed", url: "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/dental-benefit/return-payment.html" }
   ];
   static \u0275fac = function TestComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _TestComponent)(\u0275\u0275directiveInject(UrlDataService), \u0275\u0275directiveInject(UploadStateService), \u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(TranslateService));
+    return new (__ngFactoryType__ || _TestComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TestComponent, selectors: [["ca-test"]], decls: 40, vars: 12, consts: [["id", "wb-cont"], [3, "innerHTML"], [1, "flex", "flex-row", "gap-2"], ["label", "Primary"], ["label", "Secondary", "severity", "secondary"], ["label", "Help", "severity", "help"], ["label", "Info", "severity", "info"], ["label", "Success", "severity", "success"], ["label", "Danger", "severity", "danger"], ["label", "Warn", "severity", "warn"], ["label", "Contrast", "severity", "contrast"], [3, "value"], ["pTemplate", "header"], ["pTemplate", "body"], ["label", "your.translation.key", "name", "unique-name", 3, "selectedChange", "options", "selected"], ["variant", "text", "severity", "info", 3, "onClick"]], template: function TestComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -23394,10 +23318,3933 @@ var TestComponent = class _TestComponent {
 <ca-horizontal-radio-buttons label="your.translation.key" name="unique-name" [options]="yourArray"\r
                              [(selected)]="yourSelectedButton" (selectedChange)="yourFunction($event)">\r
 </ca-horizontal-radio-buttons>` }]
-  }], () => [{ type: UrlDataService }, { type: UploadStateService }, { type: Router }, { type: TranslateService }], null);
+  }], null, null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TestComponent, { className: "TestComponent", filePath: "src/app/views/example/test.component.ts", lineNumber: 21 });
+})();
+
+// node_modules/primeng/fesm2022/primeng-buttongroup.mjs
+var _c011 = ["*"];
+var theme8 = ({
+  dt
+}) => `
+.p-buttongroup .p-button {
+    margin: 0;
+}
+
+.p-buttongroup .p-button:not(:last-child),
+.p-buttongroup .p-button:not(:last-child):hover {
+    border-right: 0 none;
+}
+
+.p-buttongroup .p-button:not(:first-of-type):not(:last-of-type) {
+    border-radius: 0;
+}
+
+.p-buttongroup .p-button:first-of-type:not(:only-of-type) {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+}
+
+.p-buttongroup .p-button:last-of-type:not(:only-of-type) {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+}
+
+.p-buttongroup .p-button:focus {
+    position: relative;
+    z-index: 1;
+}
+
+.p-buttongroup {
+    display:flex;
+}
+
+.p-buttongroup > .p-button {
+    flex: 1;
+}
+
+/* For PrimeNG */
+
+.p-buttongroup .p-button:focus,
+.p-buttongroup p-button:focus .p-button,
+.p-buttonset .p-button:focus,
+.p-buttonset .p-button:focus,
+.p-buttonset p-button:focus .p-button,
+.p-buttonset .p-button:focus {
+    position: relative;
+    z-index: 1;
+}
+
+.p-buttongroup .p-button:not(:last-child),
+.p-buttongroup .p-button:not(:last-child):hover,
+.p-buttongroup p-button:not(:last-child) .p-button,
+.p-buttongroup p-button:not(:last-child) .p-button:hover,
+.p-buttonset .p-button:not(:last-child),
+.p-buttonset .p-button:not(:last-child):hover,
+.p-buttonset p-button:not(:last-child) .p-button,
+.p-buttonset p-button:not(:last-child) .p-button:hover {
+    border-right: 0 none;
+}
+
+.p-buttongroup .p-button:not(:first-of-type):not(:last-of-type),
+.p-buttongroup p-button:not(:first-of-type):not(:last-of-type) .p-button,
+.p-buttonset .p-button:not(:first-of-type):not(:last-of-type),
+.p-buttonset p-button:not(:first-of-type):not(:last-of-type) .p-button {
+    border-radius: 0;
+}
+
+.p-buttongroup .p-button:first-of-type:not(:only-of-type),
+.p-buttongroup p-button:first-of-type:not(:only-of-type) .p-button,
+.p-buttonset .p-button:first-of-type:not(:only-of-type),
+.p-buttonset p-button:first-of-type:not(:only-of-type) .p-button {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+}
+
+.p-buttongroup .p-button:last-of-type:not(:only-of-type),
+.p-buttongroup p-button:last-of-type:not(:only-of-type) .p-button,
+.p-buttonset .p-button:last-of-type:not(:only-of-type),
+.p-buttonset p-button:last-of-type:not(:only-of-type) .p-button {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+}
+
+p-button[iconpos='right'] spinnericon {
+    order: 1;
+}
+`;
+var classes8 = {
+  root: "p-buttongroup p-component"
+};
+var ButtonGroupStyle = class _ButtonGroupStyle extends BaseStyle {
+  name = "buttongroup";
+  theme = theme8;
+  classes = classes8;
+  static \u0275fac = /* @__PURE__ */ (() => {
+    let \u0275ButtonGroupStyle_BaseFactory;
+    return function ButtonGroupStyle_Factory(__ngFactoryType__) {
+      return (\u0275ButtonGroupStyle_BaseFactory || (\u0275ButtonGroupStyle_BaseFactory = \u0275\u0275getInheritedFactory(_ButtonGroupStyle)))(__ngFactoryType__ || _ButtonGroupStyle);
+    };
+  })();
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+    token: _ButtonGroupStyle,
+    factory: _ButtonGroupStyle.\u0275fac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ButtonGroupStyle, [{
+    type: Injectable
+  }], null, null);
+})();
+var ButtonGroupClasses;
+(function(ButtonGroupClasses2) {
+  ButtonGroupClasses2["root"] = "p-buttongroup";
+})(ButtonGroupClasses || (ButtonGroupClasses = {}));
+var ButtonGroup = class _ButtonGroup extends BaseComponent {
+  _componentStyle = inject(ButtonGroupStyle);
+  static \u0275fac = /* @__PURE__ */ (() => {
+    let \u0275ButtonGroup_BaseFactory;
+    return function ButtonGroup_Factory(__ngFactoryType__) {
+      return (\u0275ButtonGroup_BaseFactory || (\u0275ButtonGroup_BaseFactory = \u0275\u0275getInheritedFactory(_ButtonGroup)))(__ngFactoryType__ || _ButtonGroup);
+    };
+  })();
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
+    type: _ButtonGroup,
+    selectors: [["p-buttonGroup"], ["p-buttongroup"], ["p-button-group"]],
+    features: [\u0275\u0275ProvidersFeature([ButtonGroupStyle]), \u0275\u0275InheritDefinitionFeature],
+    ngContentSelectors: _c011,
+    decls: 2,
+    vars: 0,
+    consts: [["role", "group", 1, "p-buttongroup", "p-component"]],
+    template: function ButtonGroup_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275projectionDef();
+        \u0275\u0275elementStart(0, "span", 0);
+        \u0275\u0275projection(1);
+        \u0275\u0275elementEnd();
+      }
+    },
+    dependencies: [CommonModule],
+    encapsulation: 2,
+    changeDetection: 0
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ButtonGroup, [{
+    type: Component,
+    args: [{
+      selector: "p-buttonGroup, p-buttongroup, p-button-group",
+      standalone: true,
+      imports: [CommonModule],
+      template: `
+        <span class="p-buttongroup p-component" role="group">
+            <ng-content></ng-content>
+        </span>
+    `,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      encapsulation: ViewEncapsulation.None,
+      providers: [ButtonGroupStyle]
+    }]
+  }], null, null);
+})();
+var ButtonGroupModule = class _ButtonGroupModule {
+  static \u0275fac = function ButtonGroupModule_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _ButtonGroupModule)();
+  };
+  static \u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
+    type: _ButtonGroupModule,
+    imports: [ButtonGroup],
+    exports: [ButtonGroup]
+  });
+  static \u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({
+    imports: [ButtonGroup]
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ButtonGroupModule, [{
+    type: NgModule,
+    args: [{
+      imports: [ButtonGroup],
+      exports: [ButtonGroup]
+    }]
+  }], null, null);
+})();
+
+// node_modules/primeng/fesm2022/primeng-confirmpopup.mjs
+var _c012 = ["content"];
+var _c111 = ["accepticon"];
+var _c23 = ["rejecticon"];
+var _c33 = ["headless"];
+var _c43 = (a0, a1) => ({
+  showTransitionParams: a0,
+  hideTransitionParams: a1
+});
+var _c53 = (a0) => ({
+  value: "open",
+  params: a0
+});
+var _c63 = (a0) => ({
+  $implicit: a0
+});
+function ConfirmPopup_div_0_ng_container_1_ng_container_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainer(0);
+  }
+}
+function ConfirmPopup_div_0_ng_container_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275template(1, ConfirmPopup_div_0_ng_container_1_ng_container_1_Template, 1, 0, "ng-container", 8);
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngTemplateOutlet", ctx_r1.headlessTemplate || ctx_r1._headlessTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction1(2, _c63, ctx_r1.confirmation));
+  }
+}
+function ConfirmPopup_div_0_ng_template_2_ng_container_2_ng_container_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainer(0);
+  }
+}
+function ConfirmPopup_div_0_ng_template_2_ng_container_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275template(1, ConfirmPopup_div_0_ng_template_2_ng_container_2_ng_container_1_Template, 1, 0, "ng-container", 8);
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngTemplateOutlet", ctx_r1.contentTemplate || ctx_r1._contentTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction1(2, _c63, ctx_r1.confirmation));
+  }
+}
+function ConfirmPopup_div_0_ng_template_2_ng_template_3_i_0_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "i", 15);
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(4);
+    \u0275\u0275classMap(ctx_r1.confirmation == null ? null : ctx_r1.confirmation.icon);
+    \u0275\u0275property("ngClass", "p-confirmpopup-icon");
+  }
+}
+function ConfirmPopup_div_0_ng_template_2_ng_template_3_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275template(0, ConfirmPopup_div_0_ng_template_2_ng_template_3_i_0_Template, 1, 3, "i", 13);
+    \u0275\u0275elementStart(1, "span", 14);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275property("ngIf", ctx_r1.confirmation == null ? null : ctx_r1.confirmation.icon);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(ctx_r1.confirmation == null ? null : ctx_r1.confirmation.message);
+  }
+}
+function ConfirmPopup_div_0_ng_template_2_p_button_6_i_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "i");
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(4);
+    \u0275\u0275classMap(ctx_r1.confirmation == null ? null : ctx_r1.confirmation.rejectIcon);
+  }
+}
+function ConfirmPopup_div_0_ng_template_2_p_button_6_2_ng_template_0_Template(rf, ctx) {
+}
+function ConfirmPopup_div_0_ng_template_2_p_button_6_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275template(0, ConfirmPopup_div_0_ng_template_2_p_button_6_2_ng_template_0_Template, 0, 0, "ng-template", null, 3, \u0275\u0275templateRefExtractor);
+  }
+}
+function ConfirmPopup_div_0_ng_template_2_p_button_6_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r3 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "p-button", 16);
+    \u0275\u0275listener("onClick", function ConfirmPopup_div_0_ng_template_2_p_button_6_Template_p_button_onClick_0_listener() {
+      \u0275\u0275restoreView(_r3);
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r1.onReject());
+    });
+    \u0275\u0275template(1, ConfirmPopup_div_0_ng_template_2_p_button_6_i_1_Template, 1, 2, "i", 17)(2, ConfirmPopup_div_0_ng_template_2_p_button_6_2_Template, 2, 0, null, 18);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275property("label", ctx_r1.rejectButtonLabel)("ngClass", "p-confirmpopup-reject-button")("styleClass", ctx_r1.confirmation == null ? null : ctx_r1.confirmation.rejectButtonStyleClass)("size", (ctx_r1.confirmation.rejectButtonProps == null ? null : ctx_r1.confirmation.rejectButtonProps.size) || "small")("text", (ctx_r1.confirmation.rejectButtonProps == null ? null : ctx_r1.confirmation.rejectButtonProps.text) || false)("buttonProps", ctx_r1.getRejectButtonProps());
+    \u0275\u0275attribute("aria-label", ctx_r1.rejectButtonLabel);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.confirmation == null ? null : ctx_r1.confirmation.rejectIcon)("ngIfElse", ctx_r1.rejecticon);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngTemplateOutlet", ctx_r1.rejectIconTemplate || ctx_r1._rejectIconTemplate);
+  }
+}
+function ConfirmPopup_div_0_ng_template_2_p_button_7_i_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "i");
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(4);
+    \u0275\u0275classMap(ctx_r1.confirmation == null ? null : ctx_r1.confirmation.acceptIcon);
+  }
+}
+function ConfirmPopup_div_0_ng_template_2_p_button_7_2_ng_template_0_Template(rf, ctx) {
+}
+function ConfirmPopup_div_0_ng_template_2_p_button_7_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275template(0, ConfirmPopup_div_0_ng_template_2_p_button_7_2_ng_template_0_Template, 0, 0, "ng-template", null, 4, \u0275\u0275templateRefExtractor);
+  }
+}
+function ConfirmPopup_div_0_ng_template_2_p_button_7_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r4 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "p-button", 19);
+    \u0275\u0275listener("onClick", function ConfirmPopup_div_0_ng_template_2_p_button_7_Template_p_button_onClick_0_listener() {
+      \u0275\u0275restoreView(_r4);
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r1.onAccept());
+    });
+    \u0275\u0275template(1, ConfirmPopup_div_0_ng_template_2_p_button_7_i_1_Template, 1, 2, "i", 17)(2, ConfirmPopup_div_0_ng_template_2_p_button_7_2_Template, 2, 0, null, 18);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275property("label", ctx_r1.acceptButtonLabel)("ngClass", "p-confirmpopup-accept-button")("styleClass", ctx_r1.confirmation == null ? null : ctx_r1.confirmation.acceptButtonStyleClass)("size", (ctx_r1.confirmation.acceptButtonProps == null ? null : ctx_r1.confirmation.acceptButtonProps.size) || "small")("buttonProps", ctx_r1.getAcceptButtonProps());
+    \u0275\u0275attribute("aria-label", ctx_r1.acceptButtonLabel);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.confirmation == null ? null : ctx_r1.confirmation.acceptIcon)("ngIfElse", ctx_r1.accepticontemplate);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngTemplateOutlet", ctx_r1.acceptIconTemplate || ctx_r1._acceptIconTemplate);
+  }
+}
+function ConfirmPopup_div_0_ng_template_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 9, 1);
+    \u0275\u0275template(2, ConfirmPopup_div_0_ng_template_2_ng_container_2_Template, 2, 4, "ng-container", 7)(3, ConfirmPopup_div_0_ng_template_2_ng_template_3_Template, 3, 2, "ng-template", null, 2, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "div", 10);
+    \u0275\u0275template(6, ConfirmPopup_div_0_ng_template_2_p_button_6_Template, 3, 10, "p-button", 11)(7, ConfirmPopup_div_0_ng_template_2_p_button_7_Template, 3, 9, "p-button", 12);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const withoutContentTemplate_r5 = \u0275\u0275reference(4);
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", ctx_r1.contentTemplate || ctx_r1._contentTemplate)("ngIfElse", withoutContentTemplate_r5);
+    \u0275\u0275advance(4);
+    \u0275\u0275property("ngIf", (ctx_r1.confirmation == null ? null : ctx_r1.confirmation.rejectVisible) !== false);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", (ctx_r1.confirmation == null ? null : ctx_r1.confirmation.acceptVisible) !== false);
+  }
+}
+function ConfirmPopup_div_0_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 6);
+    \u0275\u0275listener("click", function ConfirmPopup_div_0_Template_div_click_0_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.onOverlayClick($event));
+    })("@animation.start", function ConfirmPopup_div_0_Template_div_animation_animation_start_0_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.onAnimationStart($event));
+    })("@animation.done", function ConfirmPopup_div_0_Template_div_animation_animation_done_0_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.onAnimationEnd($event));
+    });
+    \u0275\u0275template(1, ConfirmPopup_div_0_ng_container_1_Template, 2, 4, "ng-container", 7)(2, ConfirmPopup_div_0_ng_template_2_Template, 8, 4, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const notHeadless_r6 = \u0275\u0275reference(3);
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275classMap(ctx_r1.styleClass);
+    \u0275\u0275property("ngClass", "p-confirmpopup p-component")("ngStyle", ctx_r1.style)("@animation", \u0275\u0275pureFunction1(10, _c53, \u0275\u0275pureFunction2(7, _c43, ctx_r1.showTransitionOptions, ctx_r1.hideTransitionOptions)));
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.headlessTemplate || ctx_r1._headlessTemplate)("ngIfElse", notHeadless_r6);
+  }
+}
+var theme9 = ({
+  dt
+}) => `
+.p-confirmpopup {
+    position: absolute;
+    margin-top: ${dt("confirmpopup.gutter")};
+    top: 0;
+    left: 0;
+    background: ${dt("confirmpopup.background")};
+    color: ${dt("confirmpopup.color")};
+    border: 1px solid ${dt("confirmpopup.border.color")};
+    border-radius: ${dt("confirmpopup.border.radius")};
+    box-shadow: ${dt("confirmpopup.shadow")};
+}
+
+.p-confirmpopup-content {
+    display: flex;
+    align-items: center;
+    padding: ${dt("confirmpopup.content.padding")};
+    gap: ${dt("confirmpopup.content.gap")};
+}
+
+.p-confirmpopup-icon {
+    font-size: ${dt("confirmpopup.icon.size")};
+    width: ${dt("confirmpopup.icon.size")};
+    height: ${dt("confirmpopup.icon.size")};
+    color: ${dt("confirmpopup.icon.color")};
+}
+
+.p-confirmpopup-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: ${dt("confirmpopup.footer.gap")};
+    padding: ${dt("confirmpopup.footer.padding")};
+}
+
+.p-confirmpopup-footer button {
+    width: auto;
+}
+
+.p-confirmpopup-footer button:last-child {
+    margin: 0;
+}
+
+.p-confirmpopup-flipped {
+    margin-top: calc(${dt("confirmpopup.gutter")} * -1);
+    margin-bottom: ${dt("confirmpopup.gutter")};
+}
+
+.p-confirmpopup-enter-from {
+    opacity: 0;
+    transform: scaleY(0.8);
+}
+
+.p-confirmpopup-leave-to {
+    opacity: 0;
+}
+
+.p-confirmpopup-enter-active {
+    transition: transform 0.12s cubic-bezier(0, 0, 0.2, 1), opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
+}
+
+.p-confirmpopup-leave-active {
+    transition: opacity 0.1s linear;
+}
+
+.p-confirmpopup:after,
+.p-confirmpopup:before {
+    bottom: 100%;
+    left: ${dt("confirmpopup.arrow.offset")};
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.p-confirmpopup:after {
+    border-width: calc(${dt("confirmpopup.gutter")} - 2px);
+    margin-left: calc(-1 * (${dt("confirmpopup.gutter")} - 2px));
+    border-style: solid;
+    border-color: transparent;
+    border-bottom-color: ${dt("confirmpopup.background")};
+}
+
+.p-confirmpopup:before {
+    border-width: ${dt("confirmpopup.gutter")};
+    margin-left: calc(-1 * ${dt("confirmpopup.gutter")});
+    border-style: solid;
+    border-color: transparent;
+    border-bottom-color: ${dt("confirmpopup.border.color")};
+}
+
+.p-confirmpopup-flipped:after,
+.p-confirmpopup-flipped:before {
+    bottom: auto;
+    top: 100%;
+}
+
+.p-confirmpopup-flipped:after {
+    border-bottom-color: transparent;
+    border-top-color: ${dt("confirmpopup.background")};
+}
+
+.p-confirmpopup-flipped:before {
+    border-bottom-color: transparent;
+    border-top-color: ${dt("confirmpopup.border.color")};
+}
+`;
+var classes9 = {
+  root: "p-confirmpopup p-component",
+  content: "p-confirmpopup-content",
+  icon: "p-confirmpopup-icon",
+  message: "p-confirmpopup-message",
+  footer: "p-confirmpopup-footer",
+  pcRejectButton: "p-confirmpopup-reject-button",
+  pcAcceptButton: "p-confirmpopup-accept-button"
+};
+var ConfirmPopupStyle = class _ConfirmPopupStyle extends BaseStyle {
+  name = "confirmpopup";
+  theme = theme9;
+  classes = classes9;
+  static \u0275fac = /* @__PURE__ */ (() => {
+    let \u0275ConfirmPopupStyle_BaseFactory;
+    return function ConfirmPopupStyle_Factory(__ngFactoryType__) {
+      return (\u0275ConfirmPopupStyle_BaseFactory || (\u0275ConfirmPopupStyle_BaseFactory = \u0275\u0275getInheritedFactory(_ConfirmPopupStyle)))(__ngFactoryType__ || _ConfirmPopupStyle);
+    };
+  })();
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+    token: _ConfirmPopupStyle,
+    factory: _ConfirmPopupStyle.\u0275fac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ConfirmPopupStyle, [{
+    type: Injectable
+  }], null, null);
+})();
+var ConfirmPopupClasses;
+(function(ConfirmPopupClasses2) {
+  ConfirmPopupClasses2["root"] = "p-confirmpopup";
+  ConfirmPopupClasses2["content"] = "p-confirmpopup-content";
+  ConfirmPopupClasses2["icon"] = "p-confirmpopup-icon";
+  ConfirmPopupClasses2["message"] = "p-confirmpopup-message";
+  ConfirmPopupClasses2["footer"] = "p-confirmpopup-footer";
+  ConfirmPopupClasses2["pcRejectButton"] = "p-confirmpopup-reject-button";
+  ConfirmPopupClasses2["pcAcceptButton"] = "p-confirmpopup-accept-button";
+})(ConfirmPopupClasses || (ConfirmPopupClasses = {}));
+var ConfirmPopup = class _ConfirmPopup extends BaseComponent {
+  el;
+  confirmationService;
+  renderer;
+  cd;
+  overlayService;
+  document;
+  /**
+   * Optional key to match the key of confirm object, necessary to use when component tree has multiple confirm dialogs.
+   * @group Props
+   */
+  key;
+  /**
+   * Element to receive the focus when the popup gets visible, valid values are "accept", "reject", and "none".
+   * @group Props
+   */
+  defaultFocus = "accept";
+  /**
+   * Transition options of the show animation.
+   * @group Props
+   */
+  showTransitionOptions = ".12s cubic-bezier(0, 0, 0.2, 1)";
+  /**
+   * Transition options of the hide animation.
+   * @group Props
+   */
+  hideTransitionOptions = ".1s linear";
+  /**
+   * Whether to automatically manage layering.
+   * @group Props
+   */
+  autoZIndex = true;
+  /**
+   * Base zIndex value to use in layering.
+   * @group Props
+   */
+  baseZIndex = 0;
+  /**
+   * Inline style of the component.
+   * @group Props
+   */
+  style;
+  /**
+   * Style class of the component.
+   * @group Props
+   */
+  styleClass;
+  /**
+   * Defines if the component is visible.
+   * @group Props
+   */
+  get visible() {
+    return this._visible;
+  }
+  set visible(value) {
+    this._visible = value;
+    this.cd.markForCheck();
+  }
+  container;
+  subscription;
+  confirmation;
+  contentTemplate;
+  acceptIconTemplate;
+  rejectIconTemplate;
+  headlessTemplate;
+  _contentTemplate;
+  _acceptIconTemplate;
+  _rejectIconTemplate;
+  _headlessTemplate;
+  _visible;
+  documentClickListener;
+  documentResizeListener;
+  scrollHandler;
+  window;
+  _componentStyle = inject(ConfirmPopupStyle);
+  constructor(el, confirmationService, renderer, cd, overlayService, document2) {
+    super();
+    this.el = el;
+    this.confirmationService = confirmationService;
+    this.renderer = renderer;
+    this.cd = cd;
+    this.overlayService = overlayService;
+    this.document = document2;
+    this.window = this.document.defaultView;
+    this.subscription = this.confirmationService.requireConfirmation$.subscribe((confirmation) => {
+      if (!confirmation) {
+        this.hide();
+        return;
+      }
+      if (confirmation.key === this.key) {
+        this.confirmation = confirmation;
+        const keys = Object.keys(confirmation);
+        keys.forEach((key) => {
+          this[key] = confirmation[key];
+        });
+        if (this.confirmation.accept) {
+          this.confirmation.acceptEvent = new EventEmitter();
+          this.confirmation.acceptEvent.subscribe(this.confirmation.accept);
+        }
+        if (this.confirmation.reject) {
+          this.confirmation.rejectEvent = new EventEmitter();
+          this.confirmation.rejectEvent.subscribe(this.confirmation.reject);
+        }
+        this.visible = true;
+      }
+    });
+  }
+  templates;
+  ngAfterContentInit() {
+    this.templates?.forEach((item) => {
+      switch (item.getType()) {
+        case "content":
+          this._contentTemplate = item.template;
+          break;
+        case "rejecticon":
+          this._rejectIconTemplate = item.template;
+          break;
+        case "accepticon":
+          this._acceptIconTemplate = item.template;
+          break;
+        case "headless":
+          this._headlessTemplate = item.template;
+          break;
+      }
+    });
+  }
+  option(name, k) {
+    const source = this;
+    if (source.hasOwnProperty(name)) {
+      if (k) {
+        return source[k];
+      }
+      return source[name];
+    }
+    return void 0;
+  }
+  onEscapeKeydown(event) {
+    if (this.confirmation && this.confirmation.closeOnEscape) {
+      this.onReject();
+    }
+  }
+  onAnimationStart(event) {
+    if (event.toState === "open") {
+      this.container = event.element;
+      this.renderer.appendChild(this.document.body, this.container);
+      this.align();
+      this.bindListeners();
+      const element = this.getElementToFocus();
+      if (element) {
+        element.focus();
+      }
+    }
+  }
+  onAnimationEnd(event) {
+    switch (event.toState) {
+      case "void":
+        this.onContainerDestroy();
+        break;
+    }
+  }
+  getAcceptButtonProps() {
+    return this.option("acceptButtonProps");
+  }
+  getRejectButtonProps() {
+    return this.option("rejectButtonProps");
+  }
+  getElementToFocus() {
+    switch (this.defaultFocus) {
+      case "accept":
+        return findSingle(this.container, ".p-confirm-popup-accept");
+      case "reject":
+        return findSingle(this.container, ".p-confirm-popup-reject");
+      case "none":
+        return null;
+    }
+  }
+  align() {
+    if (this.autoZIndex) {
+      zindexutils.set("overlay", this.container, this.config.zIndex.overlay);
+    }
+    if (!this.confirmation) {
+      return;
+    }
+    absolutePosition(this.container, this.confirmation?.target, false);
+    const containerOffset = getOffset(this.container);
+    const targetOffset = getOffset(this.confirmation?.target);
+    let arrowLeft = 0;
+    if (containerOffset.left < targetOffset.left) {
+      arrowLeft = targetOffset.left - containerOffset.left;
+    }
+    this.container.style.setProperty("--overlayArrowLeft", `${arrowLeft}px`);
+    if (containerOffset.top < targetOffset.top) {
+      addClass(this.container, "p-confirm-popup-flipped");
+    }
+  }
+  hide() {
+    this.visible = false;
+  }
+  onAccept() {
+    if (this.confirmation?.acceptEvent) {
+      this.confirmation.acceptEvent.emit();
+    }
+    this.hide();
+  }
+  onReject() {
+    if (this.confirmation?.rejectEvent) {
+      this.confirmation.rejectEvent.emit();
+    }
+    this.hide();
+  }
+  onOverlayClick(event) {
+    this.overlayService.add({
+      originalEvent: event,
+      target: this.el.nativeElement
+    });
+  }
+  bindListeners() {
+    setTimeout(() => {
+      this.bindDocumentClickListener();
+      this.bindDocumentResizeListener();
+      this.bindScrollListener();
+    });
+  }
+  unbindListeners() {
+    this.unbindDocumentClickListener();
+    this.unbindDocumentResizeListener();
+    this.unbindScrollListener();
+  }
+  bindDocumentClickListener() {
+    if (!this.documentClickListener) {
+      let documentEvent = isIOS() ? "touchstart" : "click";
+      const documentTarget = this.el ? this.el.nativeElement.ownerDocument : this.document;
+      this.documentClickListener = this.renderer.listen(documentTarget, documentEvent, (event) => {
+        if (this.confirmation && this.confirmation.dismissableMask !== false) {
+          let targetElement = this.confirmation.target;
+          if (this.container !== event.target && !this.container?.contains(event.target) && targetElement !== event.target && !targetElement.contains(event.target)) {
+            this.hide();
+          }
+        }
+      });
+    }
+  }
+  unbindDocumentClickListener() {
+    if (this.documentClickListener) {
+      this.documentClickListener();
+      this.documentClickListener = null;
+    }
+  }
+  onWindowResize() {
+    if (this.visible && !isTouchDevice()) {
+      this.hide();
+    }
+  }
+  bindDocumentResizeListener() {
+    if (!this.documentResizeListener) {
+      this.documentResizeListener = this.renderer.listen(this.window, "resize", this.onWindowResize.bind(this));
+    }
+  }
+  unbindDocumentResizeListener() {
+    if (this.documentResizeListener) {
+      this.documentResizeListener();
+      this.documentResizeListener = null;
+    }
+  }
+  bindScrollListener() {
+    if (!this.scrollHandler) {
+      this.scrollHandler = new ConnectedOverlayScrollHandler(this.confirmation?.target, () => {
+        if (this.visible) {
+          this.hide();
+        }
+      });
+    }
+    this.scrollHandler.bindScrollListener();
+  }
+  unbindScrollListener() {
+    if (this.scrollHandler) {
+      this.scrollHandler.unbindScrollListener();
+    }
+  }
+  unsubscribeConfirmationSubscriptions() {
+    if (this.confirmation) {
+      if (this.confirmation.acceptEvent) {
+        this.confirmation.acceptEvent.unsubscribe();
+      }
+      if (this.confirmation.rejectEvent) {
+        this.confirmation.rejectEvent.unsubscribe();
+      }
+    }
+  }
+  onContainerDestroy() {
+    this.unbindListeners();
+    this.unsubscribeConfirmationSubscriptions();
+    if (this.autoZIndex) {
+      zindexutils.clear(this.container);
+    }
+    this.confirmation = null;
+    this.container = null;
+  }
+  restoreAppend() {
+    if (this.container) {
+      this.renderer.removeChild(this.document.body, this.container);
+    }
+    this.onContainerDestroy();
+  }
+  get acceptButtonLabel() {
+    return this.confirmation?.acceptLabel || this.config.getTranslation(TranslationKeys.ACCEPT);
+  }
+  get rejectButtonLabel() {
+    return this.confirmation?.rejectLabel || this.config.getTranslation(TranslationKeys.REJECT);
+  }
+  ngOnDestroy() {
+    this.restoreAppend();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+  static \u0275fac = function ConfirmPopup_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _ConfirmPopup)(\u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(ConfirmationService), \u0275\u0275directiveInject(Renderer2), \u0275\u0275directiveInject(ChangeDetectorRef), \u0275\u0275directiveInject(OverlayService), \u0275\u0275directiveInject(DOCUMENT));
+  };
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
+    type: _ConfirmPopup,
+    selectors: [["p-confirmPopup"], ["p-confirmpopup"], ["p-confirm-popup"]],
+    contentQueries: function ConfirmPopup_ContentQueries(rf, ctx, dirIndex) {
+      if (rf & 1) {
+        \u0275\u0275contentQuery(dirIndex, _c012, 4);
+        \u0275\u0275contentQuery(dirIndex, _c111, 4);
+        \u0275\u0275contentQuery(dirIndex, _c23, 4);
+        \u0275\u0275contentQuery(dirIndex, _c33, 4);
+        \u0275\u0275contentQuery(dirIndex, PrimeTemplate, 4);
+      }
+      if (rf & 2) {
+        let _t;
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.contentTemplate = _t.first);
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.acceptIconTemplate = _t.first);
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.rejectIconTemplate = _t.first);
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.headlessTemplate = _t.first);
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.templates = _t);
+      }
+    },
+    hostBindings: function ConfirmPopup_HostBindings(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275listener("keydown.escape", function ConfirmPopup_keydown_escape_HostBindingHandler($event) {
+          return ctx.onEscapeKeydown($event);
+        }, false, \u0275\u0275resolveDocument);
+      }
+    },
+    inputs: {
+      key: "key",
+      defaultFocus: "defaultFocus",
+      showTransitionOptions: "showTransitionOptions",
+      hideTransitionOptions: "hideTransitionOptions",
+      autoZIndex: [2, "autoZIndex", "autoZIndex", booleanAttribute],
+      baseZIndex: [2, "baseZIndex", "baseZIndex", numberAttribute],
+      style: "style",
+      styleClass: "styleClass",
+      visible: "visible"
+    },
+    features: [\u0275\u0275ProvidersFeature([ConfirmPopupStyle]), \u0275\u0275InheritDefinitionFeature],
+    decls: 1,
+    vars: 1,
+    consts: [["notHeadless", ""], ["content", ""], ["withoutContentTemplate", ""], ["rejecticon", ""], ["accepticontemplate", ""], ["role", "alertdialog", 3, "ngClass", "ngStyle", "class", "click", 4, "ngIf"], ["role", "alertdialog", 3, "click", "ngClass", "ngStyle"], [4, "ngIf", "ngIfElse"], [4, "ngTemplateOutlet", "ngTemplateOutletContext"], [1, "p-confirmpopup-content"], [1, "p-confirmpopup-footer"], ["type", "button", 3, "label", "ngClass", "styleClass", "size", "text", "buttonProps", "onClick", 4, "ngIf"], ["type", "button", 3, "label", "ngClass", "styleClass", "size", "buttonProps", "onClick", 4, "ngIf"], [3, "ngClass", "class", 4, "ngIf"], [1, "p-confirmpopup-message"], [3, "ngClass"], ["type", "button", 3, "onClick", "label", "ngClass", "styleClass", "size", "text", "buttonProps"], [3, "class", 4, "ngIf", "ngIfElse"], [4, "ngTemplateOutlet"], ["type", "button", 3, "onClick", "label", "ngClass", "styleClass", "size", "buttonProps"]],
+    template: function ConfirmPopup_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275template(0, ConfirmPopup_div_0_Template, 4, 12, "div", 5);
+      }
+      if (rf & 2) {
+        \u0275\u0275property("ngIf", ctx.visible);
+      }
+    },
+    dependencies: [CommonModule, NgClass, NgIf, NgTemplateOutlet, NgStyle, SharedModule, ButtonModule, Button],
+    encapsulation: 2,
+    data: {
+      animation: [trigger("animation", [state("void", style({
+        transform: "scaleY(0.8)",
+        opacity: 0
+      })), state("open", style({
+        transform: "translateY(0)",
+        opacity: 1
+      })), transition("void => open", animate("{{showTransitionParams}}")), transition("open => void", animate("{{hideTransitionParams}}"))])]
+    },
+    changeDetection: 0
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ConfirmPopup, [{
+    type: Component,
+    args: [{
+      selector: "p-confirmPopup, p-confirmpopup, p-confirm-popup",
+      standalone: true,
+      imports: [CommonModule, SharedModule, ButtonModule],
+      template: `
+        <div
+            *ngIf="visible"
+            [ngClass]="'p-confirmpopup p-component'"
+            [ngStyle]="style"
+            [class]="styleClass"
+            role="alertdialog"
+            (click)="onOverlayClick($event)"
+            [@animation]="{
+                value: 'open',
+                params: { showTransitionParams: showTransitionOptions, hideTransitionParams: hideTransitionOptions }
+            }"
+            (@animation.start)="onAnimationStart($event)"
+            (@animation.done)="onAnimationEnd($event)"
+        >
+            <ng-container *ngIf="headlessTemplate || _headlessTemplate; else notHeadless">
+                <ng-container *ngTemplateOutlet="headlessTemplate || _headlessTemplate; context: { $implicit: confirmation }"></ng-container>
+            </ng-container>
+            <ng-template #notHeadless>
+                <div #content class="p-confirmpopup-content">
+                    <ng-container *ngIf="contentTemplate || _contentTemplate; else withoutContentTemplate">
+                        <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate; context: { $implicit: confirmation }"></ng-container>
+                    </ng-container>
+                    <ng-template #withoutContentTemplate>
+                        <i [ngClass]="'p-confirmpopup-icon'" [class]="confirmation?.icon" *ngIf="confirmation?.icon"></i>
+                        <span class="p-confirmpopup-message">{{ confirmation?.message }}</span>
+                    </ng-template>
+                </div>
+                <div class="p-confirmpopup-footer">
+                    <p-button
+                        type="button"
+                        [label]="rejectButtonLabel"
+                        (onClick)="onReject()"
+                        [ngClass]="'p-confirmpopup-reject-button'"
+                        [styleClass]="confirmation?.rejectButtonStyleClass"
+                        [size]="confirmation.rejectButtonProps?.size || 'small'"
+                        [text]="confirmation.rejectButtonProps?.text || false"
+                        *ngIf="confirmation?.rejectVisible !== false"
+                        [attr.aria-label]="rejectButtonLabel"
+                        [buttonProps]="getRejectButtonProps()"
+                    >
+                        <i [class]="confirmation?.rejectIcon" *ngIf="confirmation?.rejectIcon; else rejecticon"></i>
+                        <ng-template #rejecticon *ngTemplateOutlet="rejectIconTemplate || _rejectIconTemplate"></ng-template>
+                    </p-button>
+                    <p-button
+                        type="button"
+                        [label]="acceptButtonLabel"
+                        (onClick)="onAccept()"
+                        [ngClass]="'p-confirmpopup-accept-button'"
+                        [styleClass]="confirmation?.acceptButtonStyleClass"
+                        [size]="confirmation.acceptButtonProps?.size || 'small'"
+                        *ngIf="confirmation?.acceptVisible !== false"
+                        [attr.aria-label]="acceptButtonLabel"
+                        [buttonProps]="getAcceptButtonProps()"
+                    >
+                        <i [class]="confirmation?.acceptIcon" *ngIf="confirmation?.acceptIcon; else accepticontemplate"></i>
+                        <ng-template #accepticontemplate *ngTemplateOutlet="acceptIconTemplate || _acceptIconTemplate"></ng-template>
+                    </p-button>
+                </div>
+            </ng-template>
+        </div>
+    `,
+      animations: [trigger("animation", [state("void", style({
+        transform: "scaleY(0.8)",
+        opacity: 0
+      })), state("open", style({
+        transform: "translateY(0)",
+        opacity: 1
+      })), transition("void => open", animate("{{showTransitionParams}}")), transition("open => void", animate("{{hideTransitionParams}}"))])],
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      encapsulation: ViewEncapsulation.None,
+      providers: [ConfirmPopupStyle]
+    }]
+  }], () => [{
+    type: ElementRef
+  }, {
+    type: ConfirmationService
+  }, {
+    type: Renderer2
+  }, {
+    type: ChangeDetectorRef
+  }, {
+    type: OverlayService
+  }, {
+    type: Document,
+    decorators: [{
+      type: Inject,
+      args: [DOCUMENT]
+    }]
+  }], {
+    key: [{
+      type: Input
+    }],
+    defaultFocus: [{
+      type: Input
+    }],
+    showTransitionOptions: [{
+      type: Input
+    }],
+    hideTransitionOptions: [{
+      type: Input
+    }],
+    autoZIndex: [{
+      type: Input,
+      args: [{
+        transform: booleanAttribute
+      }]
+    }],
+    baseZIndex: [{
+      type: Input,
+      args: [{
+        transform: numberAttribute
+      }]
+    }],
+    style: [{
+      type: Input
+    }],
+    styleClass: [{
+      type: Input
+    }],
+    visible: [{
+      type: Input
+    }],
+    contentTemplate: [{
+      type: ContentChild,
+      args: ["content", {
+        descendants: false
+      }]
+    }],
+    acceptIconTemplate: [{
+      type: ContentChild,
+      args: ["accepticon", {
+        descendants: false
+      }]
+    }],
+    rejectIconTemplate: [{
+      type: ContentChild,
+      args: ["rejecticon", {
+        descendants: false
+      }]
+    }],
+    headlessTemplate: [{
+      type: ContentChild,
+      args: ["headless", {
+        descendants: false
+      }]
+    }],
+    templates: [{
+      type: ContentChildren,
+      args: [PrimeTemplate]
+    }],
+    onEscapeKeydown: [{
+      type: HostListener,
+      args: ["document:keydown.escape", ["$event"]]
+    }]
+  });
+})();
+var ConfirmPopupModule = class _ConfirmPopupModule {
+  static \u0275fac = function ConfirmPopupModule_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _ConfirmPopupModule)();
+  };
+  static \u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
+    type: _ConfirmPopupModule,
+    imports: [ConfirmPopup, SharedModule],
+    exports: [ConfirmPopup, SharedModule]
+  });
+  static \u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({
+    imports: [ConfirmPopup, SharedModule, SharedModule]
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ConfirmPopupModule, [{
+    type: NgModule,
+    args: [{
+      imports: [ConfirmPopup, SharedModule],
+      exports: [ConfirmPopup, SharedModule]
+    }]
+  }], null, null);
+})();
+
+// node_modules/primeng/fesm2022/primeng-stepper.mjs
+var _c013 = ["*"];
+var _c113 = ["content"];
+var _c24 = (a0, a1, a2) => ({
+  activateCallback: a0,
+  value: a1,
+  active: a2
+});
+function Step_Conditional_0_Conditional_5_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "p-stepper-separator");
+  }
+}
+function Step_Conditional_0_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 0);
+    \u0275\u0275listener("click", function Step_Conditional_0_Template_button_click_0_listener() {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.onStepClick());
+    });
+    \u0275\u0275elementStart(1, "span", 1);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "span", 2);
+    \u0275\u0275projection(4);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(5, Step_Conditional_0_Conditional_5_Template, 1, 0, "p-stepper-separator");
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275property("tabindex", ctx_r1.isStepDisabled() ? -1 : void 0)("disabled", ctx_r1.isStepDisabled());
+    \u0275\u0275attribute("id", ctx_r1.id())("role", "tab")("aria-controls", ctx_r1.ariaControls());
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(ctx_r1.value());
+    \u0275\u0275advance(3);
+    \u0275\u0275conditional(ctx_r1.isSeparatorVisible() ? 5 : -1);
+  }
+}
+function Step_Conditional_1_ng_container_0_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainer(0);
+  }
+}
+function Step_Conditional_1_Conditional_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "p-stepper-separator");
+  }
+}
+function Step_Conditional_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275template(0, Step_Conditional_1_ng_container_0_Template, 1, 0, "ng-container", 3)(1, Step_Conditional_1_Conditional_1_Template, 1, 0, "p-stepper-separator");
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275property("ngTemplateOutlet", ctx_r1.content || ctx_r1._contentTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction3(3, _c24, ctx_r1.onStepClick.bind(ctx_r1), ctx_r1.value(), ctx_r1.active()));
+    \u0275\u0275advance();
+    \u0275\u0275conditional(ctx_r1.isSeparatorVisible() ? 1 : -1);
+  }
+}
+var _c34 = (a0) => ({
+  transitionParams: a0
+});
+var _c44 = (a0) => ({
+  value: "visible",
+  params: a0
+});
+var _c54 = (a0) => ({
+  value: "hidden",
+  params: a0
+});
+function StepPanel_Conditional_0_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "p-stepper-separator");
+  }
+}
+function StepPanel_Conditional_2_ng_container_0_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainer(0);
+  }
+}
+function StepPanel_Conditional_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275template(0, StepPanel_Conditional_2_ng_container_0_Template, 1, 0, "ng-container", 1);
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275property("ngTemplateOutlet", ctx_r0.contentTemplate || ctx_r0._contentTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction3(2, _c24, ctx_r0.updateValue.bind(ctx_r0), ctx_r0.value(), ctx_r0.active()));
+  }
+}
+var theme10 = ({
+  dt
+}) => `
+.p-steplist {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    overflow-x: auto;
+}
+
+.p-step {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: ${dt("stepper.step.gap")};
+    padding: ${dt("stepper.step.padding")};
+}
+
+.p-step:last-of-type {
+    flex: initial;
+}
+
+.p-step-header {
+    border: 0 none;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background ${dt("stepper.transition.duration")}, color ${dt("stepper.transition.duration")}, border-color ${dt("stepper.transition.duration")}, outline-color ${dt("stepper.transition.duration")}, box-shadow ${dt("stepper.transition.duration")};
+    border-radius: ${dt("stepper.step.header.border.radius")};
+    outline-color: transparent;
+    background: transparent;
+    padding: ${dt("stepper.step.header.padding")};
+    gap: ${dt("stepper.step.header.gap")};
+}
+
+.p-step-header:focus-visible {
+    box-shadow: ${dt("stepper.step.header.focus.ring.shadow")};
+    outline: ${dt("stepper.step.header.focus.ring.width")} ${dt("stepper.step.header.focus.ring.style")} ${dt("stepper.step.header.focus.ring.color")};
+    outline-offset: ${dt("stepper.step.header.focus.ring.offset")};
+}
+
+.p-stepper.p-stepper-readonly .p-step {
+    cursor: auto;
+}
+
+.p-step-title {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    color: ${dt("stepper.step.title.color")};
+    font-weight: ${dt("stepper.step.title.font.weight")};
+    transition: background ${dt("stepper.transition.duration")}, color ${dt("stepper.transition.duration")}, border-color ${dt("stepper.transition.duration")}, box-shadow ${dt("stepper.transition.duration")}, outline-color ${dt("stepper.transition.duration")};
+}
+
+.p-step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: ${dt("stepper.step.number.color")};
+    border: 2px solid ${dt("stepper.step.number.border.color")};
+    background: ${dt("stepper.step.number.background")};
+    min-width: ${dt("stepper.step.number.size")};
+    height: ${dt("stepper.step.number.size")};
+    line-height: ${dt("stepper.step.number.size")};
+    font-size: ${dt("stepper.step.number.font.size")};
+    z-index: 1;
+    border-radius: ${dt("stepper.step.number.border.radius")};
+    position: relative;
+    font-weight: ${dt("stepper.step.number.font.weight")};
+}
+
+.p-step-number::after {
+    content: " ";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: ${dt("stepper.step.number.border.radius")};
+    box-shadow: ${dt("stepper.step.number.shadow")};
+}
+
+.p-step-active .p-step-header {
+    cursor: default;
+}
+
+.p-step-active .p-step-number {
+    background: ${dt("stepper.step.number.active.background")};
+    border-color: ${dt("stepper.step.number.active.border.color")};
+    color: ${dt("stepper.step.number.active.color")};
+}
+
+.p-step-active .p-step-title {
+    color: ${dt("stepper.step.title.active.color")};
+}
+
+.p-step:not(.p-disabled):focus-visible {
+    outline: ${dt("focus.ring.width")} ${dt("focus.ring.style")} ${dt("focus.ring.color")};
+    outline-offset: ${dt("focus.ring.offset")};
+}
+
+.p-step:has(~ .p-step-active) .p-stepper-separator {
+    background: ${dt("stepper.separator.active.background")};
+}
+
+.p-stepper-separator {
+    flex: 1 1 0;
+    background: ${dt("stepper.separator.background")};
+    width: 100%;
+    height: ${dt("stepper.separator.size")};
+    transition: background ${dt("stepper.transition.duration")}, color ${dt("stepper.transition.duration")}, border-color ${dt("stepper.transition.duration")}, box-shadow ${dt("stepper.transition.duration")}, outline-color ${dt("stepper.transition.duration")};
+}
+
+.p-steppanels {
+    padding: ${dt("stepper.steppanels.padding")};
+}
+
+.p-steppanel {
+    background: ${dt("stepper.steppanel.background")};
+    color: ${dt("stepper.steppanel.color")};
+}
+
+.p-stepper:has(.p-stepitem) {
+    display: flex;
+    flex-direction: column;
+}
+
+.p-stepitem {
+    display: flex;
+    flex-direction: column;
+    flex: initial;
+}
+
+.p-stepitem.p-stepitem-active {
+    flex: 1 1 auto;
+}
+
+.p-stepitem .p-step {
+    flex: initial;
+}
+
+.p-stepitem .p-steppanel-content {
+    width: 100%;
+    padding: ${dt("stepper.steppanel.padding")};
+    margin-inline-start: 1rem;
+}
+
+.p-stepitem .p-steppanel {
+    display: flex;
+    flex: 1 1 auto;
+}
+
+.p-stepitem .p-stepper-separator {
+    flex: 0 0 auto;
+    width: ${dt("stepper.separator.size")};
+    height: auto;
+    margin: ${dt("stepper.separator.margin")};
+    position: relative;
+    left: calc(-1 * ${dt("stepper.separator.size")});
+}
+
+.p-stepitem .p-stepper-separator:dir(rtl) {
+    left: calc(-9 * ${dt("stepper.separator.size")});
+}
+
+.p-stepitem:has(~ .p-stepitem-active) .p-stepper-separator {
+    background: ${dt("stepper.separator.active.background")};
+}
+
+.p-stepitem:last-of-type .p-steppanel {
+    padding-inline-start: ${dt("stepper.step.number.size")};
+}
+/* For PrimeNG */
+.p-steppanel {
+    overflow: hidden;
+}
+
+.p-stepppanel:not(.ng-animating) {
+    overflow: inherit;
+}
+`;
+var classes10 = {
+  root: ({
+    props
+  }) => ["p-stepper p-component", {
+    "p-readonly": props.linear
+  }],
+  separator: "p-stepper-separator"
+};
+var StepperStyle = class _StepperStyle extends BaseStyle {
+  name = "stepper";
+  theme = theme10;
+  classes = classes10;
+  static \u0275fac = /* @__PURE__ */ (() => {
+    let \u0275StepperStyle_BaseFactory;
+    return function StepperStyle_Factory(__ngFactoryType__) {
+      return (\u0275StepperStyle_BaseFactory || (\u0275StepperStyle_BaseFactory = \u0275\u0275getInheritedFactory(_StepperStyle)))(__ngFactoryType__ || _StepperStyle);
+    };
+  })();
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+    token: _StepperStyle,
+    factory: _StepperStyle.\u0275fac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(StepperStyle, [{
+    type: Injectable
+  }], null, null);
+})();
+var StepperClasses;
+(function(StepperClasses2) {
+  StepperClasses2["root"] = "p-stepper";
+  StepperClasses2["separator"] = "p-stepper-separator";
+})(StepperClasses || (StepperClasses = {}));
+var StepList = class _StepList extends BaseComponent {
+  steps = contentChildren(forwardRef(() => Step));
+  static \u0275fac = /* @__PURE__ */ (() => {
+    let \u0275StepList_BaseFactory;
+    return function StepList_Factory(__ngFactoryType__) {
+      return (\u0275StepList_BaseFactory || (\u0275StepList_BaseFactory = \u0275\u0275getInheritedFactory(_StepList)))(__ngFactoryType__ || _StepList);
+    };
+  })();
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
+    type: _StepList,
+    selectors: [["p-step-list"]],
+    contentQueries: function StepList_ContentQueries(rf, ctx, dirIndex) {
+      if (rf & 1) {
+        \u0275\u0275contentQuerySignal(dirIndex, ctx.steps, Step, 4);
+      }
+      if (rf & 2) {
+        \u0275\u0275queryAdvance();
+      }
+    },
+    hostVars: 4,
+    hostBindings: function StepList_HostBindings(rf, ctx) {
+      if (rf & 2) {
+        \u0275\u0275classProp("p-steplist", true)("p-component", true);
+      }
+    },
+    features: [\u0275\u0275InheritDefinitionFeature],
+    ngContentSelectors: _c013,
+    decls: 1,
+    vars: 0,
+    template: function StepList_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275projectionDef();
+        \u0275\u0275projection(0);
+      }
+    },
+    dependencies: [CommonModule],
+    encapsulation: 2,
+    changeDetection: 0
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(StepList, [{
+    type: Component,
+    args: [{
+      selector: "p-step-list",
+      standalone: true,
+      imports: [CommonModule],
+      template: ` <ng-content></ng-content>`,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      encapsulation: ViewEncapsulation.None,
+      host: {
+        "[class.p-steplist]": "true",
+        "[class.p-component]": "true"
+      }
+    }]
+  }], null, null);
+})();
+var StepperSeparator = class _StepperSeparator extends BaseComponent {
+  static \u0275fac = /* @__PURE__ */ (() => {
+    let \u0275StepperSeparator_BaseFactory;
+    return function StepperSeparator_Factory(__ngFactoryType__) {
+      return (\u0275StepperSeparator_BaseFactory || (\u0275StepperSeparator_BaseFactory = \u0275\u0275getInheritedFactory(_StepperSeparator)))(__ngFactoryType__ || _StepperSeparator);
+    };
+  })();
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
+    type: _StepperSeparator,
+    selectors: [["p-stepper-separator"]],
+    hostVars: 4,
+    hostBindings: function StepperSeparator_HostBindings(rf, ctx) {
+      if (rf & 2) {
+        \u0275\u0275classProp("p-stepper-separator", true)("p-component", true);
+      }
+    },
+    features: [\u0275\u0275InheritDefinitionFeature],
+    ngContentSelectors: _c013,
+    decls: 1,
+    vars: 0,
+    template: function StepperSeparator_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275projectionDef();
+        \u0275\u0275projection(0);
+      }
+    },
+    dependencies: [CommonModule],
+    encapsulation: 2,
+    changeDetection: 0
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(StepperSeparator, [{
+    type: Component,
+    args: [{
+      selector: "p-stepper-separator",
+      standalone: true,
+      imports: [CommonModule],
+      template: ` <ng-content></ng-content>`,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      encapsulation: ViewEncapsulation.None,
+      host: {
+        "[class.p-stepper-separator]": "true",
+        "[class.p-component]": "true"
+      }
+    }]
+  }], null, null);
+})();
+var StepItem = class _StepItem extends BaseComponent {
+  pcStepper = inject(forwardRef(() => Stepper));
+  /**
+   * Value of step.
+   * @type {<number | undefined>}
+   * @defaultValue undefined
+   * @group Props
+   */
+  value = model();
+  isActive = computed(() => this.pcStepper.value() === this.value());
+  step = contentChild(forwardRef(() => Step));
+  stepPanel = contentChild(forwardRef(() => StepPanel));
+  constructor() {
+    super();
+    effect(() => {
+      this.step().value.set(this.value());
+    });
+    effect(() => {
+      this.stepPanel().value.set(this.value());
+    });
+  }
+  static \u0275fac = function StepItem_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _StepItem)();
+  };
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
+    type: _StepItem,
+    selectors: [["p-step-item"]],
+    contentQueries: function StepItem_ContentQueries(rf, ctx, dirIndex) {
+      if (rf & 1) {
+        \u0275\u0275contentQuerySignal(dirIndex, ctx.step, Step, 5);
+        \u0275\u0275contentQuerySignal(dirIndex, ctx.stepPanel, StepPanel, 5);
+      }
+      if (rf & 2) {
+        \u0275\u0275queryAdvance(2);
+      }
+    },
+    hostVars: 5,
+    hostBindings: function StepItem_HostBindings(rf, ctx) {
+      if (rf & 2) {
+        \u0275\u0275attribute("data-p-active", ctx.isActive());
+        \u0275\u0275classProp("p-stepitem", true)("p-component", true);
+      }
+    },
+    inputs: {
+      value: [1, "value"]
+    },
+    outputs: {
+      value: "valueChange"
+    },
+    features: [\u0275\u0275InheritDefinitionFeature],
+    ngContentSelectors: _c013,
+    decls: 1,
+    vars: 0,
+    template: function StepItem_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275projectionDef();
+        \u0275\u0275projection(0);
+      }
+    },
+    dependencies: [CommonModule],
+    encapsulation: 2,
+    changeDetection: 0
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(StepItem, [{
+    type: Component,
+    args: [{
+      selector: "p-step-item",
+      standalone: true,
+      imports: [CommonModule],
+      template: ` <ng-content></ng-content>`,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      encapsulation: ViewEncapsulation.None,
+      host: {
+        "[class.p-stepitem]": "true",
+        "[class.p-component]": "true",
+        "[attr.data-p-active]": "isActive()"
+      }
+    }]
+  }], () => [], null);
+})();
+var Step = class _Step extends BaseComponent {
+  pcStepper = inject(forwardRef(() => Stepper));
+  /**
+   * Active value of stepper.
+   * @type {number}
+   * @defaultValue undefined
+   * @group Props
+   */
+  value = model();
+  /**
+   * Whether the step is disabled.
+   * @type {boolean}
+   * @defaultValue false
+   * @group Props
+   */
+  disabled = input(false, {
+    transform: (v) => transformToBoolean(v)
+  });
+  active = computed(() => this.pcStepper.isStepActive(this.value()));
+  isStepDisabled = computed(() => !this.active() && (this.pcStepper.linear() || this.disabled()));
+  id = computed(() => `${this.pcStepper.id()}_step_${this.value()}`);
+  ariaControls = computed(() => `${this.pcStepper.id()}_steppanel_${this.value()}`);
+  isSeparatorVisible = computed(() => {
+    if (this.pcStepper.stepList()) {
+      const steps = this.pcStepper.stepList().steps();
+      const index = steps.indexOf(this);
+      const stepLen = steps.length;
+      return index !== stepLen - 1;
+    } else {
+      return false;
+    }
+  });
+  /**
+   * Content template.
+   * @type {TemplateRef<StepContentTemplateContext>}
+   * @group Templates
+   */
+  content;
+  templates;
+  _contentTemplate;
+  ngAfterContentInit() {
+    this.templates?.forEach((item) => {
+      switch (item.getType()) {
+        case "content":
+          this._contentTemplate = item.template;
+          break;
+      }
+    });
+  }
+  onStepClick() {
+    this.pcStepper.updateValue(this.value());
+  }
+  static \u0275fac = /* @__PURE__ */ (() => {
+    let \u0275Step_BaseFactory;
+    return function Step_Factory(__ngFactoryType__) {
+      return (\u0275Step_BaseFactory || (\u0275Step_BaseFactory = \u0275\u0275getInheritedFactory(_Step)))(__ngFactoryType__ || _Step);
+    };
+  })();
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
+    type: _Step,
+    selectors: [["p-step"]],
+    contentQueries: function Step_ContentQueries(rf, ctx, dirIndex) {
+      if (rf & 1) {
+        \u0275\u0275contentQuery(dirIndex, _c113, 4);
+        \u0275\u0275contentQuery(dirIndex, PrimeTemplate, 4);
+      }
+      if (rf & 2) {
+        let _t;
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.content = _t.first);
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.templates = _t);
+      }
+    },
+    hostVars: 13,
+    hostBindings: function Step_HostBindings(rf, ctx) {
+      if (rf & 2) {
+        \u0275\u0275attribute("aria-current", ctx.active() ? "step" : void 0)("role", "presentation")("data-p-active", ctx.active())("data-p-disabled", ctx.isStepDisabled())("data-pc-name", "step");
+        \u0275\u0275classProp("p-step", true)("p-step-active", ctx.active())("p-disabled", ctx.isStepDisabled())("p-component", true);
+      }
+    },
+    inputs: {
+      value: [1, "value"],
+      disabled: [1, "disabled"]
+    },
+    outputs: {
+      value: "valueChange"
+    },
+    features: [\u0275\u0275InheritDefinitionFeature],
+    ngContentSelectors: _c013,
+    decls: 2,
+    vars: 1,
+    consts: [["type", "button", 1, "p-step-header", 3, "click", "tabindex", "disabled"], [1, "p-step-number"], [1, "p-step-title"], [4, "ngTemplateOutlet", "ngTemplateOutletContext"]],
+    template: function Step_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275projectionDef();
+        \u0275\u0275template(0, Step_Conditional_0_Template, 6, 7)(1, Step_Conditional_1_Template, 2, 7);
+      }
+      if (rf & 2) {
+        \u0275\u0275conditional(!ctx.content && !ctx._contentTemplate ? 0 : 1);
+      }
+    },
+    dependencies: [CommonModule, NgTemplateOutlet, StepperSeparator, SharedModule],
+    encapsulation: 2,
+    changeDetection: 0
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Step, [{
+    type: Component,
+    args: [{
+      selector: "p-step",
+      standalone: true,
+      imports: [CommonModule, StepperSeparator, SharedModule],
+      template: `
+        @if (!content && !_contentTemplate) {
+            <button [attr.id]="id()" class="p-step-header" [attr.role]="'tab'" [tabindex]="isStepDisabled() ? -1 : undefined" [attr.aria-controls]="ariaControls()" [disabled]="isStepDisabled()" (click)="onStepClick()" type="button">
+                <span class="p-step-number">{{ value() }}</span>
+                <span class="p-step-title">
+                    <ng-content></ng-content>
+                </span>
+            </button>
+            @if (isSeparatorVisible()) {
+                <p-stepper-separator />
+            }
+        } @else {
+            <ng-container *ngTemplateOutlet="content || _contentTemplate; context: { activateCallback: onStepClick.bind(this), value: value(), active: active() }"></ng-container>
+            @if (isSeparatorVisible()) {
+                <p-stepper-separator />
+            }
+        }
+    `,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      encapsulation: ViewEncapsulation.None,
+      host: {
+        "[class.p-step]": "true",
+        "[class.p-step-active]": "active()",
+        "[class.p-disabled]": "isStepDisabled()",
+        "[class.p-component]": "true",
+        "[attr.aria-current]": 'active() ? "step" : undefined',
+        "[attr.role]": '"presentation"',
+        "[attr.data-p-active]": "active()",
+        "[attr.data-p-disabled]": "isStepDisabled()",
+        "[attr.data-pc-name]": '"step"'
+      }
+    }]
+  }], null, {
+    content: [{
+      type: ContentChild,
+      args: ["content", {
+        descendants: false
+      }]
+    }],
+    templates: [{
+      type: ContentChildren,
+      args: [PrimeTemplate]
+    }]
+  });
+})();
+var StepPanel = class _StepPanel extends BaseComponent {
+  pcStepper = inject(forwardRef(() => Stepper));
+  transitionOptions = computed(() => this.pcStepper.transitionOptions());
+  /**
+   * Active value of stepper.
+   * @type {number}
+   * @defaultValue undefined
+   * @group Props
+   */
+  value = model(void 0);
+  active = computed(() => this.pcStepper.value() === this.value());
+  ariaControls = computed(() => `${this.pcStepper.id()}_step_${this.value()}`);
+  id = computed(() => `${this.pcStepper.id()}_steppanel_${this.value()}`);
+  isVertical = computed(() => this.pcStepper.stepItems().length > 0);
+  isSeparatorVisible = computed(() => {
+    if (this.pcStepper.stepItems()) {
+      const stepLen = this.pcStepper.stepItems().length;
+      const stepPanelElements = find(this.pcStepper.el.nativeElement, '[data-pc-name="steppanel"]');
+      const index = findIndexInList(this.el.nativeElement, stepPanelElements);
+      return index !== stepLen - 1;
+    }
+  });
+  /**
+   * Content template.
+   * @param {StepPanelContentTemplateContext} context - Context of the template
+   * @see {@link StepPanelContentTemplateContext}
+   * @group Templates
+   */
+  contentTemplate;
+  templates;
+  _contentTemplate;
+  ngAfterContentInit() {
+    this.templates?.forEach((item) => {
+      switch (item.getType()) {
+        case "content":
+          this._contentTemplate = item.template;
+          break;
+      }
+    });
+  }
+  updateValue(value) {
+    this.pcStepper.updateValue(value);
+  }
+  static \u0275fac = /* @__PURE__ */ (() => {
+    let \u0275StepPanel_BaseFactory;
+    return function StepPanel_Factory(__ngFactoryType__) {
+      return (\u0275StepPanel_BaseFactory || (\u0275StepPanel_BaseFactory = \u0275\u0275getInheritedFactory(_StepPanel)))(__ngFactoryType__ || _StepPanel);
+    };
+  })();
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
+    type: _StepPanel,
+    selectors: [["p-step-panel"]],
+    contentQueries: function StepPanel_ContentQueries(rf, ctx, dirIndex) {
+      if (rf & 1) {
+        \u0275\u0275contentQuery(dirIndex, _c113, 5);
+        \u0275\u0275contentQuery(dirIndex, PrimeTemplate, 4);
+      }
+      if (rf & 2) {
+        let _t;
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.contentTemplate = _t.first);
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.templates = _t);
+      }
+    },
+    hostVars: 11,
+    hostBindings: function StepPanel_HostBindings(rf, ctx) {
+      if (rf & 2) {
+        \u0275\u0275attribute("role", "tabpanel")("aria-controls", ctx.ariaControls())("id", ctx.id())("data-p-active", ctx.active())("data-pc-name", "steppanel");
+        \u0275\u0275classProp("p-steppanel", true)("p-component", true)("p-steppanel-active", ctx.active());
+      }
+    },
+    inputs: {
+      value: [1, "value"]
+    },
+    outputs: {
+      value: "valueChange"
+    },
+    features: [\u0275\u0275InheritDefinitionFeature],
+    decls: 3,
+    vars: 11,
+    consts: [[1, "p-steppanel-content"], [4, "ngTemplateOutlet", "ngTemplateOutletContext"]],
+    template: function StepPanel_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275template(0, StepPanel_Conditional_0_Template, 1, 0, "p-stepper-separator");
+        \u0275\u0275elementStart(1, "div", 0);
+        \u0275\u0275template(2, StepPanel_Conditional_2_Template, 1, 6, "ng-container");
+        \u0275\u0275elementEnd();
+      }
+      if (rf & 2) {
+        \u0275\u0275conditional(ctx.isSeparatorVisible() ? 0 : -1);
+        \u0275\u0275advance();
+        \u0275\u0275property("@content", ctx.isVertical() ? ctx.active() ? \u0275\u0275pureFunction1(5, _c44, \u0275\u0275pureFunction1(3, _c34, ctx.transitionOptions())) : \u0275\u0275pureFunction1(9, _c54, \u0275\u0275pureFunction1(7, _c34, ctx.transitionOptions())) : void 0);
+        \u0275\u0275advance();
+        \u0275\u0275conditional(ctx.active() ? 2 : -1);
+      }
+    },
+    dependencies: [CommonModule, NgTemplateOutlet, StepperSeparator, SharedModule],
+    encapsulation: 2,
+    data: {
+      animation: [trigger("content", [state("hidden", style({
+        height: "0",
+        visibility: "hidden"
+      })), state("visible", style({
+        height: "*",
+        visibility: "visible"
+      })), transition("visible <=> hidden", [animate("250ms cubic-bezier(0.86, 0, 0.07, 1)")]), transition("void => *", animate(0))])]
+    },
+    changeDetection: 0
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(StepPanel, [{
+    type: Component,
+    args: [{
+      selector: "p-step-panel",
+      standalone: true,
+      imports: [CommonModule, StepperSeparator, SharedModule],
+      template: `
+        @if (isSeparatorVisible()) {
+            <p-stepper-separator />
+        }
+        <div class="p-steppanel-content" [@content]="isVertical() ? (active() ? { value: 'visible', params: { transitionParams: transitionOptions() } } : { value: 'hidden', params: { transitionParams: transitionOptions() } }) : undefined">
+            @if (active()) {
+                <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate; context: { activateCallback: updateValue.bind(this), value: value(), active: active() }"></ng-container>
+            }
+        </div>
+    `,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      encapsulation: ViewEncapsulation.None,
+      host: {
+        "[class.p-steppanel]": "true",
+        "[class.p-component]": "true",
+        "[class.p-steppanel-active]": "active()",
+        "[attr.role]": '"tabpanel"',
+        "[attr.aria-controls]": "ariaControls()",
+        "[attr.id]": "id()",
+        "[attr.data-p-active]": "active()",
+        "[attr.data-pc-name]": '"steppanel"'
+      },
+      animations: [trigger("content", [state("hidden", style({
+        height: "0",
+        visibility: "hidden"
+      })), state("visible", style({
+        height: "*",
+        visibility: "visible"
+      })), transition("visible <=> hidden", [animate("250ms cubic-bezier(0.86, 0, 0.07, 1)")]), transition("void => *", animate(0))])]
+    }]
+  }], null, {
+    contentTemplate: [{
+      type: ContentChild,
+      args: ["content"]
+    }],
+    templates: [{
+      type: ContentChildren,
+      args: [PrimeTemplate]
+    }]
+  });
+})();
+var StepPanels = class _StepPanels extends BaseComponent {
+  static \u0275fac = /* @__PURE__ */ (() => {
+    let \u0275StepPanels_BaseFactory;
+    return function StepPanels_Factory(__ngFactoryType__) {
+      return (\u0275StepPanels_BaseFactory || (\u0275StepPanels_BaseFactory = \u0275\u0275getInheritedFactory(_StepPanels)))(__ngFactoryType__ || _StepPanels);
+    };
+  })();
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
+    type: _StepPanels,
+    selectors: [["p-step-panels"]],
+    hostVars: 4,
+    hostBindings: function StepPanels_HostBindings(rf, ctx) {
+      if (rf & 2) {
+        \u0275\u0275classProp("p-steppanels", true)("p-component", true);
+      }
+    },
+    features: [\u0275\u0275InheritDefinitionFeature],
+    ngContentSelectors: _c013,
+    decls: 1,
+    vars: 0,
+    template: function StepPanels_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275projectionDef();
+        \u0275\u0275projection(0);
+      }
+    },
+    dependencies: [CommonModule, SharedModule],
+    encapsulation: 2,
+    changeDetection: 0
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(StepPanels, [{
+    type: Component,
+    args: [{
+      selector: "p-step-panels",
+      standalone: true,
+      imports: [CommonModule, SharedModule],
+      template: ` <ng-content></ng-content>`,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      encapsulation: ViewEncapsulation.None,
+      host: {
+        "[class.p-steppanels]": "true",
+        "[class.p-component]": "true"
+      }
+    }]
+  }], null, null);
+})();
+var Stepper = class _Stepper extends BaseComponent {
+  /**
+   * A model that can hold a numeric value or be undefined.
+   * @defaultValue undefined
+   * @type {ModelSignal<number | undefined>}
+   * @group Props
+   */
+  value = model(void 0);
+  /**
+   * A boolean variable that captures user input.
+   * @defaultValue false
+   * @type {InputSignalWithTransform<any, boolean >}
+   * @group Props
+   */
+  linear = input(false, {
+    transform: (v) => transformToBoolean(v)
+  });
+  /**
+   * Transition options of the animation.
+   * @defaultValue 400ms cubic-bezier(0.86, 0, 0.07, 1)
+   * @type {InputSignal<string >}
+   * @group Props
+   */
+  transitionOptions = input("400ms cubic-bezier(0.86, 0, 0.07, 1)");
+  _componentStyle = inject(StepperStyle);
+  id = signal(uuid("pn_id_"));
+  stepItems = contentChildren(StepItem);
+  steps = contentChildren(Step);
+  stepList = contentChild(StepList);
+  updateValue(value) {
+    this.value.set(value);
+  }
+  isStepActive(value) {
+    return this.value() === value;
+  }
+  static \u0275fac = /* @__PURE__ */ (() => {
+    let \u0275Stepper_BaseFactory;
+    return function Stepper_Factory(__ngFactoryType__) {
+      return (\u0275Stepper_BaseFactory || (\u0275Stepper_BaseFactory = \u0275\u0275getInheritedFactory(_Stepper)))(__ngFactoryType__ || _Stepper);
+    };
+  })();
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
+    type: _Stepper,
+    selectors: [["p-stepper"]],
+    contentQueries: function Stepper_ContentQueries(rf, ctx, dirIndex) {
+      if (rf & 1) {
+        \u0275\u0275contentQuerySignal(dirIndex, ctx.stepItems, StepItem, 4);
+        \u0275\u0275contentQuerySignal(dirIndex, ctx.steps, Step, 4);
+        \u0275\u0275contentQuerySignal(dirIndex, ctx.stepList, StepList, 5);
+      }
+      if (rf & 2) {
+        \u0275\u0275queryAdvance(3);
+      }
+    },
+    hostVars: 6,
+    hostBindings: function Stepper_HostBindings(rf, ctx) {
+      if (rf & 2) {
+        \u0275\u0275attribute("role", "tablist")("id", ctx.id());
+        \u0275\u0275classProp("p-stepper", true)("p-component", true);
+      }
+    },
+    inputs: {
+      value: [1, "value"],
+      linear: [1, "linear"],
+      transitionOptions: [1, "transitionOptions"]
+    },
+    outputs: {
+      value: "valueChange"
+    },
+    features: [\u0275\u0275ProvidersFeature([StepperStyle]), \u0275\u0275InheritDefinitionFeature],
+    ngContentSelectors: _c013,
+    decls: 1,
+    vars: 0,
+    template: function Stepper_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275projectionDef();
+        \u0275\u0275projection(0);
+      }
+    },
+    dependencies: [CommonModule, SharedModule],
+    encapsulation: 2,
+    changeDetection: 0
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Stepper, [{
+    type: Component,
+    args: [{
+      selector: "p-stepper",
+      standalone: true,
+      imports: [CommonModule, SharedModule],
+      template: ` <ng-content></ng-content>`,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      encapsulation: ViewEncapsulation.None,
+      providers: [StepperStyle],
+      host: {
+        "[class.p-stepper]": "true",
+        "[class.p-component]": "true",
+        "[attr.role]": '"tablist"',
+        "[attr.id]": "id()"
+      }
+    }]
+  }], null, null);
+})();
+var StepperModule = class _StepperModule {
+  static \u0275fac = function StepperModule_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _StepperModule)();
+  };
+  static \u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
+    type: _StepperModule,
+    imports: [Stepper, StepList, StepPanels, StepPanel, StepItem, Step, StepperSeparator, SharedModule],
+    exports: [Stepper, StepList, StepPanels, StepPanel, StepItem, Step, StepperSeparator, SharedModule]
+  });
+  static \u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({
+    imports: [Stepper, StepList, StepPanels, StepPanel, StepItem, Step, StepperSeparator, SharedModule, SharedModule]
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(StepperModule, [{
+    type: NgModule,
+    args: [{
+      imports: [Stepper, StepList, StepPanels, StepPanel, StepItem, Step, StepperSeparator, SharedModule],
+      exports: [Stepper, StepList, StepPanels, StepPanel, StepItem, Step, StepperSeparator, SharedModule]
+    }]
+  }], null, null);
+})();
+
+// node_modules/primeng/fesm2022/primeng-toggleswitch.mjs
+var _c014 = ["handle"];
+var _c114 = ["input"];
+var _c25 = (a0) => ({
+  checked: a0
+});
+function ToggleSwitch_Conditional_5_ng_container_0_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainer(0);
+  }
+}
+function ToggleSwitch_Conditional_5_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275template(0, ToggleSwitch_Conditional_5_ng_container_0_Template, 1, 0, "ng-container", 4);
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275property("ngTemplateOutlet", ctx_r1.handleTemplate || ctx_r1._handleTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction1(2, _c25, ctx_r1.checked()));
+  }
+}
+var theme11 = ({
+  dt
+}) => `
+.p-toggleswitch {
+    display: inline-block;
+    width: ${dt("toggleswitch.width")};
+    height: ${dt("toggleswitch.height")};
+}
+
+.p-toggleswitch-input {
+    cursor: pointer;
+    appearance: none;
+    position: absolute;
+    top: 0;
+    inset-inline-start: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+    z-index: 1;
+    outline: 0 none;
+    border-radius: ${dt("toggleswitch.border.radius")};
+}
+
+.p-toggleswitch-slider {
+    display: inline-block;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    border-width: ${dt("toggleswitch.border.width")};
+    border-style: solid;
+    border-color: ${dt("toggleswitch.border.color")};
+    background: ${dt("toggleswitch.background")};
+    transition: background ${dt("toggleswitch.transition.duration")}, color ${dt("toggleswitch.transition.duration")}, border-color ${dt("toggleswitch.transition.duration")}, outline-color ${dt("toggleswitch.transition.duration")}, box-shadow ${dt("toggleswitch.transition.duration")};
+    border-radius: ${dt("toggleswitch.border.radius")};
+    outline-color: transparent;
+    box-shadow: ${dt("toggleswitch.shadow")};
+}
+
+.p-toggleswitch-handle {
+    position: absolute;
+    top: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: ${dt("toggleswitch.handle.background")};
+    color: ${dt("toggleswitch.handle.color")};
+    width: ${dt("toggleswitch.handle.size")};
+    height: ${dt("toggleswitch.handle.size")};
+    inset-inline-start: ${dt("toggleswitch.gap")};
+    margin-block-start: calc(-1 * calc(${dt("toggleswitch.handle.size")} / 2));
+    border-radius: ${dt("toggleswitch.handle.border.radius")};
+    transition: background ${dt("toggleswitch.transition.duration")}, color ${dt("toggleswitch.transition.duration")}, inset-inline-start ${dt("toggleswitch.slide.duration")}, box-shadow ${dt("toggleswitch.slide.duration")};
+}
+
+.p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
+    background: ${dt("toggleswitch.checked.background")};
+    border-color: ${dt("toggleswitch.checked.border.color")};
+}
+
+.p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-handle {
+    background: ${dt("toggleswitch.handle.checked.background")};
+    color: ${dt("toggleswitch.handle.checked.color")};
+    inset-inline-start: calc(${dt("toggleswitch.width")} - calc(${dt("toggleswitch.handle.size")} + ${dt("toggleswitch.gap")}));
+}
+
+.p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover) .p-toggleswitch-slider {
+    background: ${dt("toggleswitch.hover.background")};
+    border-color: ${dt("toggleswitch.hover.border.color")};
+}
+
+.p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover) .p-toggleswitch-handle {
+    background: ${dt("toggleswitch.handle.hover.background")};
+    color: ${dt("toggleswitch.handle.hover.color")};
+}
+
+.p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover).p-toggleswitch-checked .p-toggleswitch-slider {
+    background: ${dt("toggleswitch.checked.hover.background")};
+    border-color: ${dt("toggleswitch.checked.hover.border.color")};
+}
+
+.p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover).p-toggleswitch-checked .p-toggleswitch-handle {
+    background: ${dt("toggleswitch.handle.checked.hover.background")};
+    color: ${dt("toggleswitch.handle.checked.hover.color")};
+}
+
+.p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:focus-visible) .p-toggleswitch-slider {
+    box-shadow: ${dt("toggleswitch.focus.ring.shadow")};
+    outline: ${dt("toggleswitch.focus.ring.width")} ${dt("toggleswitch.focus.ring.style")} ${dt("toggleswitch.focus.ring.color")};
+    outline-offset: ${dt("toggleswitch.focus.ring.offset")};
+}
+
+.p-toggleswitch.p-invalid > .p-toggleswitch-slider {
+    border-color: ${dt("toggleswitch.invalid.border.color")};
+}
+
+.p-toggleswitch.p-disabled {
+    opacity: 1;
+}
+
+.p-toggleswitch.p-disabled .p-toggleswitch-slider {
+    background: ${dt("toggleswitch.disabled.background")};
+}
+
+.p-toggleswitch.p-disabled .p-toggleswitch-handle {
+    background: ${dt("toggleswitch.handle.disabled.background")};
+}
+
+/* For PrimeNG */
+
+p-toggleSwitch.ng-invalid.ng-dirty > .p-toggleswitch > .p-toggleswitch-slider,
+p-toggle-switch.ng-invalid.ng-dirty > .p-toggleswitch > .p-toggleswitch-slider,
+p-toggleswitch.ng-invalid.ng-dirty > .p-toggleswitch > .p-toggleswitch-slider {
+    border-color: ${dt("toggleswitch.invalid.border.color")};
+}`;
+var inlineStyles2 = {
+  root: {
+    position: "relative"
+  }
+};
+var classes11 = {
+  root: ({
+    instance
+  }) => ({
+    "p-toggleswitch p-component": true,
+    "p-toggleswitch-checked": instance.checked(),
+    "p-disabled": instance.disabled,
+    "p-invalid": instance.invalid
+  }),
+  input: "p-toggleswitch-input",
+  slider: "p-toggleswitch-slider",
+  handle: "p-toggleswitch-handle"
+};
+var ToggleSwitchStyle = class _ToggleSwitchStyle extends BaseStyle {
+  name = "toggleswitch";
+  theme = theme11;
+  classes = classes11;
+  inlineStyles = inlineStyles2;
+  static \u0275fac = /* @__PURE__ */ (() => {
+    let \u0275ToggleSwitchStyle_BaseFactory;
+    return function ToggleSwitchStyle_Factory(__ngFactoryType__) {
+      return (\u0275ToggleSwitchStyle_BaseFactory || (\u0275ToggleSwitchStyle_BaseFactory = \u0275\u0275getInheritedFactory(_ToggleSwitchStyle)))(__ngFactoryType__ || _ToggleSwitchStyle);
+    };
+  })();
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+    token: _ToggleSwitchStyle,
+    factory: _ToggleSwitchStyle.\u0275fac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ToggleSwitchStyle, [{
+    type: Injectable
+  }], null, null);
+})();
+var ToggleSwitchClasses;
+(function(ToggleSwitchClasses2) {
+  ToggleSwitchClasses2["root"] = "p-toggleswitch";
+  ToggleSwitchClasses2["input"] = "p-toggleswitch-input";
+  ToggleSwitchClasses2["slider"] = "p-toggleswitch-slider";
+})(ToggleSwitchClasses || (ToggleSwitchClasses = {}));
+var TOGGLESWITCH_VALUE_ACCESSOR = {
+  provide: NG_VALUE_ACCESSOR,
+  useExisting: forwardRef(() => ToggleSwitch),
+  multi: true
+};
+var ToggleSwitch = class _ToggleSwitch extends BaseComponent {
+  /**
+   * Inline style of the component.
+   * @group Props
+   */
+  style;
+  /**
+   * Style class of the component.
+   * @group Props
+   */
+  styleClass;
+  /**
+   * Index of the element in tabbing order.
+   * @group Props
+   */
+  tabindex;
+  /**
+   * Identifier of the input element.
+   * @group Props
+   */
+  inputId;
+  /**
+   * Name of the input element.
+   * @group Props
+   */
+  name;
+  /**
+   * When present, it specifies that the element should be disabled.
+   * @group Props
+   */
+  disabled;
+  /**
+   * When present, it specifies that the component cannot be edited.
+   * @group Props
+   */
+  readonly;
+  /**
+   * Value in checked state.
+   * @group Props
+   */
+  trueValue = true;
+  /**
+   * Value in unchecked state.
+   * @group Props
+   */
+  falseValue = false;
+  /**
+   * Used to define a string that autocomplete attribute the current element.
+   * @group Props
+   */
+  ariaLabel;
+  /**
+   * Establishes relationships between the component and label(s) where its value should be one or more element IDs.
+   * @group Props
+   */
+  ariaLabelledBy;
+  /**
+   * When present, it specifies that the component should automatically get focus on load.
+   * @group Props
+   */
+  autofocus;
+  /**
+   * Callback to invoke when the on value change.
+   * @param {ToggleSwitchChangeEvent} event - Custom change event.
+   * @group Emits
+   */
+  onChange = new EventEmitter();
+  input;
+  /**
+   * Callback to invoke when the on value change.
+   * @type {TemplateRef<ToggleSwitchHandleTemplateContext>} context - Context of the template
+   * @example
+   * ```html
+   * <ng-template #handle let-checked="checked"> </ng-template>
+   * ```
+   * @see {@link ToggleSwitchHandleTemplateContext}
+   * @group Templates
+   */
+  handleTemplate;
+  _handleTemplate;
+  modelValue = false;
+  focused = false;
+  onModelChange = () => {
+  };
+  onModelTouched = () => {
+  };
+  _componentStyle = inject(ToggleSwitchStyle);
+  templates;
+  ngAfterContentInit() {
+    this.templates.forEach((item) => {
+      switch (item.getType()) {
+        case "handle":
+          this._handleTemplate = item.template;
+          break;
+        default:
+          this._handleTemplate = item.template;
+          break;
+      }
+    });
+  }
+  onClick(event) {
+    if (!this.disabled && !this.readonly) {
+      this.modelValue = this.checked() ? this.falseValue : this.trueValue;
+      this.onModelChange(this.modelValue);
+      this.onChange.emit({
+        originalEvent: event,
+        checked: this.modelValue
+      });
+      this.input.nativeElement.focus();
+    }
+  }
+  onFocus() {
+    this.focused = true;
+  }
+  onBlur() {
+    this.focused = false;
+    this.onModelTouched();
+  }
+  writeValue(value) {
+    this.modelValue = value;
+    this.cd.markForCheck();
+  }
+  registerOnChange(fn) {
+    this.onModelChange = fn;
+  }
+  registerOnTouched(fn) {
+    this.onModelTouched = fn;
+  }
+  setDisabledState(val) {
+    this.disabled = val;
+    this.cd.markForCheck();
+  }
+  checked() {
+    return this.modelValue === this.trueValue;
+  }
+  static \u0275fac = /* @__PURE__ */ (() => {
+    let \u0275ToggleSwitch_BaseFactory;
+    return function ToggleSwitch_Factory(__ngFactoryType__) {
+      return (\u0275ToggleSwitch_BaseFactory || (\u0275ToggleSwitch_BaseFactory = \u0275\u0275getInheritedFactory(_ToggleSwitch)))(__ngFactoryType__ || _ToggleSwitch);
+    };
+  })();
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
+    type: _ToggleSwitch,
+    selectors: [["p-toggleswitch"], ["p-toggleSwitch"], ["p-toggle-switch"]],
+    contentQueries: function ToggleSwitch_ContentQueries(rf, ctx, dirIndex) {
+      if (rf & 1) {
+        \u0275\u0275contentQuery(dirIndex, _c014, 4);
+        \u0275\u0275contentQuery(dirIndex, PrimeTemplate, 4);
+      }
+      if (rf & 2) {
+        let _t;
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.handleTemplate = _t.first);
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.templates = _t);
+      }
+    },
+    viewQuery: function ToggleSwitch_Query(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275viewQuery(_c114, 5);
+      }
+      if (rf & 2) {
+        let _t;
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.input = _t.first);
+      }
+    },
+    inputs: {
+      style: "style",
+      styleClass: "styleClass",
+      tabindex: [2, "tabindex", "tabindex", numberAttribute],
+      inputId: "inputId",
+      name: "name",
+      disabled: [2, "disabled", "disabled", booleanAttribute],
+      readonly: [2, "readonly", "readonly", booleanAttribute],
+      trueValue: "trueValue",
+      falseValue: "falseValue",
+      ariaLabel: "ariaLabel",
+      ariaLabelledBy: "ariaLabelledBy",
+      autofocus: [2, "autofocus", "autofocus", booleanAttribute]
+    },
+    outputs: {
+      onChange: "onChange"
+    },
+    features: [\u0275\u0275ProvidersFeature([TOGGLESWITCH_VALUE_ACCESSOR, ToggleSwitchStyle]), \u0275\u0275InheritDefinitionFeature],
+    decls: 6,
+    vars: 23,
+    consts: [["input", ""], [3, "click", "ngClass", "ngStyle"], ["type", "checkbox", "role", "switch", 3, "focus", "blur", "ngClass", "checked", "disabled", "pAutoFocus"], [3, "ngClass"], [4, "ngTemplateOutlet", "ngTemplateOutletContext"]],
+    template: function ToggleSwitch_Template(rf, ctx) {
+      if (rf & 1) {
+        const _r1 = \u0275\u0275getCurrentView();
+        \u0275\u0275elementStart(0, "div", 1);
+        \u0275\u0275listener("click", function ToggleSwitch_Template_div_click_0_listener($event) {
+          \u0275\u0275restoreView(_r1);
+          return \u0275\u0275resetView(ctx.onClick($event));
+        });
+        \u0275\u0275elementStart(1, "input", 2, 0);
+        \u0275\u0275listener("focus", function ToggleSwitch_Template_input_focus_1_listener() {
+          \u0275\u0275restoreView(_r1);
+          return \u0275\u0275resetView(ctx.onFocus());
+        })("blur", function ToggleSwitch_Template_input_blur_1_listener() {
+          \u0275\u0275restoreView(_r1);
+          return \u0275\u0275resetView(ctx.onBlur());
+        });
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(3, "span", 3)(4, "div", 3);
+        \u0275\u0275template(5, ToggleSwitch_Conditional_5_Template, 1, 4, "ng-container");
+        \u0275\u0275elementEnd()()();
+      }
+      if (rf & 2) {
+        \u0275\u0275styleMap(ctx.sx("root"));
+        \u0275\u0275classMap(ctx.styleClass);
+        \u0275\u0275property("ngClass", ctx.cx("root"))("ngStyle", ctx.style);
+        \u0275\u0275attribute("data-pc-name", "toggleswitch")("data-pc-section", "root");
+        \u0275\u0275advance();
+        \u0275\u0275property("ngClass", ctx.cx("input"))("checked", ctx.checked())("disabled", ctx.disabled)("pAutoFocus", ctx.autofocus);
+        \u0275\u0275attribute("id", ctx.inputId)("aria-checked", ctx.checked())("aria-labelledby", ctx.ariaLabelledBy)("aria-label", ctx.ariaLabel)("name", ctx.name)("tabindex", ctx.tabindex)("data-pc-section", "hiddenInput");
+        \u0275\u0275advance(2);
+        \u0275\u0275property("ngClass", ctx.cx("slider"));
+        \u0275\u0275attribute("data-pc-section", "slider");
+        \u0275\u0275advance();
+        \u0275\u0275property("ngClass", ctx.cx("handle"));
+        \u0275\u0275advance();
+        \u0275\u0275conditional(ctx.handleTemplate || ctx._handleTemplate ? 5 : -1);
+      }
+    },
+    dependencies: [CommonModule, NgClass, NgTemplateOutlet, NgStyle, AutoFocus, SharedModule],
+    encapsulation: 2,
+    changeDetection: 0
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ToggleSwitch, [{
+    type: Component,
+    args: [{
+      selector: "p-toggleswitch, p-toggleSwitch, p-toggle-switch",
+      standalone: true,
+      imports: [CommonModule, AutoFocus, SharedModule],
+      template: `
+        <div [ngClass]="cx('root')" [style]="sx('root')" [ngStyle]="style" [class]="styleClass" (click)="onClick($event)" [attr.data-pc-name]="'toggleswitch'" [attr.data-pc-section]="'root'">
+            <input
+                #input
+                [attr.id]="inputId"
+                type="checkbox"
+                role="switch"
+                [ngClass]="cx('input')"
+                [checked]="checked()"
+                [disabled]="disabled"
+                [attr.aria-checked]="checked()"
+                [attr.aria-labelledby]="ariaLabelledBy"
+                [attr.aria-label]="ariaLabel"
+                [attr.name]="name"
+                [attr.tabindex]="tabindex"
+                (focus)="onFocus()"
+                (blur)="onBlur()"
+                [attr.data-pc-section]="'hiddenInput'"
+                [pAutoFocus]="autofocus"
+            />
+            <span [ngClass]="cx('slider')" [attr.data-pc-section]="'slider'">
+                <div [ngClass]="cx('handle')">
+                    @if (handleTemplate || _handleTemplate) {
+                        <ng-container *ngTemplateOutlet="handleTemplate || _handleTemplate; context: { checked: checked() }" />
+                    }
+                </div>
+            </span>
+        </div>
+    `,
+      providers: [TOGGLESWITCH_VALUE_ACCESSOR, ToggleSwitchStyle],
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      encapsulation: ViewEncapsulation.None
+    }]
+  }], null, {
+    style: [{
+      type: Input
+    }],
+    styleClass: [{
+      type: Input
+    }],
+    tabindex: [{
+      type: Input,
+      args: [{
+        transform: numberAttribute
+      }]
+    }],
+    inputId: [{
+      type: Input
+    }],
+    name: [{
+      type: Input
+    }],
+    disabled: [{
+      type: Input,
+      args: [{
+        transform: booleanAttribute
+      }]
+    }],
+    readonly: [{
+      type: Input,
+      args: [{
+        transform: booleanAttribute
+      }]
+    }],
+    trueValue: [{
+      type: Input
+    }],
+    falseValue: [{
+      type: Input
+    }],
+    ariaLabel: [{
+      type: Input
+    }],
+    ariaLabelledBy: [{
+      type: Input
+    }],
+    autofocus: [{
+      type: Input,
+      args: [{
+        transform: booleanAttribute
+      }]
+    }],
+    onChange: [{
+      type: Output
+    }],
+    input: [{
+      type: ViewChild,
+      args: ["input"]
+    }],
+    handleTemplate: [{
+      type: ContentChild,
+      args: ["handle", {
+        descendants: false
+      }]
+    }],
+    templates: [{
+      type: ContentChildren,
+      args: [PrimeTemplate]
+    }]
+  });
+})();
+var ToggleSwitchModule = class _ToggleSwitchModule {
+  static \u0275fac = function ToggleSwitchModule_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _ToggleSwitchModule)();
+  };
+  static \u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
+    type: _ToggleSwitchModule,
+    imports: [ToggleSwitch, SharedModule],
+    exports: [ToggleSwitch, SharedModule]
+  });
+  static \u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({
+    imports: [ToggleSwitch, SharedModule, SharedModule]
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ToggleSwitchModule, [{
+    type: NgModule,
+    args: [{
+      imports: [ToggleSwitch, SharedModule],
+      exports: [ToggleSwitch, SharedModule]
+    }]
+  }], null, null);
+})();
+
+// src/app/views/ia-assistant/components/link-list.component.ts
+function LinkListComponent_ng_container_0_ng_container_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275elementStart(1, "p", 3);
+    \u0275\u0275text(2, "Only links from the following domains are allowed:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "ul", 3)(4, "li");
+    \u0275\u0275text(5, "www.canada.ca");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementContainerEnd();
+  }
+}
+function LinkListComponent_ng_container_0_ng_container_3_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275elementStart(1, "p", 3);
+    \u0275\u0275text(2, "Only links from the following domains are allowed:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "ul", 3)(4, "li");
+    \u0275\u0275text(5, "www.canada.ca");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "li");
+    \u0275\u0275text(7, "test.canada.ca");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(8, "li");
+    \u0275\u0275text(9, "gc-proto.github.io");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(10, "li");
+    \u0275\u0275text(11, "cra-proto.github.io");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(12, "li");
+    \u0275\u0275text(13, "cra-design.github.io");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementContainerEnd();
+  }
+}
+function LinkListComponent_ng_container_0_div_4_p_iftalabel_1_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r2 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "p-iftalabel")(1, "input", 9);
+    \u0275\u0275twoWayListener("ngModelChange", function LinkListComponent_ng_container_0_div_4_p_iftalabel_1_Template_input_ngModelChange_1_listener($event) {
+      \u0275\u0275restoreView(_r2);
+      const url_r3 = \u0275\u0275nextContext().$implicit;
+      \u0275\u0275twoWayBindingSet(url_r3.originalHref, $event) || (url_r3.originalHref = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(2, "label", 10);
+    \u0275\u0275text(3, "Original URL");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const url_r3 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275twoWayProperty("ngModel", url_r3.originalHref);
+  }
+}
+function LinkListComponent_ng_container_0_div_4_p_tag_3_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "p-tag", 11);
+  }
+}
+function LinkListComponent_ng_container_0_div_4_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div");
+    \u0275\u0275template(1, LinkListComponent_ng_container_0_div_4_p_iftalabel_1_Template, 4, 1, "p-iftalabel", 0);
+    \u0275\u0275elementStart(2, "p-inputgroup");
+    \u0275\u0275template(3, LinkListComponent_ng_container_0_div_4_p_tag_3_Template, 1, 0, "p-tag", 4);
+    \u0275\u0275elementStart(4, "p-iftalabel")(5, "input", 5);
+    \u0275\u0275twoWayListener("ngModelChange", function LinkListComponent_ng_container_0_div_4_Template_input_ngModelChange_5_listener($event) {
+      const url_r3 = \u0275\u0275restoreView(_r1).$implicit;
+      \u0275\u0275twoWayBindingSet(url_r3.href, $event) || (url_r3.href = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "label", 6);
+    \u0275\u0275text(7);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(8, "p-inputgroup-addon")(9, "p-button", 7);
+    \u0275\u0275listener("click", function LinkListComponent_ng_container_0_div_4_Template_p_button_click_9_listener($event) {
+      const url_r3 = \u0275\u0275restoreView(_r1).$implicit;
+      const ctx_r3 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r3.approve.emit({ url: url_r3, event: $event }));
+    });
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(10, "p-inputgroup-addon")(11, "p-button", 8);
+    \u0275\u0275listener("click", function LinkListComponent_ng_container_0_div_4_Template_p_button_click_11_listener() {
+      const url_r3 = \u0275\u0275restoreView(_r1).$implicit;
+      const ctx_r3 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r3.remove.emit(url_r3));
+    });
+    \u0275\u0275elementEnd()()()();
+  }
+  if (rf & 2) {
+    const url_r3 = ctx.$implicit;
+    const ctx_r3 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", url_r3.originalHref);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", ctx_r3.type === "proto");
+    \u0275\u0275advance(2);
+    \u0275\u0275property("id", ctx_r3.labelKey);
+    \u0275\u0275twoWayProperty("ngModel", url_r3.href);
+    \u0275\u0275advance();
+    \u0275\u0275property("for", ctx_r3.labelKey);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1("", ctx_r3.labelKey, " URL");
+    \u0275\u0275advance(4);
+    \u0275\u0275property("pTooltip", ctx_r3.type === "proto" ? "Remove link" : "Remove item");
+  }
+}
+function LinkListComponent_ng_container_0_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275elementStart(1, "div", 1);
+    \u0275\u0275template(2, LinkListComponent_ng_container_0_ng_container_2_Template, 6, 0, "ng-container", 0)(3, LinkListComponent_ng_container_0_ng_container_3_Template, 14, 0, "ng-container", 0)(4, LinkListComponent_ng_container_0_div_4_Template, 12, 7, "div", 2);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const ctx_r3 = \u0275\u0275nextContext();
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", ctx_r3.labelKey === "Blocked" && ctx_r3.type === "prod");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r3.labelKey === "Blocked" && ctx_r3.type === "proto");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngForOf", ctx_r3.links);
+  }
+}
+var LinkListComponent = class _LinkListComponent {
+  labelKey;
+  links;
+  type = "prod";
+  approve = new EventEmitter();
+  remove = new EventEmitter();
+  static \u0275fac = function LinkListComponent_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _LinkListComponent)();
+  };
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _LinkListComponent, selectors: [["ca-link-list"]], inputs: { labelKey: "labelKey", links: "links", type: "type" }, outputs: { approve: "approve", remove: "remove" }, decls: 1, vars: 1, consts: [[4, "ngIf"], [1, "flex", "flex-column", "gap-2"], [4, "ngFor", "ngForOf"], [1, "my-0"], ["icon", "pi pi-github", "value", "Prototype", 4, "ngIf"], ["type", "text", "pInputText", "", "variant", "outlined", "pSize", "small", "fluid", "", 3, "ngModelChange", "id", "ngModel"], [3, "for"], ["icon", "pi pi-check-circle", "pTooltip", "Revalidate", "tooltipPosition", "top", "severity", "success", "variant", "text", 3, "click"], ["icon", "pi pi-times-circle", "tooltipPosition", "top", "severity", "danger", "variant", "text", 3, "click", "pTooltip"], ["type", "text", "id", "original", "pInputText", "", "disabled", "", "pSize", "small", "fluid", "", 1, "ng-invalid", "ng-dirty", "bg-white", 3, "ngModelChange", "ngModel"], ["for", "original"], ["icon", "pi pi-github", "value", "Prototype"]], template: function LinkListComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      \u0275\u0275template(0, LinkListComponent_ng_container_0_Template, 5, 3, "ng-container", 0);
+    }
+    if (rf & 2) {
+      \u0275\u0275property("ngIf", ctx.links == null ? null : ctx.links.length);
+    }
+  }, dependencies: [CommonModule, NgForOf, NgIf, FormsModule, DefaultValueAccessor, NgControlStatus, NgModel, IftaLabelModule, IftaLabel, InputTextModule, InputText, InputGroupModule, InputGroup, InputGroupAddonModule, InputGroupAddon, ButtonModule, Button, Tooltip, TagModule, Tag], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n/*# sourceMappingURL=link-list.component.css.map */"] });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(LinkListComponent, [{
+    type: Component,
+    args: [{ selector: "ca-link-list", imports: [CommonModule, FormsModule, IftaLabelModule, InputTextModule, InputGroupModule, InputGroupAddonModule, ButtonModule, Tooltip, TagModule], template: `
+<ng-container *ngIf="links?.length">
+  <!--h2 class="mb-0">{{ labelKey }} links</h2-->
+  <div class="flex flex-column gap-2">
+    <ng-container *ngIf="labelKey === 'Blocked' && type === 'prod'">
+      <p class="my-0">Only links from the following domains are allowed:</p>
+      <ul class="my-0">
+          <li>www.canada.ca</li>
+      </ul>
+    </ng-container>
+    <ng-container *ngIf="labelKey === 'Blocked' && type === 'proto'">
+      <p class="my-0">Only links from the following domains are allowed:</p>
+      <ul class="my-0">
+          <li>www.canada.ca</li>
+          <li>test.canada.ca</li>
+          <li>gc-proto.github.io</li>
+          <li>cra-proto.github.io</li>
+          <li>cra-design.github.io</li>
+      </ul>
+    </ng-container>
+    <div *ngFor="let url of links">
+      <p-iftalabel *ngIf="url.originalHref">
+        <input type="text" id="original" pInputText [(ngModel)]="url.originalHref" disabled pSize="small" class="ng-invalid ng-dirty bg-white" fluid/>
+        <label for="original">Original URL</label>
+      </p-iftalabel>
+        <p-inputgroup>
+          <p-tag *ngIf="type === 'proto'" icon="pi pi-github" value="Prototype" />
+          <p-iftalabel>          
+            <input type="text" [id]="labelKey" pInputText variant="outlined" [(ngModel)]="url.href" pSize="small" fluid/>
+            <label [for]="labelKey">{{ labelKey }} URL</label>          
+          </p-iftalabel>
+          <p-inputgroup-addon>
+            <p-button icon="pi pi-check-circle" pTooltip="Revalidate" tooltipPosition="top" severity="success" variant="text" (click)="approve.emit({ url, event: $event })" />
+          </p-inputgroup-addon>
+          <p-inputgroup-addon>
+            <p-button icon="pi pi-times-circle" [pTooltip]="type === 'proto' ? 'Remove link':'Remove item'" tooltipPosition="top" severity="danger" variant="text" (click)="remove.emit(url)" />
+          </p-inputgroup-addon>
+        </p-inputgroup>
+    </div>
+  </div>
+</ng-container>
+  `, styles: ["/* angular:styles/component:css;219558ef63f119a92210704329b58a3cdceaa4fb296db559e672f74512827dc7;C:/Users/rosaz/translation-assistant/content-assistant/src/app/views/ia-assistant/components/link-list.component.ts */\n:host {\n  display: block;\n}\n/*# sourceMappingURL=link-list.component.css.map */\n"] }]
+  }], null, { labelKey: [{
+    type: Input
+  }], links: [{
+    type: Input
+  }], type: [{
+    type: Input
+  }], approve: [{
+    type: Output
+  }], remove: [{
+    type: Output
+  }] });
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(LinkListComponent, { className: "LinkListComponent", filePath: "src/app/views/ia-assistant/components/link-list.component.ts", lineNumber: 65 });
+})();
+
+// src/app/views/ia-assistant/ia-assistant.component.ts
+function IaAssistantComponent_ng_template_16_p_table_9_ng_template_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "tr")(1, "th");
+    \u0275\u0275text(2, "Production URL");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "th");
+    \u0275\u0275text(4, "Prototype URL");
+    \u0275\u0275elementEnd()();
+  }
+}
+function IaAssistantComponent_ng_template_16_p_table_9_ng_template_3_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "tr")(1, "td");
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "td");
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const url_r4 = ctx.$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(url_r4.production.href);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(url_r4.prototype == null ? null : url_r4.prototype.href);
+  }
+}
+function IaAssistantComponent_ng_template_16_p_table_9_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p-table", 21);
+    \u0275\u0275template(1, IaAssistantComponent_ng_template_16_p_table_9_ng_template_1_Template, 5, 0, "ng-template", null, 1, \u0275\u0275templateRefExtractor)(3, IaAssistantComponent_ng_template_16_p_table_9_ng_template_3_Template, 5, 2, "ng-template", null, 2, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext(2);
+    \u0275\u0275property("value", ctx_r2.urlPairs)("scrollable", true);
+  }
+}
+function IaAssistantComponent_ng_template_16_p_chip_22_p_badge_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "p-badge", 24);
+  }
+}
+function IaAssistantComponent_ng_template_16_p_chip_22_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r5 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "p-chip", 22);
+    \u0275\u0275listener("onRemove", function IaAssistantComponent_ng_template_16_p_chip_22_Template_p_chip_onRemove_0_listener() {
+      const term_r6 = \u0275\u0275restoreView(_r5).$implicit;
+      const ctx_r2 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r2.removeTerm(term_r6));
+    });
+    \u0275\u0275template(1, IaAssistantComponent_ng_template_16_p_chip_22_p_badge_1_Template, 1, 0, "p-badge", 23);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const term_r6 = ctx.$implicit;
+    const ctx_r2 = \u0275\u0275nextContext(2);
+    \u0275\u0275property("label", term_r6.toString())("styleClass", ctx_r2.getTermColor(term_r6))("removable", true);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.isRegex(term_r6));
+  }
+}
+function IaAssistantComponent_ng_template_16_p_button_24_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r7 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "p-button", 25);
+    \u0275\u0275listener("onClick", function IaAssistantComponent_ng_template_16_p_button_24_Template_p_button_onClick_0_listener() {
+      \u0275\u0275restoreView(_r7);
+      const ctx_r2 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r2.urlPairs = []);
+    });
+    \u0275\u0275elementEnd();
+  }
+}
+function IaAssistantComponent_ng_template_16_p_button_25_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r8 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "p-button", 26);
+    \u0275\u0275listener("onClick", function IaAssistantComponent_ng_template_16_p_button_25_Template_p_button_onClick_0_listener() {
+      \u0275\u0275restoreView(_r8);
+      const activateCallback_r9 = \u0275\u0275nextContext().activateCallback;
+      const ctx_r2 = \u0275\u0275nextContext();
+      ctx_r2.validateUrlPairs();
+      return \u0275\u0275resetView(activateCallback_r9(2));
+    });
+    \u0275\u0275elementEnd();
+  }
+}
+function IaAssistantComponent_ng_template_16_p_button_26_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r10 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "p-button", 27);
+    \u0275\u0275listener("onClick", function IaAssistantComponent_ng_template_16_p_button_26_Template_p_button_onClick_0_listener() {
+      \u0275\u0275restoreView(_r10);
+      const activateCallback_r9 = \u0275\u0275nextContext().activateCallback;
+      return \u0275\u0275resetView(activateCallback_r9(2));
+    });
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext(2);
+    \u0275\u0275property("disabled", ctx_r2.urlPairs.length === 0);
+  }
+}
+function IaAssistantComponent_ng_template_16_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r2 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 7)(1, "h2", 8);
+    \u0275\u0275text(2, "Canada.ca URLs");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "p", 9);
+    \u0275\u0275text(4, "Paste some relevant Canada.ca URLs to get started. These links will be crawled to find any child pages to include in your inventory. Each link should begin on a new line. If you have prototype links, you can paste both columns or separate them with a comma or semicolon.");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "p-iftalabel")(6, "textarea", 10);
+    \u0275\u0275twoWayListener("ngModelChange", function IaAssistantComponent_ng_template_16_Template_textarea_ngModelChange_6_listener($event) {
+      \u0275\u0275restoreView(_r2);
+      const ctx_r2 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r2.rawUrls, $event) || (ctx_r2.rawUrls = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275listener("blur", function IaAssistantComponent_ng_template_16_Template_textarea_blur_6_listener() {
+      \u0275\u0275restoreView(_r2);
+      const ctx_r2 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r2.setUrlPairs());
+    })("paste", function IaAssistantComponent_ng_template_16_Template_textarea_paste_6_listener() {
+      \u0275\u0275restoreView(_r2);
+      const ctx_r2 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r2.onPasteUrls());
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "label", 11);
+    \u0275\u0275text(8, "URLs");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(9, IaAssistantComponent_ng_template_16_p_table_9_Template, 5, 2, "p-table", 12);
+    \u0275\u0275elementStart(10, "h2", 8);
+    \u0275\u0275text(11, "Search criteria");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(12, "p", 9);
+    \u0275\u0275text(13, "Enter terms separated by semicolons or new lines. These will be used to include additional pages in your result, even if there is no direct breadcrumb IA relationship between the pages. The search is ");
+    \u0275\u0275elementStart(14, "strong");
+    \u0275\u0275text(15, "not");
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(16, ' case-sensitive. Regex patterns should begin with "regex:".');
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(17, "p-iftalabel")(18, "textarea", 13);
+    \u0275\u0275twoWayListener("ngModelChange", function IaAssistantComponent_ng_template_16_Template_textarea_ngModelChange_18_listener($event) {
+      \u0275\u0275restoreView(_r2);
+      const ctx_r2 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r2.rawTerms, $event) || (ctx_r2.rawTerms = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275listener("blur", function IaAssistantComponent_ng_template_16_Template_textarea_blur_18_listener() {
+      \u0275\u0275restoreView(_r2);
+      const ctx_r2 = \u0275\u0275nextContext();
+      ctx_r2.updateTerms();
+      return \u0275\u0275resetView(ctx_r2.updateRawTerms());
+    })("keydown", function IaAssistantComponent_ng_template_16_Template_textarea_keydown_18_listener($event) {
+      \u0275\u0275restoreView(_r2);
+      const ctx_r2 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r2.onKeydownTerm($event));
+    })("paste", function IaAssistantComponent_ng_template_16_Template_textarea_paste_18_listener() {
+      \u0275\u0275restoreView(_r2);
+      const ctx_r2 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r2.onPasteTerm());
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(19, "label", 14);
+    \u0275\u0275text(20, "Search terms (optional)");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(21, "div", 15);
+    \u0275\u0275template(22, IaAssistantComponent_ng_template_16_p_chip_22_Template, 2, 4, "p-chip", 16);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(23, "div", 17);
+    \u0275\u0275template(24, IaAssistantComponent_ng_template_16_p_button_24_Template, 1, 0, "p-button", 18)(25, IaAssistantComponent_ng_template_16_p_button_25_Template, 1, 0, "p-button", 19)(26, IaAssistantComponent_ng_template_16_p_button_26_Template, 1, 1, "p-button", 20);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext();
+    \u0275\u0275advance(6);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r2.rawUrls);
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngIf", ctx_r2.includePrototypeLinks);
+    \u0275\u0275advance(9);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r2.rawTerms);
+    \u0275\u0275advance(4);
+    \u0275\u0275property("ngForOf", ctx_r2.terms);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", ctx_r2.urlPairs.length > 0 && ctx_r2.urlsChecking.length === 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.urlsChecking.length > 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.urlsChecking.length === 0);
+  }
+}
+function IaAssistantComponent_ng_template_19_ng_container_1_h2_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "h2");
+    \u0275\u0275text(1, "Validating links");
+    \u0275\u0275elementEnd();
+  }
+}
+function IaAssistantComponent_ng_template_19_ng_container_1_h2_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "h2");
+    \u0275\u0275text(1, "Validated links");
+    \u0275\u0275elementEnd();
+  }
+}
+function IaAssistantComponent_ng_template_19_ng_container_1_ng_template_4_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span");
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate2("", ctx_r2.urlChecked, "/", ctx_r2.urlTotal, "");
+  }
+}
+function IaAssistantComponent_ng_template_19_ng_container_1_div_6_ng_container_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275elementStart(1, "p-chip", 42);
+    \u0275\u0275element(2, "i", 43);
+    \u0275\u0275elementStart(3, "span");
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const url_r12 = ctx.$implicit;
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(url_r12.href);
+  }
+}
+function IaAssistantComponent_ng_template_19_ng_container_1_div_6_ng_container_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275elementStart(1, "p-chip", 44);
+    \u0275\u0275element(2, "i", 43);
+    \u0275\u0275elementStart(3, "span");
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const url_r13 = ctx.$implicit;
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(url_r13.href);
+  }
+}
+function IaAssistantComponent_ng_template_19_ng_container_1_div_6_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 40);
+    \u0275\u0275template(1, IaAssistantComponent_ng_template_19_ng_container_1_div_6_ng_container_1_Template, 5, 1, "ng-container", 41)(2, IaAssistantComponent_ng_template_19_ng_container_1_div_6_ng_container_2_Template, 5, 1, "ng-container", 41);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngForOf", ctx_r2.urlsChecking);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngForOf", ctx_r2.urlsProtoChecking);
+  }
+}
+function IaAssistantComponent_ng_template_19_ng_container_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275template(1, IaAssistantComponent_ng_template_19_ng_container_1_h2_1_Template, 2, 0, "h2", 28)(2, IaAssistantComponent_ng_template_19_ng_container_1_h2_2_Template, 2, 0, "h2", 28);
+    \u0275\u0275elementStart(3, "p-progressbar", 6);
+    \u0275\u0275template(4, IaAssistantComponent_ng_template_19_ng_container_1_ng_template_4_Template, 2, 2, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(6, IaAssistantComponent_ng_template_19_ng_container_1_div_6_Template, 3, 2, "div", 39);
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.urlsChecking.length > 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.urlsChecking.length === 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("value", ctx_r2.urlPercent);
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngIf", ctx_r2.urlsChecking.length > 0 || ctx_r2.urlsProtoChecking.length > 0);
+  }
+}
+function IaAssistantComponent_ng_template_19_h2_3_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "h2", 45);
+    \u0275\u0275text(1, "Broken links");
+    \u0275\u0275elementEnd();
+  }
+}
+function IaAssistantComponent_ng_template_19_ca_link_list_4_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r14 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "ca-link-list", 46);
+    \u0275\u0275listener("approve", function IaAssistantComponent_ng_template_19_ca_link_list_4_Template_ca_link_list_approve_0_listener($event) {
+      \u0275\u0275restoreView(_r14);
+      const ctx_r2 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r2.approve($event.url, $event.event, "prod"));
+    })("remove", function IaAssistantComponent_ng_template_19_ca_link_list_4_Template_ca_link_list_remove_0_listener($event) {
+      \u0275\u0275restoreView(_r14);
+      const ctx_r2 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r2.remove($event, "prod"));
+    });
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext(2);
+    \u0275\u0275property("links", ctx_r2.urlsBad);
+  }
+}
+function IaAssistantComponent_ng_template_19_ca_link_list_5_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r15 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "ca-link-list", 47);
+    \u0275\u0275listener("approve", function IaAssistantComponent_ng_template_19_ca_link_list_5_Template_ca_link_list_approve_0_listener($event) {
+      \u0275\u0275restoreView(_r15);
+      const ctx_r2 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r2.approve($event.url, $event.event, "proto"));
+    })("remove", function IaAssistantComponent_ng_template_19_ca_link_list_5_Template_ca_link_list_remove_0_listener($event) {
+      \u0275\u0275restoreView(_r15);
+      const ctx_r2 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r2.remove($event, "proto"));
+    });
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext(2);
+    \u0275\u0275property("links", ctx_r2.urlsProtoBad);
+  }
+}
+function IaAssistantComponent_ng_template_19_h2_6_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "h2", 45);
+    \u0275\u0275text(1, "Redirected links");
+    \u0275\u0275elementEnd();
+  }
+}
+function IaAssistantComponent_ng_template_19_ca_link_list_7_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r16 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "ca-link-list", 48);
+    \u0275\u0275listener("approve", function IaAssistantComponent_ng_template_19_ca_link_list_7_Template_ca_link_list_approve_0_listener($event) {
+      \u0275\u0275restoreView(_r16);
+      const ctx_r2 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r2.approve($event.url, $event.event, "prod"));
+    })("remove", function IaAssistantComponent_ng_template_19_ca_link_list_7_Template_ca_link_list_remove_0_listener($event) {
+      \u0275\u0275restoreView(_r16);
+      const ctx_r2 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r2.remove($event, "prod"));
+    });
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext(2);
+    \u0275\u0275property("links", ctx_r2.urlsRedirected);
+  }
+}
+function IaAssistantComponent_ng_template_19_ca_link_list_8_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r17 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "ca-link-list", 49);
+    \u0275\u0275listener("approve", function IaAssistantComponent_ng_template_19_ca_link_list_8_Template_ca_link_list_approve_0_listener($event) {
+      \u0275\u0275restoreView(_r17);
+      const ctx_r2 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r2.approve($event.url, $event.event, "proto"));
+    })("remove", function IaAssistantComponent_ng_template_19_ca_link_list_8_Template_ca_link_list_remove_0_listener($event) {
+      \u0275\u0275restoreView(_r17);
+      const ctx_r2 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r2.remove($event, "proto"));
+    });
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext(2);
+    \u0275\u0275property("links", ctx_r2.urlsProtoRedirected);
+  }
+}
+function IaAssistantComponent_ng_template_19_h2_9_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "h2", 45);
+    \u0275\u0275text(1, "Blocked links");
+    \u0275\u0275elementEnd();
+  }
+}
+function IaAssistantComponent_ng_template_19_ca_link_list_10_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r18 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "ca-link-list", 50);
+    \u0275\u0275listener("approve", function IaAssistantComponent_ng_template_19_ca_link_list_10_Template_ca_link_list_approve_0_listener($event) {
+      \u0275\u0275restoreView(_r18);
+      const ctx_r2 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r2.approve($event.url, $event.event, "prod"));
+    })("remove", function IaAssistantComponent_ng_template_19_ca_link_list_10_Template_ca_link_list_remove_0_listener($event) {
+      \u0275\u0275restoreView(_r18);
+      const ctx_r2 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r2.remove($event, "prod"));
+    });
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext(2);
+    \u0275\u0275property("links", ctx_r2.urlsBlocked);
+  }
+}
+function IaAssistantComponent_ng_template_19_ca_link_list_11_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r19 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "ca-link-list", 51);
+    \u0275\u0275listener("approve", function IaAssistantComponent_ng_template_19_ca_link_list_11_Template_ca_link_list_approve_0_listener($event) {
+      \u0275\u0275restoreView(_r19);
+      const ctx_r2 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r2.approve($event.url, $event.event, "proto"));
+    })("remove", function IaAssistantComponent_ng_template_19_ca_link_list_11_Template_ca_link_list_remove_0_listener($event) {
+      \u0275\u0275restoreView(_r19);
+      const ctx_r2 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r2.remove($event, "proto"));
+    });
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext(2);
+    \u0275\u0275property("links", ctx_r2.urlsProtoBlocked);
+  }
+}
+function IaAssistantComponent_ng_template_19_ng_container_12_li_4_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "li");
+    \u0275\u0275element(1, "i", 53);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const url_r20 = ctx.$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(url_r20.href);
+  }
+}
+function IaAssistantComponent_ng_template_19_ng_container_12_li_5_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "li");
+    \u0275\u0275element(1, "i", 54);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const url_r21 = ctx.$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(url_r21.href);
+  }
+}
+function IaAssistantComponent_ng_template_19_ng_container_12_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275elementStart(1, "h2", 45);
+    \u0275\u0275text(2, "Valid links");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "ul", 52);
+    \u0275\u0275template(4, IaAssistantComponent_ng_template_19_ng_container_12_li_4_Template, 3, 1, "li", 41)(5, IaAssistantComponent_ng_template_19_ng_container_12_li_5_Template, 3, 1, "li", 41);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(4);
+    \u0275\u0275property("ngForOf", ctx_r2.urlsOk);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngForOf", ctx_r2.urlsProtoOk);
+  }
+}
+function IaAssistantComponent_ng_template_19_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r11 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 7);
+    \u0275\u0275template(1, IaAssistantComponent_ng_template_19_ng_container_1_Template, 7, 4, "ng-container", 28);
+    \u0275\u0275element(2, "p-confirmpopup");
+    \u0275\u0275template(3, IaAssistantComponent_ng_template_19_h2_3_Template, 2, 0, "h2", 29)(4, IaAssistantComponent_ng_template_19_ca_link_list_4_Template, 1, 1, "ca-link-list", 30)(5, IaAssistantComponent_ng_template_19_ca_link_list_5_Template, 1, 1, "ca-link-list", 31)(6, IaAssistantComponent_ng_template_19_h2_6_Template, 2, 0, "h2", 29)(7, IaAssistantComponent_ng_template_19_ca_link_list_7_Template, 1, 1, "ca-link-list", 32)(8, IaAssistantComponent_ng_template_19_ca_link_list_8_Template, 1, 1, "ca-link-list", 33)(9, IaAssistantComponent_ng_template_19_h2_9_Template, 2, 0, "h2", 29)(10, IaAssistantComponent_ng_template_19_ca_link_list_10_Template, 1, 1, "ca-link-list", 34)(11, IaAssistantComponent_ng_template_19_ca_link_list_11_Template, 1, 1, "ca-link-list", 35)(12, IaAssistantComponent_ng_template_19_ng_container_12_Template, 6, 2, "ng-container", 28);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(13, "div", 36)(14, "p-button", 37);
+    \u0275\u0275listener("onClick", function IaAssistantComponent_ng_template_19_Template_p_button_onClick_14_listener() {
+      const activateCallback_r22 = \u0275\u0275restoreView(_r11).activateCallback;
+      return \u0275\u0275resetView(activateCallback_r22(1));
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(15, "p-button", 38);
+    \u0275\u0275listener("onClick", function IaAssistantComponent_ng_template_19_Template_p_button_onClick_15_listener() {
+      const activateCallback_r22 = \u0275\u0275restoreView(_r11).activateCallback;
+      return \u0275\u0275resetView(activateCallback_r22(3));
+    });
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.urlPairs.length > 0);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", ctx_r2.urlsBad.length > 0 || ctx_r2.urlsProtoBad.length > 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.urlsBad.length > 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.urlsProtoBad.length > 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.urlsRedirected.length > 0 || ctx_r2.urlsProtoRedirected.length > 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.urlsRedirected.length > 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.urlsProtoRedirected.length > 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.urlsBlocked.length > 0 || ctx_r2.urlsProtoBlocked.length > 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.urlsBlocked.length > 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.urlsProtoBlocked.length > 0);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.urlsOk.length > 0 || ctx_r2.urlsProtoOk.length > 0);
+  }
+}
+function IaAssistantComponent_ng_template_22_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r23 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 7);
+    \u0275\u0275text(1, " To do: set up progress bars & fxns for checking relationship between pasted links, crawling root URLs to create IA tree, & referring link/search term/url structure crawl (for unique links that aren't in the IA tree) ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(2, "div", 55)(3, "p-button", 37);
+    \u0275\u0275listener("onClick", function IaAssistantComponent_ng_template_22_Template_p_button_onClick_3_listener() {
+      const activateCallback_r24 = \u0275\u0275restoreView(_r23).activateCallback;
+      return \u0275\u0275resetView(activateCallback_r24(2));
+    });
+    \u0275\u0275elementEnd()();
+  }
+}
+var IaAssistantComponent = class _IaAssistantComponent {
+  confirmationService = inject(ConfirmationService);
+  //Step
+  activeStep = 1;
+  /****************
+   * SEARCH TERMS *
+   ****************/
+  rawTerms = "";
+  terms = [];
+  updateTerms() {
+    this.terms = this.rawTerms.split(/[\n;\t]+/).map((term) => term.trim()).filter(Boolean).map((term) => {
+      try {
+        if (term.startsWith("regex:")) {
+          const pattern = term.slice(6);
+          return new RegExp(pattern, "smi");
+        } else
+          return term.toLowerCase();
+      } catch (error) {
+        console.log(error);
+        return `invalid ${term}`;
+      }
+    });
+    this.terms = Array.from(new Set(this.terms));
+  }
+  updateRawTerms() {
+    this.rawTerms = this.terms.map((term) => {
+      if (term instanceof RegExp) {
+        return `regex:${term.source}`;
+      } else {
+        return term;
+      }
+    }).join("; ");
+  }
+  onKeydownTerm(event) {
+    if (event.key === ";" || event.key === "Enter" || event.key === "Tab") {
+      this.updateTerms();
+    }
+  }
+  onPasteTerm() {
+    setTimeout(() => this.updateTerms(), 0);
+  }
+  removeTerm(term) {
+    this.terms = this.terms.filter((t2) => t2 !== term);
+    console.log(this.terms);
+    this.updateRawTerms();
+  }
+  isRegex(term) {
+    return term instanceof RegExp;
+  }
+  getTermColor(term) {
+    if (this.isRegex(term))
+      return "bg-blue-100";
+    else if (typeof term === "string" && term.startsWith("invalid regex"))
+      return "bg-red-100";
+    else
+      return "bg-green-100";
+  }
+  /****************
+   *     URLS     *
+   ****************/
+  rawUrls = "";
+  urlPairs = [];
+  includePrototypeLinks = false;
+  //for progress bar
+  urlTotal = 0;
+  urlChecked = 0;
+  urlPercent = 0;
+  resetProgress() {
+    this.urlTotal = this.urlPairs.length + this.urlPairs.filter((p2) => p2.prototype).length;
+    this.urlChecked = 0;
+    this.urlPercent = 0;
+  }
+  //Block unknown hosts <-- will probably separate canada.ca from GitHub repos so that only Canada.ca is crawled for the IA tree
+  allowedHosts = /* @__PURE__ */ new Set([
+    "cra-design.github.io",
+    "cra-proto.github.io",
+    "gc-proto.github.io",
+    "test.canada.ca",
+    "www.canada.ca"
+  ]);
+  /*** Set URL pairs from user input & boolean if any prototypes were included ***/
+  setUrlPairs() {
+    this.urlPairs = this.rawUrls.split(/\r?\n/).map((line) => line.trim().toLowerCase()).filter(Boolean).map((line) => {
+      const [prod, proto] = line.split(/[\t,; ]+/);
+      const production = {
+        href: prod?.trim() || "",
+        status: "checking"
+      };
+      const prototype = proto ? { href: proto.trim(), status: "checking" } : void 0;
+      return { production, prototype };
+    });
+    this.urlPairs = Array.from(new Map(this.urlPairs.map((p2) => [p2.production.href, p2])).values());
+    this.includePrototypeLinks = this.urlPairs.some((p2) => p2.prototype && p2.prototype.href !== "");
+  }
+  onPasteUrls() {
+    setTimeout(() => this.setUrlPairs(), 0);
+  }
+  /*** Validate a single URL item ***/
+  checkStatus(link) {
+    return __async(this, null, function* () {
+      try {
+        if (!environment.production) {
+          yield new Promise((resolve) => setTimeout(resolve, 500 + Math.random() * 1e3));
+        }
+        const url = new URL(link.href);
+        if (!this.allowedHosts.has(url.host)) {
+          link.status = "blocked";
+          return;
+        }
+        const response = yield fetch(link.href, { method: "HEAD", cache: "no-store" });
+        if (!response.ok || response.url.includes("404.html")) {
+          link.status = "bad";
+        } else if (response.url !== link.href) {
+          link.status = "redirect";
+          link.originalHref = link.href;
+          link.href = response.url;
+        } else {
+          link.status = "ok";
+        }
+      } catch (error) {
+        console.log(error);
+        link.status = "bad";
+      }
+    });
+  }
+  /*** Validate a URL item array (half of the URL pair) ***/
+  validateUrlItems(urls) {
+    return __async(this, null, function* () {
+      const urlsToCheck = urls.map((url) => this.checkStatus(url).finally(() => {
+        this.urlChecked++;
+        this.urlPercent = this.urlChecked / this.urlTotal * 100;
+      }));
+      yield Promise.all(urlsToCheck);
+      yield new Promise((resolve) => setTimeout(resolve, 100));
+      const badUrls = urls.filter((url) => url.status === "bad");
+      badUrls.forEach((badUrl) => badUrl.status = "checking");
+      this.urlChecked -= badUrls.length;
+      const urlsToRecheck = badUrls.map((badUrl) => this.checkStatus(badUrl).finally(() => {
+        this.urlChecked++;
+        this.urlPercent = this.urlChecked / this.urlTotal * 100;
+      }));
+      yield Promise.all(urlsToRecheck);
+    });
+  }
+  /*** Validate URL pairs ***/
+  validateUrlPairs() {
+    return __async(this, null, function* () {
+      if (!this.urlPairs?.length)
+        return;
+      this.resetProgress();
+      yield this.validateUrlItems(this.urlPairs.map((p2) => p2.production));
+      if (this.includePrototypeLinks) {
+        yield this.validateUrlItems(this.urlPairs.map((p2) => p2.prototype).filter((p2) => !!p2));
+      }
+      this.goToStep3();
+    });
+  }
+  /*** Advance to step 3 if all URLs are good ***/
+  goToStep3() {
+    if (this.urlsOk.length + this.urlsProtoOk.length === this.urlTotal) {
+      this.activeStep = 3;
+    }
+  }
+  //Filter based on status
+  get urlsChecking() {
+    return this.urlPairs.map((p2) => p2.production).filter((u) => u.status === "checking");
+  }
+  get urlsBlocked() {
+    return this.urlPairs.map((p2) => p2.production).filter((u) => u.status === "blocked");
+  }
+  get urlsBad() {
+    return this.urlPairs.map((p2) => p2.production).filter((u) => u.status === "bad");
+  }
+  get urlsRedirected() {
+    return this.urlPairs.map((p2) => p2.production).filter((u) => u.status === "redirect");
+  }
+  get urlsOk() {
+    return this.urlPairs.map((p2) => p2.production).filter((u) => u.status === "ok");
+  }
+  get urlsProtoChecking() {
+    return this.urlPairs.map((p2) => p2.prototype).filter((u) => !!u && u.status === "checking");
+  }
+  get urlsProtoBlocked() {
+    return this.urlPairs.map((p2) => p2.prototype).filter((u) => !!u && u.status === "blocked");
+  }
+  get urlsProtoBad() {
+    return this.urlPairs.map((p2) => p2.prototype).filter((u) => !!u && u.status === "bad");
+  }
+  get urlsProtoRedirected() {
+    return this.urlPairs.map((p2) => p2.prototype).filter((u) => !!u && u.status === "redirect");
+  }
+  get urlsProtoOk() {
+    return this.urlPairs.map((p2) => p2.prototype).filter((u) => !!u && u.status === "ok");
+  }
+  remove(link, type) {
+    let decrement = 1;
+    if (type === "prod") {
+      const pair = this.urlPairs.find((p2) => p2.production === link);
+      if (pair?.prototype)
+        decrement += 1;
+      this.urlPairs = this.urlPairs.filter((p2) => p2.production !== link);
+    } else {
+      const pair = this.urlPairs.find((p2) => p2.prototype === link);
+      if (pair) {
+        pair.prototype = void 0;
+      }
+    }
+    this.urlChecked -= decrement;
+    this.urlTotal -= decrement;
+    this.urlPercent = this.urlChecked / this.urlTotal * 100;
+    this.goToStep3();
+  }
+  approve(link, $event, type) {
+    link.href = link.href.trim().toLowerCase();
+    const urlsToCheck = type === "prod" ? this.urlPairs.map((p2) => p2.production) : this.urlPairs.map((p2) => p2.prototype).filter((p2) => !!p2);
+    if (urlsToCheck.some((u) => u !== link && u.href === link.href)) {
+      if (type === "prod") {
+        this.confirmDuplicate($event, link);
+        return;
+      } else {
+        this.confirmProtoDuplicate($event, link);
+        return;
+      }
+    }
+    this.revalidate(link);
+  }
+  revalidate(link) {
+    link.status = "checking";
+    this.urlChecked -= 1;
+    this.urlPercent = this.urlChecked / this.urlTotal * 100;
+    this.checkStatus(link).finally(() => {
+      this.urlChecked++;
+      this.urlPercent = this.urlChecked / this.urlTotal * 100;
+      this.goToStep3();
+    });
+  }
+  confirmDuplicate(event, link) {
+    this.confirmationService.confirm({
+      target: event.currentTarget,
+      message: "This URL is already included. Do you want to remove the duplicate link?",
+      icon: "pi pi-exclamation-triangle",
+      rejectButtonProps: {
+        label: "Cancel",
+        severity: "secondary",
+        outlined: true
+      },
+      acceptButtonProps: {
+        label: "Yes",
+        severity: "danger"
+      },
+      accept: () => {
+        this.remove(link, "prod");
+      },
+      reject: () => {
+        console.log("Cancel adding duplicate link");
+      }
+    });
+  }
+  confirmProtoDuplicate(event, link) {
+    this.confirmationService.confirm({
+      target: event.currentTarget,
+      message: "This prototype URL was already included for another page. Do you want to keep it anyway?",
+      icon: "pi pi-exclamation-triangle",
+      rejectButtonProps: {
+        label: "Cancel",
+        severity: "secondary",
+        outlined: true
+      },
+      acceptButtonProps: {
+        label: "Yes",
+        severity: "success"
+      },
+      accept: () => {
+        this.revalidate(link);
+      },
+      reject: () => {
+        console.log("Cancel adding duplicate link");
+      }
+    });
+  }
+  static \u0275fac = function IaAssistantComponent_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _IaAssistantComponent)();
+  };
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _IaAssistantComponent, selectors: [["ca-ia-assistant"]], decls: 24, vars: 14, consts: [["content", ""], ["header", ""], ["body", ""], ["id", "wb-cont"], [3, "valueChange", "value", "linear"], [1, "-mx-4"], [3, "value"], [1, "flex", "flex-column", "gap-2", "p-3", "border-2", "border-dashed", "border-primary"], [1, "my-0"], [1, "my-0", "text-color-secondary", "text-xs"], ["id", "urls", "autoResize", "true", "rows", "5", "pTextarea", "", "fluid", "", 3, "ngModelChange", "blur", "paste", "ngModel"], ["for", "urls"], ["size", "small", "stripedRows", "", "scrollHeight", "400px", 3, "value", "scrollable", 4, "ngIf"], ["id", "search", "autoResize", "true", "rows", "2", "pTextarea", "", "fluid", "", "placeholder", "", 3, "ngModelChange", "blur", "keydown", "paste", "ngModel"], ["for", "search"], [1, "flex", "gap-2", "flex-wrap"], [3, "label", "styleClass", "removable", "onRemove", 4, "ngFor", "ngForOf"], [1, "flex", "pt-4", "gap-2", "justify-content-between"], ["label", "Reset", "icon", "pi pi-trash", "severity", "danger", 3, "onClick", 4, "ngIf"], ["label", "Validate URLs", "icon", "pi pi-arrow-right", "iconPos", "right", "class", "ml-auto", 3, "onClick", 4, "ngIf"], ["label", "Next", "icon", "pi pi-arrow-right", "iconPos", "right", "class", "ml-auto", 3, "disabled", "onClick", 4, "ngIf"], ["size", "small", "stripedRows", "", "scrollHeight", "400px", 3, "value", "scrollable"], [3, "onRemove", "label", "styleClass", "removable"], ["value", "regex", "severity", "info", 4, "ngIf"], ["value", "regex", "severity", "info"], ["label", "Reset", "icon", "pi pi-trash", "severity", "danger", 3, "onClick"], ["label", "Validate URLs", "icon", "pi pi-arrow-right", "iconPos", "right", 1, "ml-auto", 3, "onClick"], ["label", "Next", "icon", "pi pi-arrow-right", "iconPos", "right", 1, "ml-auto", 3, "onClick", "disabled"], [4, "ngIf"], ["class", "mb-0", 4, "ngIf"], ["labelKey", "Broken", "type", "prod", 3, "links", "approve", "remove", 4, "ngIf"], ["labelKey", "Broken", "type", "proto", 3, "links", "approve", "remove", 4, "ngIf"], ["labelKey", "Redirected", "type", "prod", 3, "links", "approve", "remove", 4, "ngIf"], ["labelKey", "Redirected", "type", "proto", 3, "links", "approve", "remove", 4, "ngIf"], ["labelKey", "Blocked", "type", "prod", 3, "links", "approve", "remove", 4, "ngIf"], ["labelKey", "Blocked", "type", "proto", 3, "links", "approve", "remove", 4, "ngIf"], [1, "flex", "pt-4", "justify-content-between"], ["label", "Back", "severity", "secondary", "icon", "pi pi-arrow-left", 3, "onClick"], ["label", "Next", "icon", "pi pi-arrow-right", "iconPos", "right", 3, "onClick"], ["class", "flex flex-column gap-2 mt-3", 4, "ngIf"], [1, "flex", "flex-column", "gap-2", "mt-3"], [4, "ngFor", "ngForOf"], ["styleClass", "bg-yellow-100", 1, "max-w-max"], [1, "pi", "pi-spin", "pi-spinner"], ["styleClass", "bg-orange-100", 1, "max-w-max"], [1, "mb-0"], ["labelKey", "Broken", "type", "prod", 3, "approve", "remove", "links"], ["labelKey", "Broken", "type", "proto", 3, "approve", "remove", "links"], ["labelKey", "Redirected", "type", "prod", 3, "approve", "remove", "links"], ["labelKey", "Redirected", "type", "proto", 3, "approve", "remove", "links"], ["labelKey", "Blocked", "type", "prod", 3, "approve", "remove", "links"], ["labelKey", "Blocked", "type", "proto", 3, "approve", "remove", "links"], [1, "my-0", "list-none"], [1, "pi", "pi-check", "text-green-500", "mr-2"], [1, "pi", "pi-check", "text-blue-500", "mr-2"], [1, "flex", "pt-4", "justify-content-start"]], template: function IaAssistantComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      const _r1 = \u0275\u0275getCurrentView();
+      \u0275\u0275elementStart(0, "h1", 3);
+      \u0275\u0275text(1);
+      \u0275\u0275pipe(2, "translate");
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(3, "p");
+      \u0275\u0275text(4);
+      \u0275\u0275pipe(5, "translate");
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(6, "p-stepper", 4);
+      \u0275\u0275twoWayListener("valueChange", function IaAssistantComponent_Template_p_stepper_valueChange_6_listener($event) {
+        \u0275\u0275restoreView(_r1);
+        \u0275\u0275twoWayBindingSet(ctx.activeStep, $event) || (ctx.activeStep = $event);
+        return \u0275\u0275resetView($event);
+      });
+      \u0275\u0275elementStart(7, "p-step-list", 5)(8, "p-step", 6);
+      \u0275\u0275text(9, "Enter URLs and search criteria");
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(10, "p-step", 6);
+      \u0275\u0275text(11, "Validate URLs");
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(12, "p-step", 6);
+      \u0275\u0275text(13, "Build IA Tree");
+      \u0275\u0275elementEnd()();
+      \u0275\u0275elementStart(14, "p-step-panels")(15, "p-step-panel", 6);
+      \u0275\u0275template(16, IaAssistantComponent_ng_template_16_Template, 27, 7, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(18, "p-step-panel", 6);
+      \u0275\u0275template(19, IaAssistantComponent_ng_template_19_Template, 16, 11, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(21, "p-step-panel", 6);
+      \u0275\u0275template(22, IaAssistantComponent_ng_template_22_Template, 4, 0, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+      \u0275\u0275elementEnd()()();
+    }
+    if (rf & 2) {
+      \u0275\u0275advance();
+      \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 10, "title.ia"));
+      \u0275\u0275advance(3);
+      \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(5, 12, "ia.description"));
+      \u0275\u0275advance(2);
+      \u0275\u0275twoWayProperty("value", ctx.activeStep);
+      \u0275\u0275property("linear", true);
+      \u0275\u0275advance(2);
+      \u0275\u0275property("value", 1);
+      \u0275\u0275advance(2);
+      \u0275\u0275property("value", 2);
+      \u0275\u0275advance(2);
+      \u0275\u0275property("value", 3);
+      \u0275\u0275advance(3);
+      \u0275\u0275property("value", 1);
+      \u0275\u0275advance(3);
+      \u0275\u0275property("value", 2);
+      \u0275\u0275advance(3);
+      \u0275\u0275property("value", 3);
+    }
+  }, dependencies: [CommonModule, NgForOf, NgIf, FormsModule, DefaultValueAccessor, NgControlStatus, NgModel, TranslateModule, TranslatePipe, TextareaModule, Textarea, InputTextModule, IftaLabelModule, IftaLabel, ProgressBarModule, ProgressBar, ButtonModule, Button, ButtonGroupModule, InputGroupModule, InputGroupAddonModule, ChipModule, Chip, StepperModule, Stepper, StepList, StepPanels, StepPanel, Step, ConfirmPopupModule, ConfirmPopup, ToggleSwitchModule, TableModule, Table, BadgeModule, Badge, LinkListComponent], encapsulation: 2 });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IaAssistantComponent, [{
+    type: Component,
+    args: [{ selector: "ca-ia-assistant", imports: [
+      CommonModule,
+      FormsModule,
+      TranslateModule,
+      TextareaModule,
+      InputTextModule,
+      IftaLabelModule,
+      ProgressBarModule,
+      ButtonModule,
+      ButtonGroupModule,
+      InputGroupModule,
+      InputGroupAddonModule,
+      ChipModule,
+      StepperModule,
+      ConfirmPopupModule,
+      ToggleSwitchModule,
+      TableModule,
+      BadgeModule,
+      LinkListComponent
+    ], template: `<h1 id="wb-cont">{{ 'title.ia' | translate}}</h1>\r
+<p>{{'ia.description' | translate }}</p>\r
+\r
+<p-stepper [(value)]="activeStep" [linear]="true">\r
+    <p-step-list class="-mx-4">\r
+        <p-step [value]="1">Enter URLs and search criteria</p-step>\r
+        <p-step [value]="2">Validate URLs</p-step>\r
+        <p-step [value]="3">Build IA Tree</p-step>\r
+    </p-step-list>\r
+    <p-step-panels>\r
+\r
+        <p-step-panel [value]="1">\r
+            <ng-template #content let-activateCallback="activateCallback">\r
+                <div class="flex flex-column gap-2 p-3 border-2 border-dashed border-primary">\r
+\r
+                    <h2 class="my-0">Canada.ca URLs</h2>\r
+                    <p class="my-0 text-color-secondary text-xs">Paste some relevant Canada.ca URLs to get started. These links will be crawled to find any child pages to include in your inventory. Each link should begin on a new line. If you have prototype links, you can paste both columns or separate them with a comma or semicolon.</p>\r
+\r
+\r
+                    <p-iftalabel>\r
+                        <textarea id="urls" autoResize="true" rows="5" pTextarea [(ngModel)]="rawUrls" (blur)="setUrlPairs()" (paste)="onPasteUrls()" fluid></textarea>\r
+                        <label for="urls">URLs</label>\r
+                    </p-iftalabel>\r
+\r
+                    <!--Only show url pairs if prototype links were included-->\r
+                    <p-table [value]="urlPairs" *ngIf="includePrototypeLinks" size="small" stripedRows [scrollable]="true" scrollHeight="400px">\r
+                        <ng-template #header>\r
+                            <tr>\r
+                                <th>Production URL</th>\r
+                                <th>Prototype URL</th>\r
+                            </tr>\r
+                        </ng-template>\r
+                        <ng-template #body let-url>\r
+                            <tr>\r
+                                <td>{{ url.production.href }}</td>\r
+                                <td>{{ url.prototype?.href }}</td>\r
+                            </tr>\r
+                        </ng-template>\r
+                    </p-table>\r
+                    <h2 class="my-0">Search criteria</h2>\r
+                    <p class="my-0 text-color-secondary text-xs">Enter terms separated by semicolons or new lines. These will be used to include additional pages in your result, even if there is no direct breadcrumb IA relationship between the pages. The search is <strong>not</strong> case-sensitive. Regex patterns should begin with "regex:".</p>\r
+                    <p-iftalabel>\r
+                        <textarea id="search" autoResize="true" rows="2" pTextarea [(ngModel)]="rawTerms" (blur)="updateTerms(); updateRawTerms();" (keydown)="onKeydownTerm($event)" (paste)="onPasteTerm()" fluid\r
+                                  placeholder=""></textarea>\r
+                        <label for="search">Search terms (optional)</label>\r
+                    </p-iftalabel>\r
+\r
+                    <div class="flex gap-2 flex-wrap">\r
+                        <p-chip *ngFor="let term of terms" [label]="term.toString()" [styleClass]="getTermColor(term)" [removable]="true" (onRemove)="removeTerm(term)"><p-badge *ngIf="isRegex(term)" value="regex" severity="info"></p-badge></p-chip>\r
+                    </div>\r
+\r
+                </div>\r
+                <!--FIX: blur event block button event if input is focused when button is clicked-->\r
+                <div class="flex pt-4 gap-2 justify-content-between">\r
+                    <p-button label="Reset" icon="pi pi-trash" severity="danger" (onClick)="urlPairs = []" *ngIf="urlPairs.length > 0 && urlsChecking.length === 0" />\r
+                    <p-button label="Validate URLs" icon="pi pi-arrow-right" iconPos="right" class="ml-auto" (onClick)="validateUrlPairs(); activateCallback(2)" *ngIf="urlsChecking.length > 0" />\r
+                    <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" class="ml-auto" (onClick)="activateCallback(2)" *ngIf="urlsChecking.length === 0" [disabled]="urlPairs.length === 0" />\r
+                </div>\r
+            </ng-template>\r
+        </p-step-panel>\r
+\r
+        <p-step-panel [value]="2">\r
+            <ng-template #content let-activateCallback="activateCallback">\r
+                <div class="flex flex-column gap-2 p-3 border-2 border-dashed border-primary">\r
+\r
+                    <ng-container *ngIf="urlPairs.length > 0">\r
+                        <h2 *ngIf="urlsChecking.length > 0">Validating links</h2>\r
+                        <h2 *ngIf="urlsChecking.length === 0">Validated links</h2>\r
+\r
+                        <p-progressbar [value]="urlPercent">\r
+                            <ng-template #content let-value>\r
+                                <span>{{urlChecked}}/{{urlTotal}}</span>\r
+                            </ng-template>\r
+                        </p-progressbar>\r
+\r
+                        <div class="flex flex-column gap-2 mt-3" *ngIf="urlsChecking.length > 0 || urlsProtoChecking.length > 0">\r
+                            <ng-container *ngFor="let url of urlsChecking">\r
+                                <p-chip styleClass="bg-yellow-100" class="max-w-max">\r
+                                    <i class="pi pi-spin pi-spinner"></i>\r
+                                    <span>{{ url.href }}</span>\r
+                                </p-chip>\r
+                            </ng-container>\r
+                            <ng-container *ngFor="let url of urlsProtoChecking">\r
+                                <p-chip styleClass="bg-orange-100" class="max-w-max">\r
+                                    <i class="pi pi-spin pi-spinner"></i>\r
+                                    <span>{{ url.href }}</span>\r
+                                </p-chip>\r
+                            </ng-container>\r
+                        </div>\r
+                    </ng-container>\r
+\r
+                    <p-confirmpopup />\r
+                    <h2 *ngIf="urlsBad.length > 0 || urlsProtoBad.length > 0" class="mb-0">Broken links</h2>\r
+                    <ca-link-list labelKey="Broken"\r
+                                  [links]="urlsBad"\r
+                                  type="prod"\r
+                                  (approve)="approve($event.url, $event.event, 'prod')"\r
+                                  (remove)="remove($event, 'prod')"\r
+                                  *ngIf="urlsBad.length > 0">\r
+                    </ca-link-list>\r
+                    <ca-link-list labelKey="Broken"\r
+                                  [links]="urlsProtoBad"\r
+                                  type="proto"\r
+                                  (approve)="approve($event.url, $event.event, 'proto')"\r
+                                  (remove)="remove($event, 'proto')"\r
+                                  *ngIf="urlsProtoBad.length > 0">\r
+                    </ca-link-list>\r
+                    <h2 *ngIf="urlsRedirected.length > 0 || urlsProtoRedirected.length > 0" class="mb-0">Redirected links</h2>\r
+                    <ca-link-list labelKey="Redirected"\r
+                                  [links]="urlsRedirected"\r
+                                  type="prod"\r
+                                  (approve)="approve($event.url, $event.event, 'prod')"\r
+                                  (remove)="remove($event, 'prod')"\r
+                                  *ngIf="urlsRedirected.length > 0">\r
+                    </ca-link-list>\r
+                    <ca-link-list labelKey="Redirected"\r
+                                  [links]="urlsProtoRedirected"\r
+                                  type="proto"\r
+                                  (approve)="approve($event.url, $event.event, 'proto')"\r
+                                  (remove)="remove($event, 'proto')"\r
+                                  *ngIf="urlsProtoRedirected.length > 0">\r
+                    </ca-link-list>\r
+                    <h2 *ngIf="urlsBlocked.length > 0 || urlsProtoBlocked.length > 0" class="mb-0">Blocked links</h2>\r
+                    <ca-link-list labelKey="Blocked"\r
+                                  [links]="urlsBlocked"\r
+                                  type="prod"\r
+                                  (approve)="approve($event.url, $event.event, 'prod')"\r
+                                  (remove)="remove($event, 'prod')"\r
+                                  *ngIf="urlsBlocked.length > 0">\r
+                    </ca-link-list>\r
+                    <ca-link-list labelKey="Blocked"\r
+                                  [links]="urlsProtoBlocked"\r
+                                  type="proto"\r
+                                  (approve)="approve($event.url, $event.event, 'proto')"\r
+                                  (remove)="remove($event, 'proto')"\r
+                                  *ngIf="urlsProtoBlocked.length > 0">\r
+                    </ca-link-list>\r
+\r
+                    <ng-container *ngIf="urlsOk.length > 0 || urlsProtoOk.length > 0">\r
+                        <h2 class="mb-0">Valid links</h2>\r
+                        <ul class="my-0 list-none">\r
+                            <li *ngFor="let url of urlsOk"><i class="pi pi-check text-green-500 mr-2"></i>{{ url.href }}</li>\r
+                            <li *ngFor="let url of urlsProtoOk"><i class="pi pi-check text-blue-500 mr-2"></i>{{ url.href }}</li>\r
+                        </ul>\r
+                    </ng-container>\r
+\r
+                </div>\r
+                <div class="flex pt-4 justify-content-between">\r
+                    <p-button label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(1)" />\r
+                    <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(3)" />\r
+                </div>\r
+            </ng-template>\r
+        </p-step-panel>\r
+\r
+        <p-step-panel [value]="3">\r
+            <ng-template #content let-activateCallback="activateCallback">\r
+                <div class="flex flex-column gap-2 p-3 border-2 border-dashed border-primary">\r
+\r
+                    To do: set up progress bars & fxns for checking relationship between pasted links, crawling root URLs to create IA tree, & referring link/search term/url structure crawl (for unique links that aren't in the IA tree)\r
+\r
+                </div>\r
+                <div class="flex pt-4 justify-content-start">\r
+                    <p-button label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />\r
+                </div>\r
+            </ng-template>\r
+        </p-step-panel>\r
+\r
+    </p-step-panels>\r
+</p-stepper>` }]
+  }], null, null);
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(IaAssistantComponent, { className: "IaAssistantComponent", filePath: "src/app/views/ia-assistant/ia-assistant.component.ts", lineNumber: 35 });
 })();
 
 // src/app/app.routes.ts
@@ -23419,7 +27266,7 @@ var routes = [
       }
       return true;
     }],
-    loadComponent: () => import("./chunk-PE6RSGQN.js").then((m) => m.PageAssistantCompareComponent)
+    loadComponent: () => import("./chunk-MMPZI6BT.js").then((m) => m.PageAssistantCompareComponent)
   },
   {
     path: "page-assistant/share",
@@ -23430,6 +27277,11 @@ var routes = [
     path: "page-assistant",
     component: PageUploadComponent,
     title: "title.page"
+  },
+  {
+    path: "ia-assistant",
+    component: IaAssistantComponent,
+    title: "title.ia"
   },
   {
     path: "image-assistant",
@@ -23511,14 +27363,11 @@ var appConfig = {
 
 // src/app/template/api-reset.component.ts
 var ApiResetComponent = class _ApiResetComponent {
-  localStore;
-  constructor(localStore) {
-    this.localStore = localStore;
-  }
+  localStore = inject(LocalStorageService);
   static \u0275fac = function ApiResetComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ApiResetComponent)(\u0275\u0275directiveInject(LocalStorageService));
+    return new (__ngFactoryType__ || _ApiResetComponent)();
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ApiResetComponent, selectors: [["ca-api-reset"]], decls: 2, vars: 4, consts: [["icon", "pi pi-key", "outlined", "", "severity", "secondary", "id", "api-key-reset-btn", "styleClass", "surface-border", 1, "my-2", "api-button", 3, "click", "label", "rounded"]], template: function ApiResetComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ApiResetComponent, selectors: [["ca-api-reset"]], decls: 2, vars: 4, consts: [["icon", "pi pi-key", "outlined", "", "severity", "secondary", "id", "api-key-reset-btn", "styleClass", "surface-border api-button-size", 1, "my-2", "api-button", 3, "click", "label", "rounded"]], template: function ApiResetComponent_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "p-button", 0);
       \u0275\u0275pipe(1, "translate");
@@ -23530,19 +27379,19 @@ var ApiResetComponent = class _ApiResetComponent {
     if (rf & 2) {
       \u0275\u0275property("label", \u0275\u0275pipeBind1(1, 2, "apiKey.change"))("rounded", true);
     }
-  }, dependencies: [TranslateModule, TranslatePipe, ButtonModule, Button], styles: ["\n\n@media (max-width: 768px) {\n    .api-button .p-button-label {\n    display: none;\n  }\n}\n  .api-button:hover .p-button-icon {\n  color: var(--p-primary-400) !important;\n}\n  html.dark-mode .api-button:hover .p-button-icon {\n  color: var(--p-primary-200) !important;\n}\n/*# sourceMappingURL=api-reset.component.css.map */"] });
+  }, dependencies: [TranslateModule, TranslatePipe, ButtonModule, Button], styles: ["\n\n  .api-button-size {\n  width: 13rem !important;\n}\n@media (max-width: 768px) {\n    .api-button-size {\n    width: auto !important;\n    padding: 10px !important;\n  }\n    .api-button .p-button-label {\n    display: none;\n  }\n}\n  .api-button:hover .p-button-icon {\n  color: var(--p-primary-400) !important;\n}\n  html.dark-mode .api-button:hover .p-button-icon {\n  color: var(--p-primary-200) !important;\n}\n/*# sourceMappingURL=api-reset.component.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ApiResetComponent, [{
     type: Component,
     args: [{ selector: "ca-api-reset", imports: [TranslateModule, ButtonModule], template: `
     <p-button icon="pi pi-key" [label]="'apiKey.change' | translate" [rounded]="true" outlined severity="secondary"
-    id="api-key-reset-btn" class="my-2 api-button" styleClass="surface-border" (click)="this.localStore.removeData('apiKey');" />
-  `, styles: ["/* angular:styles/component:css;bba23d67f0c44f7da3fe1807e61603e3ec278e3a7974ab93a3b3cfcf38d3671d;C:/Users/rosaz/translation-assistant/content-assistant/src/app/template/api-reset.component.ts */\n@media (max-width: 768px) {\n  ::ng-deep .api-button .p-button-label {\n    display: none;\n  }\n}\n::ng-deep .api-button:hover .p-button-icon {\n  color: var(--p-primary-400) !important;\n}\n::ng-deep html.dark-mode .api-button:hover .p-button-icon {\n  color: var(--p-primary-200) !important;\n}\n/*# sourceMappingURL=api-reset.component.css.map */\n"] }]
-  }], () => [{ type: LocalStorageService }], null);
+    id="api-key-reset-btn" class="my-2 api-button" styleClass="surface-border api-button-size" (click)="this.localStore.removeData('apiKey');" />
+  `, styles: ["/* angular:styles/component:css;3a79632ccf9b2a1bf9b85450cd9ee1a91b4c6a930bfce5ba9d88905c12f7b962;C:/Users/rosaz/translation-assistant/content-assistant/src/app/template/api-reset.component.ts */\n::ng-deep .api-button-size {\n  width: 13rem !important;\n}\n@media (max-width: 768px) {\n  ::ng-deep .api-button-size {\n    width: auto !important;\n    padding: 10px !important;\n  }\n  ::ng-deep .api-button .p-button-label {\n    display: none;\n  }\n}\n::ng-deep .api-button:hover .p-button-icon {\n  color: var(--p-primary-400) !important;\n}\n::ng-deep html.dark-mode .api-button:hover .p-button-icon {\n  color: var(--p-primary-200) !important;\n}\n/*# sourceMappingURL=api-reset.component.css.map */\n"] }]
+  }], null, null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ApiResetComponent, { className: "ApiResetComponent", filePath: "src/app/template/api-reset.component.ts", lineNumber: 27 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ApiResetComponent, { className: "ApiResetComponent", filePath: "src/app/template/api-reset.component.ts", lineNumber: 34 });
 })();
 
 // src/app/template/header.component.ts
@@ -23552,25 +27401,22 @@ function HeaderComponent_ca_api_reset_6_Template(rf, ctx) {
   }
 }
 var HeaderComponent = class _HeaderComponent {
-  translate;
-  localStore;
-  theme;
+  translate = inject(TranslateService);
+  localStore = inject(LocalStorageService);
+  theme = inject(ThemeService);
   get logoSrc() {
     return this.theme.darkMode() ? "cra-logo-dark.png" : "cra-logo.png";
   }
   // constructor(public langToggle: LangToggleService){} //putting the code below into a service works but we aren't calling it anywhere else
-  constructor(translate, localStore, theme8) {
-    this.translate = translate;
-    this.localStore = localStore;
-    this.theme = theme8;
-    var curLang = this.localStore.getData("lang") || this.translate.getBrowserLang() || "en";
+  constructor() {
+    const curLang = this.localStore.getData("lang") || this.translate.getBrowserLang() || "en";
     console.log(this.translate.getBrowserLang());
     this.translate.addLangs(["en", "fr"]);
     this.translate.setDefaultLang("en");
     this.translate.use(curLang);
   }
   selectLanguage() {
-    var oppLang = "";
+    let oppLang = "";
     if (this.translate.currentLang == "en") {
       oppLang = "fr";
     } else {
@@ -23580,9 +27426,9 @@ var HeaderComponent = class _HeaderComponent {
     this.localStore.saveData("lang", oppLang);
   }
   static \u0275fac = function HeaderComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _HeaderComponent)(\u0275\u0275directiveInject(TranslateService), \u0275\u0275directiveInject(LocalStorageService), \u0275\u0275directiveInject(ThemeService));
+    return new (__ngFactoryType__ || _HeaderComponent)();
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HeaderComponent, selectors: [["ca-header"]], decls: 11, vars: 9, consts: [["id", "header", 1, "pb-2"], [1, "flex", "align-items-center", "hidden", "md:block"], ["id", "cra-logo", "priority", "true", 1, "img-fluid", "fip-colour", "w-28rem", 3, "src", "alt"], [1, "flex", "align-items-center", "gap-3"], [4, "ngIf"], ["offIcon", "pi pi-moon", "offLabel", "", "onIcon", "pi pi-sun", "onLabel", "", "ariaLabel", "Toggle between dark and light mode", 1, "p-button-rounded", "p-button-secondary", "p-button-outlined", "p-button-sm", "surface-border", "pr-0", "darkmode-toggle", 3, "click", "ngModel"], ["tabindex", "0", 1, "cursor-pointer", "underline", "font-medium", "text-blue-600", "hover:text-blue-700", 3, "click"]], template: function HeaderComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HeaderComponent, selectors: [["ca-header"]], decls: 11, vars: 14, consts: [["id", "header", 1, "pb-2"], [1, "flex", "align-items-center", "hidden", "md:block"], ["id", "cra-logo", "priority", "true", 1, "img-fluid", "fip-colour", "w-28rem", 3, "src", "alt"], [1, "flex", "align-items-center", "gap-3"], [4, "ngIf"], ["offIcon", "pi pi-moon", "offLabel", "", "onIcon", "pi pi-sun", "onLabel", "", "ariaLabel", "Toggle between dark and light mode", 1, "p-button-rounded", "p-button-secondary", "p-button-outlined", "p-button-sm", "surface-border", "pr-0", "darkmode-toggle", 3, "click", "ngModel"], ["styleClass", "underline text-blue-600 hover:text-blue-700 nohover w-5rem", "severity", "secondary", 3, "onClick", "rounded", "text", "label", "ariaLabel"]], template: function HeaderComponent_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "header", 0)(1, "p-toolbar")(2, "div", 1);
       \u0275\u0275element(3, "img", 2);
@@ -23595,25 +27441,25 @@ var HeaderComponent = class _HeaderComponent {
         return ctx.theme.toggle();
       });
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(8, "a", 6);
-      \u0275\u0275listener("click", function HeaderComponent_Template_a_click_8_listener() {
+      \u0275\u0275elementStart(8, "p-button", 6);
+      \u0275\u0275pipe(9, "translate");
+      \u0275\u0275pipe(10, "translate");
+      \u0275\u0275listener("onClick", function HeaderComponent_Template_p_button_onClick_8_listener() {
         return ctx.selectLanguage();
       });
-      \u0275\u0275text(9);
-      \u0275\u0275pipe(10, "translate");
       \u0275\u0275elementEnd()()()();
     }
     if (rf & 2) {
       \u0275\u0275advance(3);
-      \u0275\u0275property("src", ctx.logoSrc, \u0275\u0275sanitizeUrl)("alt", \u0275\u0275pipeBind1(4, 5, "CRA"));
+      \u0275\u0275property("src", ctx.logoSrc, \u0275\u0275sanitizeUrl)("alt", \u0275\u0275pipeBind1(4, 8, "CRA"));
       \u0275\u0275advance(3);
-      \u0275\u0275property("ngIf", ctx.localStore.getData("apiKey") != null);
+      \u0275\u0275property("ngIf", ctx.localStore.getData("apiKey") !== null);
       \u0275\u0275advance();
       \u0275\u0275property("ngModel", ctx.theme.darkMode());
-      \u0275\u0275advance(2);
-      \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(10, 7, "opp.lang"), " ");
+      \u0275\u0275advance();
+      \u0275\u0275property("rounded", true)("text", true)("label", \u0275\u0275pipeBind1(9, 10, "opp.lang"))("ariaLabel", \u0275\u0275pipeBind1(10, 12, "opp.lang"));
     }
-  }, dependencies: [CommonModule, NgIf, FormsModule, NgControlStatus, NgModel, TranslateModule, TranslatePipe, ToolbarModule, Toolbar, ButtonModule, ToggleButtonModule, ToggleButton, ApiResetComponent], styles: ["\n\n  .p-toolbar {\n  background-color: transparent !important;\n  border: none !important;\n}\nheader[_ngcontent-%COMP%] {\n  border-bottom-style: solid;\n  border-bottom-color: var(--p-gray-400);\n  border-width: 1px;\n  margin-top: -4rem;\n}\n  .darkmode-toggle:hover .p-togglebutton-icon {\n  color: var(--p-cyan-400) !important;\n}\n  html.dark-mode .darkmode-toggle:hover .p-togglebutton-icon {\n  color: var(--p-amber-400) !important;\n}\n/*# sourceMappingURL=header.component.css.map */"] });
+  }, dependencies: [CommonModule, NgIf, FormsModule, NgControlStatus, NgModel, TranslateModule, TranslatePipe, ToolbarModule, Toolbar, ButtonModule, Button, ToggleButtonModule, ToggleButton, ApiResetComponent], styles: ["\n\n  .p-toolbar {\n  background-color: transparent !important;\n  border: none !important;\n}\nheader[_ngcontent-%COMP%] {\n  border-bottom-style: solid;\n  border-bottom-color: var(--p-gray-400);\n  border-width: 1px;\n  margin-top: -4rem;\n}\n  .darkmode-toggle:hover .p-togglebutton-icon {\n  color: var(--p-cyan-400) !important;\n}\n  html.dark-mode .darkmode-toggle:hover .p-togglebutton-icon {\n  color: var(--p-amber-400) !important;\n}\n/*# sourceMappingURL=header.component.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HeaderComponent, [{
@@ -23632,7 +27478,7 @@ var HeaderComponent = class _HeaderComponent {
     </div>
     <div class="flex align-items-center gap-3">
       <ca-api-reset
-        *ngIf="this.localStore.getData('apiKey') != null">
+        *ngIf="this.localStore.getData('apiKey') !== null">
       </ca-api-reset>
 
       <p-togglebutton
@@ -23646,30 +27492,26 @@ var HeaderComponent = class _HeaderComponent {
         ariaLabel="Toggle between dark and light mode">
       </p-togglebutton>
 
-      <a
-        class="cursor-pointer underline font-medium text-blue-600 hover:text-blue-700"
-        tabindex="0"
-        (click)="selectLanguage()">
-        {{ 'opp.lang' | translate }}
-      </a>
+      <p-button (onClick)="selectLanguage()" [rounded]="true" [text]="true" styleClass="underline text-blue-600 hover:text-blue-700 nohover w-5rem" severity="secondary" [label]="'opp.lang' | translate" [ariaLabel]="'opp.lang' | translate"></p-button>
+
     </div>
   </p-toolbar>
 </header>
   `, styles: ["/* angular:styles/component:css;607ff6dd9fa2de823f98ca3db927b4c2688fafc0a7c156a199ce40df64b470ce;C:/Users/rosaz/translation-assistant/content-assistant/src/app/template/header.component.ts */\n::ng-deep .p-toolbar {\n  background-color: transparent !important;\n  border: none !important;\n}\nheader {\n  border-bottom-style: solid;\n  border-bottom-color: var(--p-gray-400);\n  border-width: 1px;\n  margin-top: -4rem;\n}\n::ng-deep .darkmode-toggle:hover .p-togglebutton-icon {\n  color: var(--p-cyan-400) !important;\n}\n::ng-deep html.dark-mode .darkmode-toggle:hover .p-togglebutton-icon {\n  color: var(--p-amber-400) !important;\n}\n/*# sourceMappingURL=header.component.css.map */\n"] }]
-  }], () => [{ type: TranslateService }, { type: LocalStorageService }, { type: ThemeService }], null);
+  }], () => [], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(HeaderComponent, { className: "HeaderComponent", filePath: "src/app/template/header.component.ts", lineNumber: 77 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(HeaderComponent, { className: "HeaderComponent", filePath: "src/app/template/header.component.ts", lineNumber: 73 });
 })();
 
 // src/app/template/sidebar.component.ts
-var _c012 = () => ["/"];
-var _c111 = () => ["/page-assistant"];
-var _c23 = () => ["/image-assistant"];
-var _c33 = () => ["/translation-assistant"];
-var _c43 = () => ["/inventory-assistant"];
-var _c53 = () => ["/metadata-assistant"];
-var _c63 = () => ["/about-us"];
+var _c015 = () => ["/"];
+var _c115 = () => ["/page-assistant"];
+var _c26 = () => ["/image-assistant"];
+var _c35 = () => ["/translation-assistant"];
+var _c45 = () => ["/inventory-assistant"];
+var _c55 = () => ["/metadata-assistant"];
+var _c64 = () => ["/about-us"];
 var SidebarComponent = class _SidebarComponent {
   // Section toggle state
   isExpanded = {
@@ -23779,7 +27621,7 @@ var SidebarComponent = class _SidebarComponent {
     }
     if (rf & 2) {
       \u0275\u0275advance(3);
-      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(52, _c012));
+      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(52, _c015));
       \u0275\u0275advance(4);
       \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(8, 28, "title.landing"));
       \u0275\u0275advance(5);
@@ -23789,15 +27631,15 @@ var SidebarComponent = class _SidebarComponent {
       \u0275\u0275advance();
       \u0275\u0275classProp("hidden", !ctx.isExpanded.main);
       \u0275\u0275advance();
-      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(53, _c111));
+      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(53, _c115));
       \u0275\u0275advance(4);
       \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(22, 32, "menu.page"));
       \u0275\u0275advance(2);
-      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(54, _c23));
+      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(54, _c26));
       \u0275\u0275advance(4);
       \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(28, 34, "menu.image"));
       \u0275\u0275advance(2);
-      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(55, _c33));
+      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(55, _c35));
       \u0275\u0275advance(4);
       \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(34, 36, "menu.translation"));
       \u0275\u0275advance(5);
@@ -23807,11 +27649,11 @@ var SidebarComponent = class _SidebarComponent {
       \u0275\u0275advance();
       \u0275\u0275classProp("hidden", !ctx.isExpanded.project);
       \u0275\u0275advance();
-      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(56, _c43));
+      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(56, _c45));
       \u0275\u0275advance(4);
       \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(48, 40, "menu.inventory"));
       \u0275\u0275advance(2);
-      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(57, _c53));
+      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(57, _c55));
       \u0275\u0275advance(4);
       \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(54, 42, "menu.metadata"));
       \u0275\u0275advance(5);
@@ -23821,7 +27663,7 @@ var SidebarComponent = class _SidebarComponent {
       \u0275\u0275advance();
       \u0275\u0275classProp("hidden", !ctx.isExpanded.info);
       \u0275\u0275advance();
-      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(58, _c63));
+      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(58, _c64));
       \u0275\u0275advance(4);
       \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(68, 46, "menu.about"));
       \u0275\u0275advance(2);
@@ -23918,15 +27760,12 @@ var SidebarComponent = class _SidebarComponent {
 
 // src/app/template/footer.component.ts
 var FooterComponent = class _FooterComponent {
-  theme;
-  constructor(theme8) {
-    this.theme = theme8;
-  }
+  theme = inject(ThemeService);
   get logoSrc() {
     return this.theme.darkMode() ? "canada-logo-dark.png" : "canada-logo.png";
   }
   static \u0275fac = function FooterComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _FooterComponent)(\u0275\u0275directiveInject(ThemeService));
+    return new (__ngFactoryType__ || _FooterComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _FooterComponent, selectors: [["ca-footer"]], decls: 9, vars: 7, consts: [[1, "container"], [1, "flex", "align-items-end"], [1, "text-color-secondary", "text-sm", "pt-5"], [1, "img-fluid", "fip-colour", 3, "src", "alt"]], template: function FooterComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -23966,17 +27805,17 @@ var FooterComponent = class _FooterComponent {
   </p-toolbar>
 </footer>
   `, styles: ["/* angular:styles/component:css;219558ef63f119a92210704329b58a3cdceaa4fb296db559e672f74512827dc7;C:/Users/rosaz/translation-assistant/content-assistant/src/app/template/footer.component.ts */\n:host {\n  display: block;\n}\n/*# sourceMappingURL=footer.component.css.map */\n"] }]
-  }], () => [{ type: ThemeService }], null);
+  }], null, null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(FooterComponent, { className: "FooterComponent", filePath: "src/app/template/footer.component.ts", lineNumber: 32 });
 })();
 
 // src/app/template/api-key.component.ts
-function ApiKeyComponent_div_13_ng_container_1_Template(rf, ctx) {
+function ApiKeyComponent_div_17_ng_container_1_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementContainerStart(0);
-    \u0275\u0275elementStart(1, "p", 3);
+    \u0275\u0275elementStart(1, "p", 10);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "translate");
     \u0275\u0275elementEnd();
@@ -23987,33 +27826,30 @@ function ApiKeyComponent_div_13_ng_container_1_Template(rf, ctx) {
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 1, "apiKey.error"));
   }
 }
-function ApiKeyComponent_div_13_Template(rf, ctx) {
+function ApiKeyComponent_div_17_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 8);
-    \u0275\u0275template(1, ApiKeyComponent_div_13_ng_container_1_Template, 4, 3, "ng-container", 9);
+    \u0275\u0275elementStart(0, "div");
+    \u0275\u0275template(1, ApiKeyComponent_div_17_ng_container_1_Template, 4, 3, "ng-container", 8);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
     \u0275\u0275nextContext();
-    const apiField_r2 = \u0275\u0275reference(8);
+    const apiField_r2 = \u0275\u0275reference(9);
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", apiField_r2.errors == null ? null : apiField_r2.errors["required"]);
   }
 }
 var ApiKeyComponent = class _ApiKeyComponent {
-  localStore;
+  localStore = inject(LocalStorageService);
   api = "";
   error = "";
   emailLink = "";
   messageTemplate = "";
   apiKeyInstructions = "";
-  constructor(localStore) {
-    this.localStore = localStore;
-  }
   static \u0275fac = function ApiKeyComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ApiKeyComponent)(\u0275\u0275directiveInject(LocalStorageService));
+    return new (__ngFactoryType__ || _ApiKeyComponent)();
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ApiKeyComponent, selectors: [["ca-api-key"]], decls: 16, vars: 18, consts: [["apiField", "ngModel", "apiKey", ""], [3, "header"], [1, "flex", "flex-column", "gap-3"], [1, "m-0"], ["pInputText", "", "required", "", 3, "ngModelChange", "placeholder", "ngModel"], ["pButton", "", "icon", "pi pi-key", "severity", "success", 3, "click", "label", "raised"], ["class", "text-danger small", 4, "ngIf"], [3, "innerHTML"], [1, "text-danger", "small"], [4, "ngIf"]], template: function ApiKeyComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ApiKeyComponent, selectors: [["ca-api-key"]], decls: 20, vars: 17, consts: [["apiField", "ngModel", "apiKey", ""], [3, "header"], [1, "flex", "flex-column", "gap-3"], [1, "m-0"], ["id", "apiKeyInput", "pInputText", "", "variant", "outlined", "required", "", "fluid", "", 1, "w-full", 3, "ngModelChange", "ngModel"], ["for", "apiKeyInput"], [1, "flex-none"], ["icon", "pi pi-key", "severity", "success", 3, "click", "label"], [4, "ngIf"], [3, "innerHTML"], [1, "m-0", "text-red-500", "text-sm"]], template: function ApiKeyComponent_Template(rf, ctx) {
     if (rf & 1) {
       const _r1 = \u0275\u0275getCurrentView();
       \u0275\u0275elementStart(0, "p-card", 1);
@@ -24022,72 +27858,80 @@ var ApiKeyComponent = class _ApiKeyComponent {
       \u0275\u0275text(4);
       \u0275\u0275pipe(5, "translate");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(6, "p-inputGroup")(7, "input", 4, 0);
-      \u0275\u0275pipe(10, "translate");
-      \u0275\u0275twoWayListener("ngModelChange", function ApiKeyComponent_Template_input_ngModelChange_7_listener($event) {
+      \u0275\u0275elementStart(6, "p-inputgroup")(7, "p-iftalabel")(8, "input", 4, 0);
+      \u0275\u0275twoWayListener("ngModelChange", function ApiKeyComponent_Template_input_ngModelChange_8_listener($event) {
         \u0275\u0275restoreView(_r1);
         \u0275\u0275twoWayBindingSet(ctx.api, $event) || (ctx.api = $event);
         return \u0275\u0275resetView($event);
       });
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(11, "button", 5);
-      \u0275\u0275pipe(12, "translate");
-      \u0275\u0275listener("click", function ApiKeyComponent_Template_button_click_11_listener() {
+      \u0275\u0275elementStart(11, "label", 5);
+      \u0275\u0275text(12);
+      \u0275\u0275pipe(13, "translate");
+      \u0275\u0275elementEnd()();
+      \u0275\u0275elementStart(14, "p-inputgroup-addon", 6)(15, "p-button", 7);
+      \u0275\u0275pipe(16, "translate");
+      \u0275\u0275listener("click", function ApiKeyComponent_Template_p_button_click_15_listener() {
         \u0275\u0275restoreView(_r1);
         return \u0275\u0275resetView(ctx.localStore.saveData("apiKey", ctx.api));
       });
-      \u0275\u0275elementEnd()();
-      \u0275\u0275template(13, ApiKeyComponent_div_13_Template, 2, 1, "div", 6);
-      \u0275\u0275element(14, "div", 7);
-      \u0275\u0275pipe(15, "translate");
+      \u0275\u0275elementEnd()()();
+      \u0275\u0275template(17, ApiKeyComponent_div_17_Template, 2, 1, "div", 8);
+      \u0275\u0275element(18, "div", 9);
+      \u0275\u0275pipe(19, "translate");
       \u0275\u0275elementEnd()();
     }
     if (rf & 2) {
-      const apiField_r2 = \u0275\u0275reference(8);
-      \u0275\u0275property("header", \u0275\u0275pipeBind1(1, 8, "title.apiKey"));
+      const apiField_r2 = \u0275\u0275reference(9);
+      \u0275\u0275property("header", \u0275\u0275pipeBind1(1, 7, "title.apiKey"));
       \u0275\u0275advance(4);
-      \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(5, 10, "apiKey.intro"), " ");
-      \u0275\u0275advance(3);
-      \u0275\u0275property("placeholder", \u0275\u0275pipeBind1(10, 12, "apiKey.placeholder"));
+      \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(5, 9, "apiKey.intro"), " ");
+      \u0275\u0275advance(4);
       \u0275\u0275twoWayProperty("ngModel", ctx.api);
       \u0275\u0275advance(4);
-      \u0275\u0275property("label", \u0275\u0275pipeBind1(12, 14, "apiKey.save"))("raised", true);
+      \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(13, 11, "apiKey.placeholder"));
+      \u0275\u0275advance(3);
+      \u0275\u0275property("label", \u0275\u0275pipeBind1(16, 13, "apiKey.save"));
       \u0275\u0275advance(2);
       \u0275\u0275property("ngIf", apiField_r2.invalid && apiField_r2.touched);
       \u0275\u0275advance();
-      \u0275\u0275property("innerHTML", \u0275\u0275pipeBind1(15, 16, "apiKey.instructions"), \u0275\u0275sanitizeHtml);
+      \u0275\u0275property("innerHTML", \u0275\u0275pipeBind1(19, 15, "apiKey.instructions"), \u0275\u0275sanitizeHtml);
     }
-  }, dependencies: [CommonModule, NgIf, FormsModule, DefaultValueAccessor, NgControlStatus, RequiredValidator, NgModel, TranslateModule, TranslatePipe, ButtonModule, ButtonDirective, InputGroupModule, InputGroup, CardModule, Card], encapsulation: 2 });
+  }, dependencies: [CommonModule, NgIf, FormsModule, DefaultValueAccessor, NgControlStatus, RequiredValidator, NgModel, TranslateModule, TranslatePipe, ButtonModule, Button, InputGroupModule, InputGroup, InputGroupAddon, IftaLabel, CardModule, Card], encapsulation: 2 });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ApiKeyComponent, [{
     type: Component,
-    args: [{ selector: "ca-api-key", imports: [CommonModule, FormsModule, TranslateModule, ButtonModule, InputGroupModule, CardModule], template: `<p-card [header]="'title.apiKey' | translate">\r
+    args: [{ selector: "ca-api-key", imports: [CommonModule, FormsModule, TranslateModule, ButtonModule, InputGroupModule, InputGroupAddon, IftaLabel, CardModule], template: `<p-card [header]="'title.apiKey' | translate">\r
   <div class="flex flex-column gap-3">\r
 \r
     <p class="m-0">\r
       {{'apiKey.intro' | translate}}\r
     </p>\r
 \r
-    <p-inputGroup>\r
-      <input pInputText [placeholder]="'apiKey.placeholder' | translate" [(ngModel)]="api" #apiField="ngModel" #apiKey required />\r
-      <button pButton icon="pi pi-key" [label]="'apiKey.save' | translate" [raised]="true" severity="success"\r
-              (click)="this.localStore.saveData('apiKey', api)"></button>\r
-    </p-inputGroup>\r
+    <p-inputgroup>\r
+      <p-iftalabel>\r
+        <input id="apiKeyInput" pInputText variant="outlined" [(ngModel)]="api" #apiField="ngModel" #apiKey required class="w-full" fluid />\r
+        <label for="apiKeyInput">{{'apiKey.placeholder' | translate}}</label>\r
+      </p-iftalabel>\r
+      <p-inputgroup-addon class="flex-none">\r
+        <p-button icon="pi pi-key" [label]="'apiKey.save' | translate" severity="success" (click)="this.localStore.saveData('apiKey', api)" />\r
+      </p-inputgroup-addon>\r
+    </p-inputgroup>\r
 \r
-    <div *ngIf="apiField.invalid && apiField.touched" class="text-danger small">\r
+\r
+    <div *ngIf="apiField.invalid && apiField.touched">\r
       <ng-container *ngIf="apiField.errors?.['required']">\r
-        <p class="m-0">{{'apiKey.error' | translate}}</p>\r
+        <p class="m-0 text-red-500 text-sm">{{'apiKey.error' | translate}}</p>\r
       </ng-container>\r
     </div>\r
-<div [innerHTML]="'apiKey.instructions' | translate"></div>\r
-</div>\r
-</p-card>\r
-` }]
-  }], () => [{ type: LocalStorageService }], null);
+    <div [innerHTML]="'apiKey.instructions' | translate"></div>\r
+  </div>\r
+</p-card>` }]
+  }], null, null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ApiKeyComponent, { className: "ApiKeyComponent", filePath: "src/app/template/api-key.component.ts", lineNumber: 18 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ApiKeyComponent, { className: "ApiKeyComponent", filePath: "src/app/template/api-key.component.ts", lineNumber: 20 });
 })();
 
 // src/app/app.component.ts
@@ -24102,22 +27946,16 @@ function AppComponent_router_outlet_5_Template(rf, ctx) {
   }
 }
 var AppComponent = class _AppComponent {
-  CustomTitle;
-  titleService;
-  localStore;
-  primeng;
-  constructor(CustomTitle, titleService, localStore, primeng) {
-    this.CustomTitle = CustomTitle;
-    this.titleService = titleService;
-    this.localStore = localStore;
-    this.primeng = primeng;
-  }
+  CustomTitle = inject(CustomTitleStrategy);
+  titleService = inject(Title);
+  localStore = inject(LocalStorageService);
+  primeng = inject(PrimeNG);
   ngOnInit() {
     this.primeng.ripple.set(true);
     console.log("The initial API key is: ", this.localStore.getData("apiKey"));
   }
   static \u0275fac = function AppComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _AppComponent)(\u0275\u0275directiveInject(CustomTitleStrategy), \u0275\u0275directiveInject(Title), \u0275\u0275directiveInject(LocalStorageService), \u0275\u0275directiveInject(PrimeNG));
+    return new (__ngFactoryType__ || _AppComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["ca-root"]], decls: 7, vars: 2, consts: [["vocab", "http://schema.org/", "typeof", "WebPage", 1, "mx-8", "my-2", "container"], [1, "container"], [4, "ngIf"]], template: function AppComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -24132,7 +27970,7 @@ var AppComponent = class _AppComponent {
       \u0275\u0275advance(4);
       \u0275\u0275property("ngIf", ctx.localStore.getData("apiKey") === null);
       \u0275\u0275advance();
-      \u0275\u0275property("ngIf", ctx.localStore.getData("apiKey") != null);
+      \u0275\u0275property("ngIf", ctx.localStore.getData("apiKey") !== null);
     }
   }, dependencies: [CommonModule, NgIf, RouterOutlet, RouterModule, TranslateModule, HeaderComponent, SidebarComponent, FooterComponent, ApiKeyComponent], encapsulation: 2 });
 };
@@ -24144,11 +27982,11 @@ var AppComponent = class _AppComponent {
     <ca-header></ca-header>\r
     <ca-sidebar></ca-sidebar>\r
     <ca-api-key *ngIf="this.localStore.getData('apiKey') === null"></ca-api-key>\r
-    <router-outlet *ngIf="this.localStore.getData('apiKey') != null"></router-outlet>\r
+    <router-outlet *ngIf="this.localStore.getData('apiKey') !== null"></router-outlet>\r
   </main>\r
   <ca-footer></ca-footer>\r
 </body>` }]
-  }], () => [{ type: CustomTitleStrategy }, { type: Title }, { type: LocalStorageService }, { type: PrimeNG }], null);
+  }], null, null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "src/app/app.component.ts", lineNumber: 21 });

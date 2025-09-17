@@ -1,4 +1,5 @@
 import {
+  $dt,
   Accordion,
   AccordionContent,
   AccordionHeader,
@@ -125,6 +126,7 @@ import {
   calculateScrollbarWidth,
   clearSelection,
   createElement,
+  environment,
   equals,
   find,
   findLastIndex,
@@ -165,7 +167,7 @@ import {
   unblockBodyScroll,
   uuid,
   zindexutils
-} from "./chunk-FM5O5A5T.js";
+} from "./chunk-TZBHCSEB.js";
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -231,7 +233,6 @@ import {
   ɵɵelementStart,
   ɵɵgetCurrentView,
   ɵɵgetInheritedFactory,
-  ɵɵinject,
   ɵɵlistener,
   ɵɵloadQuery,
   ɵɵnamespaceSVG,
@@ -250,6 +251,7 @@ import {
   ɵɵqueryRefresh,
   ɵɵreference,
   ɵɵresetView,
+  ɵɵresolveDocument,
   ɵɵrestoreView,
   ɵɵsanitizeHtml,
   ɵɵsanitizeUrl,
@@ -265,7 +267,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-6G6LGOOB.js";
+} from "./chunk-7IV2XZGV.js";
 import {
   __async,
   __commonJS,
@@ -1211,9 +1213,9 @@ var require_core = __commonJS({
         return options.noHighlightRe.test(languageName);
       }
       function blockLanguage(block) {
-        let classes13 = block.className + " ";
-        classes13 += block.parentNode ? block.parentNode.className : "";
-        const match = options.languageDetectRe.exec(classes13);
+        let classes14 = block.className + " ";
+        classes14 += block.parentNode ? block.parentNode.className : "";
+        const match = options.languageDetectRe.exec(classes14);
         if (match) {
           const language = getLanguage(match[1]);
           if (!language) {
@@ -1222,7 +1224,7 @@ var require_core = __commonJS({
           }
           return language ? match[1] : "no-highlight";
         }
-        return classes13.split(/\s+/).find((_class) => shouldNotHighlight(_class) || getLanguage(_class));
+        return classes14.split(/\s+/).find((_class) => shouldNotHighlight(_class) || getLanguage(_class));
       }
       function highlight2(codeOrLanguageName, optionsOrCode, ignoreIllegals) {
         let code = "";
@@ -26415,6 +26417,1135 @@ var SplitButtonModule = class _SplitButtonModule {
   }], null, null);
 })();
 
+// src/app/views/page-assistant/services/source-diff.service.ts
+var import_diff2html_ui_slim = __toESM(require_diff2html_ui_slim());
+
+// node_modules/diff/libesm/diff/base.js
+var Diff = class {
+  diff(oldStr, newStr, options = {}) {
+    let callback;
+    if (typeof options === "function") {
+      callback = options;
+      options = {};
+    } else if ("callback" in options) {
+      callback = options.callback;
+    }
+    const oldString = this.castInput(oldStr, options);
+    const newString = this.castInput(newStr, options);
+    const oldTokens = this.removeEmpty(this.tokenize(oldString, options));
+    const newTokens = this.removeEmpty(this.tokenize(newString, options));
+    return this.diffWithOptionsObj(oldTokens, newTokens, options, callback);
+  }
+  diffWithOptionsObj(oldTokens, newTokens, options, callback) {
+    var _a;
+    const done = (value) => {
+      value = this.postProcess(value, options);
+      if (callback) {
+        setTimeout(function() {
+          callback(value);
+        }, 0);
+        return void 0;
+      } else {
+        return value;
+      }
+    };
+    const newLen = newTokens.length, oldLen = oldTokens.length;
+    let editLength = 1;
+    let maxEditLength = newLen + oldLen;
+    if (options.maxEditLength != null) {
+      maxEditLength = Math.min(maxEditLength, options.maxEditLength);
+    }
+    const maxExecutionTime = (_a = options.timeout) !== null && _a !== void 0 ? _a : Infinity;
+    const abortAfterTimestamp = Date.now() + maxExecutionTime;
+    const bestPath = [{
+      oldPos: -1,
+      lastComponent: void 0
+    }];
+    let newPos = this.extractCommon(bestPath[0], newTokens, oldTokens, 0, options);
+    if (bestPath[0].oldPos + 1 >= oldLen && newPos + 1 >= newLen) {
+      return done(this.buildValues(bestPath[0].lastComponent, newTokens, oldTokens));
+    }
+    let minDiagonalToConsider = -Infinity, maxDiagonalToConsider = Infinity;
+    const execEditLength = () => {
+      for (let diagonalPath = Math.max(minDiagonalToConsider, -editLength); diagonalPath <= Math.min(maxDiagonalToConsider, editLength); diagonalPath += 2) {
+        let basePath;
+        const removePath = bestPath[diagonalPath - 1], addPath = bestPath[diagonalPath + 1];
+        if (removePath) {
+          bestPath[diagonalPath - 1] = void 0;
+        }
+        let canAdd = false;
+        if (addPath) {
+          const addPathNewPos = addPath.oldPos - diagonalPath;
+          canAdd = addPath && 0 <= addPathNewPos && addPathNewPos < newLen;
+        }
+        const canRemove = removePath && removePath.oldPos + 1 < oldLen;
+        if (!canAdd && !canRemove) {
+          bestPath[diagonalPath] = void 0;
+          continue;
+        }
+        if (!canRemove || canAdd && removePath.oldPos < addPath.oldPos) {
+          basePath = this.addToPath(addPath, true, false, 0, options);
+        } else {
+          basePath = this.addToPath(removePath, false, true, 1, options);
+        }
+        newPos = this.extractCommon(basePath, newTokens, oldTokens, diagonalPath, options);
+        if (basePath.oldPos + 1 >= oldLen && newPos + 1 >= newLen) {
+          return done(this.buildValues(basePath.lastComponent, newTokens, oldTokens)) || true;
+        } else {
+          bestPath[diagonalPath] = basePath;
+          if (basePath.oldPos + 1 >= oldLen) {
+            maxDiagonalToConsider = Math.min(maxDiagonalToConsider, diagonalPath - 1);
+          }
+          if (newPos + 1 >= newLen) {
+            minDiagonalToConsider = Math.max(minDiagonalToConsider, diagonalPath + 1);
+          }
+        }
+      }
+      editLength++;
+    };
+    if (callback) {
+      (function exec() {
+        setTimeout(function() {
+          if (editLength > maxEditLength || Date.now() > abortAfterTimestamp) {
+            return callback(void 0);
+          }
+          if (!execEditLength()) {
+            exec();
+          }
+        }, 0);
+      })();
+    } else {
+      while (editLength <= maxEditLength && Date.now() <= abortAfterTimestamp) {
+        const ret = execEditLength();
+        if (ret) {
+          return ret;
+        }
+      }
+    }
+  }
+  addToPath(path, added, removed, oldPosInc, options) {
+    const last = path.lastComponent;
+    if (last && !options.oneChangePerToken && last.added === added && last.removed === removed) {
+      return {
+        oldPos: path.oldPos + oldPosInc,
+        lastComponent: {
+          count: last.count + 1,
+          added,
+          removed,
+          previousComponent: last.previousComponent
+        }
+      };
+    } else {
+      return {
+        oldPos: path.oldPos + oldPosInc,
+        lastComponent: {
+          count: 1,
+          added,
+          removed,
+          previousComponent: last
+        }
+      };
+    }
+  }
+  extractCommon(basePath, newTokens, oldTokens, diagonalPath, options) {
+    const newLen = newTokens.length, oldLen = oldTokens.length;
+    let oldPos = basePath.oldPos, newPos = oldPos - diagonalPath, commonCount = 0;
+    while (newPos + 1 < newLen && oldPos + 1 < oldLen && this.equals(oldTokens[oldPos + 1], newTokens[newPos + 1], options)) {
+      newPos++;
+      oldPos++;
+      commonCount++;
+      if (options.oneChangePerToken) {
+        basePath.lastComponent = {
+          count: 1,
+          previousComponent: basePath.lastComponent,
+          added: false,
+          removed: false
+        };
+      }
+    }
+    if (commonCount && !options.oneChangePerToken) {
+      basePath.lastComponent = {
+        count: commonCount,
+        previousComponent: basePath.lastComponent,
+        added: false,
+        removed: false
+      };
+    }
+    basePath.oldPos = oldPos;
+    return newPos;
+  }
+  equals(left, right, options) {
+    if (options.comparator) {
+      return options.comparator(left, right);
+    } else {
+      return left === right || !!options.ignoreCase && left.toLowerCase() === right.toLowerCase();
+    }
+  }
+  removeEmpty(array) {
+    const ret = [];
+    for (let i = 0; i < array.length; i++) {
+      if (array[i]) {
+        ret.push(array[i]);
+      }
+    }
+    return ret;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  castInput(value, options) {
+    return value;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  tokenize(value, options) {
+    return Array.from(value);
+  }
+  join(chars) {
+    return chars.join("");
+  }
+  postProcess(changeObjects, options) {
+    return changeObjects;
+  }
+  get useLongestToken() {
+    return false;
+  }
+  buildValues(lastComponent, newTokens, oldTokens) {
+    const components = [];
+    let nextComponent;
+    while (lastComponent) {
+      components.push(lastComponent);
+      nextComponent = lastComponent.previousComponent;
+      delete lastComponent.previousComponent;
+      lastComponent = nextComponent;
+    }
+    components.reverse();
+    const componentLen = components.length;
+    let componentPos = 0, newPos = 0, oldPos = 0;
+    for (; componentPos < componentLen; componentPos++) {
+      const component = components[componentPos];
+      if (!component.removed) {
+        if (!component.added && this.useLongestToken) {
+          let value = newTokens.slice(newPos, newPos + component.count);
+          value = value.map(function(value2, i) {
+            const oldValue = oldTokens[oldPos + i];
+            return oldValue.length > value2.length ? oldValue : value2;
+          });
+          component.value = this.join(value);
+        } else {
+          component.value = this.join(newTokens.slice(newPos, newPos + component.count));
+        }
+        newPos += component.count;
+        if (!component.added) {
+          oldPos += component.count;
+        }
+      } else {
+        component.value = this.join(oldTokens.slice(oldPos, oldPos + component.count));
+        oldPos += component.count;
+      }
+    }
+    return components;
+  }
+};
+
+// node_modules/diff/libesm/diff/line.js
+var LineDiff = class extends Diff {
+  constructor() {
+    super(...arguments);
+    this.tokenize = tokenize;
+  }
+  equals(left, right, options) {
+    if (options.ignoreWhitespace) {
+      if (!options.newlineIsToken || !left.includes("\n")) {
+        left = left.trim();
+      }
+      if (!options.newlineIsToken || !right.includes("\n")) {
+        right = right.trim();
+      }
+    } else if (options.ignoreNewlineAtEof && !options.newlineIsToken) {
+      if (left.endsWith("\n")) {
+        left = left.slice(0, -1);
+      }
+      if (right.endsWith("\n")) {
+        right = right.slice(0, -1);
+      }
+    }
+    return super.equals(left, right, options);
+  }
+};
+var lineDiff = new LineDiff();
+function diffLines(oldStr, newStr, options) {
+  return lineDiff.diff(oldStr, newStr, options);
+}
+function tokenize(value, options) {
+  if (options.stripTrailingCr) {
+    value = value.replace(/\r\n/g, "\n");
+  }
+  const retLines = [], linesAndNewlines = value.split(/(\n|\r\n)/);
+  if (!linesAndNewlines[linesAndNewlines.length - 1]) {
+    linesAndNewlines.pop();
+  }
+  for (let i = 0; i < linesAndNewlines.length; i++) {
+    const line = linesAndNewlines[i];
+    if (i % 2 && !options.newlineIsToken) {
+      retLines[retLines.length - 1] += line;
+    } else {
+      retLines.push(line);
+    }
+  }
+  return retLines;
+}
+
+// node_modules/diff/libesm/patch/create.js
+function structuredPatch(oldFileName, newFileName, oldStr, newStr, oldHeader, newHeader, options) {
+  let optionsObj;
+  if (!options) {
+    optionsObj = {};
+  } else if (typeof options === "function") {
+    optionsObj = {
+      callback: options
+    };
+  } else {
+    optionsObj = options;
+  }
+  if (typeof optionsObj.context === "undefined") {
+    optionsObj.context = 4;
+  }
+  const context = optionsObj.context;
+  if (optionsObj.newlineIsToken) {
+    throw new Error("newlineIsToken may not be used with patch-generation functions, only with diffing functions");
+  }
+  if (!optionsObj.callback) {
+    return diffLinesResultToPatch(diffLines(oldStr, newStr, optionsObj));
+  } else {
+    const {
+      callback
+    } = optionsObj;
+    diffLines(oldStr, newStr, Object.assign(Object.assign({}, optionsObj), {
+      callback: (diff) => {
+        const patch = diffLinesResultToPatch(diff);
+        callback(patch);
+      }
+    }));
+  }
+  function diffLinesResultToPatch(diff) {
+    if (!diff) {
+      return;
+    }
+    diff.push({
+      value: "",
+      lines: []
+    });
+    function contextLines(lines) {
+      return lines.map(function(entry) {
+        return " " + entry;
+      });
+    }
+    const hunks = [];
+    let oldRangeStart = 0, newRangeStart = 0, curRange = [], oldLine = 1, newLine = 1;
+    for (let i = 0; i < diff.length; i++) {
+      const current = diff[i], lines = current.lines || splitLines(current.value);
+      current.lines = lines;
+      if (current.added || current.removed) {
+        if (!oldRangeStart) {
+          const prev = diff[i - 1];
+          oldRangeStart = oldLine;
+          newRangeStart = newLine;
+          if (prev) {
+            curRange = context > 0 ? contextLines(prev.lines.slice(-context)) : [];
+            oldRangeStart -= curRange.length;
+            newRangeStart -= curRange.length;
+          }
+        }
+        for (const line of lines) {
+          curRange.push((current.added ? "+" : "-") + line);
+        }
+        if (current.added) {
+          newLine += lines.length;
+        } else {
+          oldLine += lines.length;
+        }
+      } else {
+        if (oldRangeStart) {
+          if (lines.length <= context * 2 && i < diff.length - 2) {
+            for (const line of contextLines(lines)) {
+              curRange.push(line);
+            }
+          } else {
+            const contextSize = Math.min(lines.length, context);
+            for (const line of contextLines(lines.slice(0, contextSize))) {
+              curRange.push(line);
+            }
+            const hunk = {
+              oldStart: oldRangeStart,
+              oldLines: oldLine - oldRangeStart + contextSize,
+              newStart: newRangeStart,
+              newLines: newLine - newRangeStart + contextSize,
+              lines: curRange
+            };
+            hunks.push(hunk);
+            oldRangeStart = 0;
+            newRangeStart = 0;
+            curRange = [];
+          }
+        }
+        oldLine += lines.length;
+        newLine += lines.length;
+      }
+    }
+    for (const hunk of hunks) {
+      for (let i = 0; i < hunk.lines.length; i++) {
+        if (hunk.lines[i].endsWith("\n")) {
+          hunk.lines[i] = hunk.lines[i].slice(0, -1);
+        } else {
+          hunk.lines.splice(i + 1, 0, "\\ No newline at end of file");
+          i++;
+        }
+      }
+    }
+    return {
+      oldFileName,
+      newFileName,
+      oldHeader,
+      newHeader,
+      hunks
+    };
+  }
+}
+function formatPatch(patch) {
+  if (Array.isArray(patch)) {
+    return patch.map(formatPatch).join("\n");
+  }
+  const ret = [];
+  if (patch.oldFileName == patch.newFileName) {
+    ret.push("Index: " + patch.oldFileName);
+  }
+  ret.push("===================================================================");
+  ret.push("--- " + patch.oldFileName + (typeof patch.oldHeader === "undefined" ? "" : "	" + patch.oldHeader));
+  ret.push("+++ " + patch.newFileName + (typeof patch.newHeader === "undefined" ? "" : "	" + patch.newHeader));
+  for (let i = 0; i < patch.hunks.length; i++) {
+    const hunk = patch.hunks[i];
+    if (hunk.oldLines === 0) {
+      hunk.oldStart -= 1;
+    }
+    if (hunk.newLines === 0) {
+      hunk.newStart -= 1;
+    }
+    ret.push("@@ -" + hunk.oldStart + "," + hunk.oldLines + " +" + hunk.newStart + "," + hunk.newLines + " @@");
+    for (const line of hunk.lines) {
+      ret.push(line);
+    }
+  }
+  return ret.join("\n") + "\n";
+}
+function createTwoFilesPatch(oldFileName, newFileName, oldStr, newStr, oldHeader, newHeader, options) {
+  if (typeof options === "function") {
+    options = {
+      callback: options
+    };
+  }
+  if (!(options === null || options === void 0 ? void 0 : options.callback)) {
+    const patchObj = structuredPatch(oldFileName, newFileName, oldStr, newStr, oldHeader, newHeader, options);
+    if (!patchObj) {
+      return;
+    }
+    return formatPatch(patchObj);
+  } else {
+    const {
+      callback
+    } = options;
+    structuredPatch(oldFileName, newFileName, oldStr, newStr, oldHeader, newHeader, Object.assign(Object.assign({}, options), {
+      callback: (patchObj) => {
+        if (!patchObj) {
+          callback(void 0);
+        } else {
+          callback(formatPatch(patchObj));
+        }
+      }
+    }));
+  }
+}
+function createPatch(fileName, oldStr, newStr, oldHeader, newHeader, options) {
+  return createTwoFilesPatch(fileName, fileName, oldStr, newStr, oldHeader, newHeader, options);
+}
+function splitLines(text) {
+  const hasTrailingNl = text.endsWith("\n");
+  const result = text.split("\n").map((line) => line + "\n");
+  if (hasTrailingNl) {
+    result.pop();
+  } else {
+    result.push(result.pop().slice(0, -1));
+  }
+  return result;
+}
+
+// src/app/views/page-assistant/services/source-diff.service.ts
+var SourceDiffService = class _SourceDiffService {
+  //Update source code views
+  generateSourceContent(container, viewType, originalHtml, modifiedHtml, originalUrl, modifiedUrl) {
+    return __async(this, null, function* () {
+      this.clearDiffContainer(container);
+      switch (viewType) {
+        case "original":
+          this.renderSource(container, originalHtml);
+          break;
+        case "modified":
+          this.renderSource(container, modifiedHtml);
+          break;
+        case "side-by-side":
+          yield this.renderSourceDiff(container, originalHtml, modifiedHtml, originalUrl, modifiedUrl, "side-by-side");
+          break;
+        case "line-by-line":
+          yield this.renderSourceDiff(container, originalHtml, modifiedHtml, originalUrl, modifiedUrl, "line-by-line");
+          break;
+      }
+    });
+  }
+  renderSource(container, html) {
+    return __async(this, null, function* () {
+      const { default: Prism } = yield import("./chunk-TEKHY7GD.js");
+      yield import("./chunk-RGWANRPM.js");
+      this.loadPrismTheme();
+      const escapedHtml = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      container.innerHTML = `<pre class="m-0"><code class="language-html">${escapedHtml}</code></pre>`;
+      const codeBlock = container.querySelector("code");
+      if (codeBlock) {
+        Prism.highlightElement(codeBlock);
+      }
+    });
+  }
+  //Generate source code diff
+  renderSourceDiff(container, originalHtml, modifiedHtml, originalUrl, modifiedUrl, diffStyle = "side-by-side") {
+    return __async(this, null, function* () {
+      try {
+        const patch = createPatch("", originalHtml, modifiedHtml, originalUrl, modifiedUrl, {
+          ignoreWhitespace: true
+        });
+        const diffOptions = {
+          outputFormat: diffStyle,
+          drawFileList: false,
+          fileContentToggle: false,
+          matching: "words",
+          synchronisedScroll: true,
+          highlight: true
+        };
+        container.innerHTML = "";
+        const diff2 = new import_diff2html_ui_slim.Diff2HtmlUI(container, patch, diffOptions);
+        diff2.highlightCode();
+        diff2.draw();
+      } catch (error) {
+        console.error("Error generating diff2html:", error);
+        container.innerHTML = '<p class="p-error">Error generating diff view.</p>';
+      }
+    });
+  }
+  //Clear diff container
+  clearDiffContainer(container) {
+    if (container) {
+      container.innerHTML = "";
+    }
+  }
+  //Toggle theme for light/dark mode
+  loadPrismTheme() {
+    const isDarkMode = document.documentElement.classList.contains("dark-mode");
+    const existingLink = document.getElementById("prism-theme");
+    const newHref = isDarkMode ? "css/prism-okaidia.min.css" : "css/prism.min.css";
+    if (existingLink) {
+      if (existingLink.href.endsWith(newHref))
+        return;
+      existingLink.href = newHref;
+    } else {
+      const link = document.createElement("link");
+      link.id = "prism-theme";
+      link.rel = "stylesheet";
+      link.href = newHref;
+      document.head.appendChild(link);
+    }
+    const diffWrappers = document.querySelectorAll(".d2h-wrapper");
+    diffWrappers.forEach((diffWrapper) => {
+      diffWrapper.classList.remove("d2h-dark-color-scheme", "d2h-light-color-scheme");
+      diffWrapper.classList.add(isDarkMode ? "d2h-dark-color-scheme" : "d2h-light-color-scheme");
+    });
+  }
+  static \u0275fac = function SourceDiffService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _SourceDiffService)();
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _SourceDiffService, factory: _SourceDiffService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(SourceDiffService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], null, null);
+})();
+
+// src/app/views/page-assistant/services/web-diff.service.ts
+var WebDiffService = class _WebDiffService {
+  //Generate HTML diff (web page view) using htmldiff-js
+  generateHtmlDiff(originalHtml, modifiedHtml) {
+    return __async(this, null, function* () {
+      const options = {
+        repeatingWordsAccuracy: 0,
+        ignoreWhiteSpaceDifferences: true,
+        orphanMatchThreshold: 0,
+        matchGranularity: 4,
+        combineWords: true
+      };
+      const { Diff: Diff2 } = yield import("./chunk-G5CPTNTY.js");
+      const diffResult = Diff2.execute(originalHtml, modifiedHtml, options).replace(
+        /<(ins|del)[^>]*>(\s|&nbsp;|&#32;|&#160;|&#x00e2;|&#x0080;|&#x00af;|&#x202f;|&#xa0;)+<\/(ins|del)>/gis,
+        // Remove empty or whitespace-only <ins>/<del> tags
+        " "
+      );
+      return diffResult;
+    });
+  }
+  //Styles for HTML diff
+  getRenderedDiffStyles() {
+    return `
+      /* Import canada.ca CSS */
+        @import url('https://use.fontawesome.com/releases/v5.15.4/css/all.css');
+        @import url('https://www.canada.ca/etc/designs/canada/wet-boew/css/theme.min.css');
+        @import url('https://www.canada.ca/etc/designs/canada/wet-boew/m\xE9li-m\xE9lo/2024-09-kejimkujik.min.css');
+
+    /* Shadow DOM container and layout fixes */
+      :host {
+        all: initial;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .rendered-content {
+        margin: 0;
+        padding: 0;
+        background-color: #ffffff !important; 
+        width: 100%;
+        max-width: 100%;
+        overflow-wrap: break-word;
+        box-sizing: border-box;
+        font-family: sans-serif;
+      }
+
+      .rendered-content table {
+        width: 100%;
+        table-layout: auto;
+      }
+
+      .rendered-content td, .rendered-content th, .rendered-content pre {
+        word-break: break-word;
+      }
+
+      .rendered-content pre {
+        white-space: pre-wrap;
+      }
+      
+      /* Base styling for ins, del, and updated-link */
+      ins,
+      del,
+      .updated-link {
+        display: inline;
+        padding: 0 0.3em;
+        height: auto;
+        border-radius: 0.3em;
+        -webkit-box-decoration-break: clone;
+        -o-box-decoration-break: clone;
+        box-decoration-break: clone;
+        margin-left: 0.07em;
+        margin-right: 0.07em;
+        font-weight: 500;
+      }
+
+      /* Inserted text (ins) */
+      .rendered-content ins {
+        background-color: #d4edda !important;
+        color: #155724 !important;
+        text-decoration: none !important;
+        padding: 2px 4px;
+        border-radius: 3px;
+        border: 1px solid #c3e6cb;
+      }
+
+      /* Deleted text (del) */
+      .rendered-content del {
+        background-color: #f8d7da !important;
+        color: #721c24 !important;
+        text-decoration: line-through !important;
+        padding: 2px 4px;
+        border-radius: 3px;
+        border: 1px solid #f5c6cb;
+      }
+
+      /* Updated links */
+      .updated-link {
+        background-color: #FFEE8C;
+      }
+
+      /* Highlighting for inserted, deleted, and updated elements */
+      del.highlight,
+      ins.highlight,
+      span.diff-group.highlight,
+      .updated-link.highlight:not(.overlay-wrapper.updated-link) {
+        outline: 3px dotted #6e2ea7;
+        padding-left: 0.35em;
+        padding-right: 0.35em;
+        line-height: unset;
+        position: unset;
+        top: unset;
+        height: unset;
+        transition: padding-left ease 0.3s, padding-right ease 0.3s, color ease 0.7s;
+      }
+
+      /* Overlay wrapper styles */
+      .overlay-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .overlay-wrapper::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(131, 213, 168, 0.4);
+        z-index: 10;
+        border-radius: 5px;
+        pointer-events: none;
+      }
+
+      .overlay-wrapper.del::before {
+        background: rgba(243, 165, 157, 0.5);
+      }
+
+      .overlay-wrapper.del::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: rgba(24, 21, 21, 0.5);
+        z-index: 20;
+        pointer-events: none;
+        opacity: 0.8;
+      }
+
+      .overlay-wrapper.updated-link::before {
+        background: rgba(250, 237, 165, 0.23);
+      }
+
+      .overlay-wrapper.highlight::before {
+        border: 2px dotted #000;
+      }
+
+      .overlay-wrapper img {
+        width: 100%;
+        display: block;
+      }
+
+      /* Optional connection type styling */
+      .cnjnctn-type-or > [class*=cnjnctn-col]:not(:first-child):before {
+        content: "or";
+      }
+    `;
+  }
+  static \u0275fac = function WebDiffService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _WebDiffService)();
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _WebDiffService, factory: _WebDiffService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(WebDiffService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], null, null);
+})();
+
+// src/app/views/page-assistant/services/shadowdom.service.ts
+var ShadowDomService = class _ShadowDomService {
+  webDiffService = inject(WebDiffService);
+  //Initialize shadowDOM on an element
+  initializeShadowDOM(element) {
+    if (element && !element.shadowRoot) {
+      return element.attachShadow({ mode: "open" });
+    }
+    return element?.shadowRoot || null;
+  }
+  //Clear shadowDom content
+  clearShadowDOM(shadowRoot) {
+    if (shadowRoot) {
+      shadowRoot.innerHTML = "";
+    }
+  }
+  //Generate shadow DOM content based on view type
+  generateShadowDOMContent(shadowRoot, viewType, originalHtml, modifiedHtml) {
+    return __async(this, null, function* () {
+      if (!shadowRoot) {
+        console.error("Shadow DOM not available");
+        return;
+      }
+      this.clearShadowDOM(shadowRoot);
+      const style2 = document.createElement("style");
+      style2.textContent = this.webDiffService.getRenderedDiffStyles();
+      shadowRoot.insertBefore(style2, shadowRoot.firstChild);
+      const diffContainer = document.createElement("div");
+      diffContainer.className = "rendered-diff-container";
+      const renderedContent = document.createElement("div");
+      renderedContent.classList.add("rendered-content");
+      switch (viewType) {
+        case "original":
+          this.renderHtml(renderedContent, originalHtml, "original-html");
+          break;
+        case "modified":
+          this.renderHtml(renderedContent, modifiedHtml, "modified-html");
+          break;
+        case "diff":
+          yield this.renderDiffHtml(renderedContent, originalHtml, modifiedHtml, "diff-content");
+          break;
+      }
+      diffContainer.appendChild(renderedContent);
+      shadowRoot.appendChild(diffContainer);
+    });
+  }
+  //Render HTML
+  renderHtml(container, html, className) {
+    container.classList.add(className);
+    container.innerHTML = `<div id="editable" contenteditable="false">${html}</div>`;
+  }
+  //Render Diff
+  renderDiffHtml(container, originalHtml, modifiedHtml, className) {
+    return __async(this, null, function* () {
+      const diffResult = yield this.webDiffService.generateHtmlDiff(originalHtml, modifiedHtml);
+      const adjustedDiff = yield this.adjustDOM(originalHtml, diffResult);
+      container.classList.add(className);
+      container.innerHTML = adjustedDiff;
+    });
+  }
+  //Adjust diff result (mark changed links, images, remove nested diff tags)
+  adjustDOM(originalHtml, diffResult) {
+    return __async(this, null, function* () {
+      const parser = new DOMParser();
+      const diffDoc = parser.parseFromString(diffResult, "text/html");
+      diffDoc.querySelectorAll("del > del, ins > ins").forEach((el) => {
+        const parent = el.parentElement;
+        if (parent && parent.textContent?.trim() === el.textContent?.trim()) {
+          parent.replaceWith(el);
+        }
+      });
+      diffDoc.querySelectorAll("del > ins, ins > del").forEach((el) => {
+        const parent = el.parentElement;
+        if (parent && parent.textContent?.trim() === el.textContent?.trim()) {
+          parent.replaceWith(el);
+        }
+      });
+      const uniqueElements = Array.from(diffDoc.querySelectorAll("ins.diffins, del.diffdel, del.diffmod, .updated-link")).map((el, index) => {
+        if (el.matches("del.diffmod") && el.nextElementSibling?.matches("ins.diffmod")) {
+          const wrapper = diffDoc.createElement("span");
+          wrapper.classList.add("diff-group");
+          const matchingIns = el.nextElementSibling;
+          el.parentNode?.insertBefore(wrapper, el);
+          wrapper.appendChild(el);
+          wrapper.appendChild(matchingIns);
+          el = wrapper;
+        }
+        const parent = el.parentElement;
+        return {
+          element: el,
+          outerHTML: parent?.innerHTML?.replace(/\n/g, "").trim() || "",
+          id: index + 1
+        };
+      });
+      uniqueElements.forEach(({ element, id }) => {
+        element.setAttribute("data-id", `${id}`);
+      });
+      return diffDoc.body.innerHTML;
+    });
+  }
+  //Handle clicks inside Shadow DOM
+  handleDocumentClick(shadowRoot, updateCurrentIndex) {
+    const clickHandler = (event) => {
+      let target = event.target;
+      while (target && target.tagName !== "A") {
+        target = target.parentElement;
+      }
+      if (target?.tagName === "A") {
+        const href = target.getAttribute("href") ?? "";
+        if (href.startsWith("#")) {
+          event.preventDefault();
+          const sectionId = target.getAttribute("href")?.substring(1);
+          const targetSection = shadowRoot.getElementById(sectionId ?? "");
+          if (targetSection) {
+            targetSection.scrollIntoView({
+              behavior: "smooth",
+              block: "start"
+            });
+          }
+        }
+        if (!href.startsWith("#")) {
+          event.preventDefault();
+        }
+      }
+      const changeElements = this.getDataIdElements(shadowRoot);
+      if (!changeElements.length)
+        return;
+      const clickedElement = changeElements.find((el) => el.contains(event.target));
+      if (!clickedElement)
+        return;
+      const index = changeElements.indexOf(clickedElement);
+      this.scrollToElement(clickedElement);
+      if (updateCurrentIndex) {
+        updateCurrentIndex(index);
+        this.lastSelection = { count: 1, startId: null, endId: null };
+      }
+    };
+    shadowRoot.addEventListener("click", clickHandler);
+    return () => {
+      shadowRoot.removeEventListener("click", clickHandler);
+    };
+  }
+  //Handle text selection inside Shadow DOM
+  handleSelection(shadowRoot) {
+    const selectionHandler = () => {
+      this.highlightSelected(shadowRoot);
+    };
+    shadowRoot.addEventListener("mouseup", selectionHandler);
+    shadowRoot.addEventListener("keyup", selectionHandler);
+    return () => {
+      shadowRoot.removeEventListener("mouseup", selectionHandler);
+      shadowRoot.removeEventListener("keyup", selectionHandler);
+    };
+  }
+  //Helper functions for next/prev buttons
+  getDataIdElements(shadowRoot) {
+    return Array.from(shadowRoot.querySelectorAll("[data-id]"));
+  }
+  highlightElement(el, highlightClass = "highlight") {
+    this.clearHighlights(el.getRootNode(), highlightClass);
+    el.classList.add(highlightClass);
+  }
+  clearHighlights(shadowRoot, highlightClass = "highlight") {
+    shadowRoot.querySelectorAll(`.${highlightClass}`).forEach((node) => {
+      node.classList.remove(highlightClass);
+    });
+  }
+  scrollToElement(el) {
+    const shadowRoot = el.getRootNode();
+    shadowRoot.querySelectorAll(".highlight").forEach((h) => h.classList.remove("highlight"));
+    el.classList.add("highlight");
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  openParentDetails(el) {
+    const detailsEl = el.closest("details");
+    if (detailsEl) {
+      detailsEl.open = true;
+    }
+  }
+  closeAllDetailsExcept(shadowRoot, keepOpenEl) {
+    shadowRoot.querySelectorAll("details").forEach((details) => {
+      if (details !== keepOpenEl.closest("details")) {
+        details.open = false;
+      }
+    });
+  }
+  lastSelection = { count: 1, startId: null, endId: null };
+  highlightSelected(shadowRoot) {
+    const selection = window.getSelection();
+    if (!shadowRoot || !selection) {
+      this.lastSelection = { count: 0, startId: null, endId: null };
+      return;
+    }
+    ;
+    const selectedText = normalize(selection.toString());
+    if (!selectedText)
+      return;
+    try {
+      this.clearHighlights(shadowRoot);
+      findSelectionInShadow(shadowRoot, selectedText);
+      const dataIdElements = this.getDataIdElements(shadowRoot);
+      const matches = dataIdElements.map((element) => {
+        const text = normalize(element.textContent || "");
+        return {
+          element,
+          dataId: parseInt(element.getAttribute("data-id") || "0"),
+          text,
+          textLength: text.length
+        };
+      }).filter((item) => item.text && selectedText.includes(item.text));
+      if (matches.length === 0) {
+        throw new Error("No diffs found in selected text.");
+      }
+      console.log("All matches:", matches.map((m) => `${m.dataId}: "${m.text}"`));
+      let bestMatch = matches.reduce((prev, current) => current.textLength > prev.textLength ? current : prev);
+      console.log(`Initial best match: data-id="${bestMatch.dataId}", text: "${bestMatch.text}" (${bestMatch.textLength} chars)`);
+      if (bestMatch.text.length <= 20) {
+        console.log("Selected text: ", selectedText);
+        const expanded = expandBestMatch(bestMatch.element, selectedText.length, 3);
+        if (!selectedText.includes(expanded)) {
+          console.log("Initial best match was wrong, checking others.");
+          console.log("EXPANDED SHADOWDOM TEXT");
+          console.log(expanded);
+          const sortedMatches = matches.sort((a, b) => b.textLength - a.textLength);
+          let found = false;
+          console.log(sortedMatches);
+          for (const possibleMatch of sortedMatches) {
+            const expanded2 = expandBestMatch(possibleMatch.element, selectedText.length, 3);
+            console.log("Checking: ", expanded2);
+            if (selectedText.includes(expanded2)) {
+              bestMatch = possibleMatch;
+              found = true;
+              console.log(`New best match: data-id="${bestMatch.dataId}", text: "${bestMatch.text}" (${bestMatch.textLength} chars)`);
+              console.log("EXPANDED SHADOWDOM TEXT");
+              console.log(expanded2);
+              break;
+            }
+          }
+          if (!found) {
+            throw new Error("No expanded matches match the selected text.");
+          }
+        }
+      }
+      const matchedDataIds = new Set(matches.map((m) => m.dataId));
+      let startId = bestMatch.dataId;
+      let endId = bestMatch.dataId;
+      let finalText = checkRange(shadowRoot, startId, endId);
+      while (startId > 0) {
+        const includeText = checkRange(shadowRoot, startId - 1, endId);
+        if (includeText) {
+          startId--;
+          finalText = includeText;
+        } else {
+          break;
+        }
+      }
+      while (true) {
+        const includeText = checkRange(shadowRoot, startId, endId + 1);
+        if (includeText) {
+          endId++;
+          finalText = includeText;
+        } else {
+          break;
+        }
+      }
+      console.log(`Final match between ${startId} and ${endId}:`, finalText);
+      let highlightedCount = 0;
+      const elementById = Object.fromEntries(dataIdElements.map((el) => [parseInt(el.getAttribute("data-id") || "0"), el]));
+      for (let id = startId; id <= endId; id++) {
+        if (matchedDataIds.has(id)) {
+          const element = elementById[id];
+          if (element) {
+            element.classList.add("highlight");
+            highlightedCount++;
+          }
+        }
+      }
+      console.log(`Highlighted ${highlightedCount} elements from data-id ${startId} to ${endId}`);
+      this.lastSelection = { count: highlightedCount, startId, endId };
+      return;
+    } catch (err) {
+      console.error(err);
+      this.lastSelection = { count: 0, startId: null, endId: null };
+      return;
+    }
+    function normalize(text) {
+      return text.replace(/\s+/g, " ").trim();
+    }
+    function extractShadowText(shadowRoot2) {
+      const walker = document.createTreeWalker(shadowRoot2, NodeFilter.SHOW_TEXT, null);
+      let text = "";
+      let node = walker.nextNode();
+      while (node) {
+        text += node.textContent || "";
+        node = walker.nextNode();
+      }
+      return normalize(text);
+    }
+    function findSelectionInShadow(shadowRoot2, selectedText2) {
+      const shadowText = extractShadowText(shadowRoot2);
+      if (!selectedText2)
+        return -1;
+      const idx = shadowText.indexOf(selectedText2);
+      if (idx === -1) {
+        throw new Error("Selection not found in shadowDOM.");
+      }
+      const secondIdx = shadowText.indexOf(selectedText2, idx + 1);
+      if (secondIdx !== -1) {
+        throw new Error("Selected text is not unique in shadowDOM.");
+      }
+      return idx;
+    }
+    function checkRange(root, startId, endId) {
+      const startEl = root.querySelector(`[data-id="${startId}"]`);
+      const endEl = root.querySelector(`[data-id="${endId}"]`);
+      if (!startEl || !endEl) {
+        return null;
+      }
+      const range = document.createRange();
+      range.setStartBefore(startEl);
+      range.setEndAfter(endEl);
+      const rangeText = normalize(range.toString());
+      return selectedText.includes(rangeText) ? rangeText : null;
+    }
+    function expandBestMatch(element, maxLength, chars = 5) {
+      let text = normalize(element.textContent || "");
+      if (text.length >= maxLength)
+        return text.slice(0, maxLength);
+      let remaining = Math.min(chars, maxLength - text.length);
+      let prevNode = element.previousSibling;
+      while (remaining > 0 && prevNode) {
+        if (prevNode.nodeType === Node.TEXT_NODE) {
+          const slice = prevNode.textContent?.slice(-remaining) || "";
+          text = joinStrings(slice, text);
+          remaining -= slice.length;
+        }
+        prevNode = prevNode.previousSibling;
+      }
+      remaining = Math.min(chars, maxLength - text.length);
+      let nextNode = element.nextSibling;
+      while (remaining > 0 && nextNode) {
+        if (nextNode.nodeType === Node.TEXT_NODE) {
+          const slice = nextNode.textContent?.slice(0, remaining) || "";
+          text = joinStrings(text, slice);
+          remaining -= slice.length;
+        }
+        nextNode = nextNode.nextSibling;
+      }
+      if (text.length > maxLength) {
+        text = text.slice(0, maxLength);
+      }
+      return normalize(text);
+    }
+    function joinStrings(left, right) {
+      if (!left)
+        return right;
+      if (!right)
+        return left;
+      const l = left[left.length - 1];
+      const r = right[0];
+      if (/\s/.test(l) || /\s/.test(r) || /[.,!?;:)]/.test(r)) {
+        return left + right;
+      }
+      return left + " " + right;
+    }
+  }
+  static \u0275fac = function ShadowDomService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _ShadowDomService)();
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _ShadowDomService, factory: _ShadowDomService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ShadowDomService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], null, null);
+})();
+
 // src/app/views/page-assistant/data/ai-prompts.constants.ts
 var PromptTemplates = {
   [PromptKey.Headings]: `
@@ -29176,16 +30307,13 @@ function AiOptionsComponent_ng_container_19_Template(rf, ctx) {
   }
 }
 var AiOptionsComponent = class _AiOptionsComponent {
-  uploadState;
+  uploadState = inject(UploadStateService);
   promptChange = new EventEmitter();
   customPrompt = new EventEmitter();
   editPrompt = new EventEmitter();
   aiChange = new EventEmitter();
   aiSubmit = new EventEmitter();
   visible = false;
-  constructor(uploadState) {
-    this.uploadState = uploadState;
-  }
   //Gets upload type for task = compare with prototype
   get uploadType() {
     return this.uploadState.getSelectedUploadType();
@@ -29279,7 +30407,7 @@ var AiOptionsComponent = class _AiOptionsComponent {
     this.customPrompt.emit(prompt);
   }
   static \u0275fac = function AiOptionsComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _AiOptionsComponent)(\u0275\u0275directiveInject(UploadStateService));
+    return new (__ngFactoryType__ || _AiOptionsComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AiOptionsComponent, selectors: [["ca-ai-options"]], outputs: { promptChange: "promptChange", customPrompt: "customPrompt", editPrompt: "editPrompt", aiChange: "aiChange", aiSubmit: "aiSubmit" }, decls: 20, vars: 19, consts: [["label", "Options", "icon", "pi pi-bars", "severity", "info", 3, "click"], ["position", "right", 3, "visibleChange", "visible", "header"], [1, "flex", "flex-column", "gap-3"], ["value", "1", 1, "flex", "flex-column", "gap-3"], ["value", "0", 1, "border-1", "border-round-md", "border-surface"], [1, "border-none"], [1, "font-bold", "mb-2"], [1, "flex", "flex-column", "gap-2"], [4, "ngFor", "ngForOf", "ngForTrackBy"], ["value", "1", "class", "border-1 border-round-md border-surface", 4, "ngIf"], ["value", "2", "class", "border-1 border-round-md border-surface", 4, "ngIf"], ["icon", "pi pi-comments", "severity", "primary", 3, "label", "click", 4, "ngIf"], [3, "ngSwitch", 4, "ngIf"], [1, "p-field-radiobutton"], ["name", "taskOptions", 3, "ngModelChange", "value", "ngModel", "inputId", "disabled"], [1, "pl-2", 3, "for"], ["value", "1", 1, "border-1", "border-round-md", "border-surface"], [4, "ngIf"], [1, "p-field-checkbox", "mt-3"], ["inputId", "appendCustom", 3, "ngModelChange", "onChange", "ngModel", "binary"], ["for", "appendCustom", 1, "pl-2"], [1, "flex", "flex-column", "gap-3", "mt-3"], ["id", "ai-changes"], ["ariaLabelledBy", "ai-changes", "fluid", "", 3, "ngModelChange", "onChange", "ngModel", "step"], ["name", "promptOptions", 3, "ngModelChange", "onClick", "value", "ngModel", "inputId", "disabled"], [1, "p-field-checkbox"], [3, "ngModelChange", "value", "ngModel", "inputId", "disabled"], ["pTextarea", "", "id", "customPrompt", "fluid", "", 3, "ngModelChange", "blur", "ngModel", "autoResize"], ["for", "customPrompt"], ["value", "2", 1, "border-1", "border-round-md", "border-surface"], ["name", "aiOptions", 3, "ngModelChange", "onClick", "value", "ngModel", "inputId", "disabled"], ["icon", "pi pi-comments", "severity", "primary", 3, "click", "label"], [3, "ngSwitch"], ["mode", "prototype", 3, "showSampleDataButton", 4, "ngSwitchCase"], ["mode", "prototype", 3, "showSampleDataButton"]], template: function AiOptionsComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -29465,7 +30593,7 @@ var AiOptionsComponent = class _AiOptionsComponent {
     </ng-container>\r
   </div>\r
 </p-drawer>` }]
-  }], () => [{ type: UploadStateService }], { promptChange: [{
+  }], null, { promptChange: [{
     type: Output
   }], customPrompt: [{
     type: Output
@@ -29544,12 +30672,8 @@ function HeadingStructureComponent_ng_template_3_Template(rf, ctx) {
   }
 }
 var HeadingStructureComponent = class _HeadingStructureComponent {
-  uploadState;
-  translate;
-  constructor(uploadState, translate) {
-    this.uploadState = uploadState;
-    this.translate = translate;
-  }
+  uploadState = inject(UploadStateService);
+  translate = inject(TranslateService);
   ngOnInit() {
     this.fetchHeadings();
     this.cols = [
@@ -29618,7 +30742,7 @@ var HeadingStructureComponent = class _HeadingStructureComponent {
     }
   }
   static \u0275fac = function HeadingStructureComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _HeadingStructureComponent)(\u0275\u0275directiveInject(UploadStateService), \u0275\u0275directiveInject(TranslateService));
+    return new (__ngFactoryType__ || _HeadingStructureComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HeadingStructureComponent, selectors: [["ca-heading-structure"]], decls: 5, vars: 6, consts: [["header", ""], ["body", ""], ["size", "small", "stripedRows", "", "selectionMode", "single", "dataKey", "order", "metaKeySelection", "false", 3, "selectionChange", "columns", "value", "tableStyle", "reorderableColumns", "selection"], [2, "width", "3rem"], [4, "ngFor", "ngForOf"], [3, "pReorderableRow", "pSelectableRow"], ["pReorderableRowHandle", "", 1, "pi", "pi-bars"], [3, "ngClass", "ngStyle"]], template: function HeadingStructureComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -29696,10 +30820,10 @@ var HeadingStructureComponent = class _HeadingStructureComponent {
   </ng-template>\r
 </p-table>\r
 ` }]
-  }], () => [{ type: UploadStateService }, { type: TranslateService }], null);
+  }], null, null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(HeadingStructureComponent, { className: "HeadingStructureComponent", filePath: "src/app/views/page-assistant/components/tools/heading-structure.component.ts", lineNumber: 33 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(HeadingStructureComponent, { className: "HeadingStructureComponent", filePath: "src/app/views/page-assistant/components/tools/heading-structure.component.ts", lineNumber: 37 });
 })();
 
 // node_modules/primeng/fesm2022/primeng-breadcrumb.mjs
@@ -43624,15 +44748,12 @@ function IaStructureComponent_ng_container_12_Template(rf, ctx) {
   }
 }
 var IaStructureComponent = class _IaStructureComponent {
-  uploadState;
-  translate;
-  locationStrategy;
-  theme;
-  constructor(uploadState, translate, locationStrategy, theme13) {
-    this.uploadState = uploadState;
-    this.translate = translate;
-    this.locationStrategy = locationStrategy;
-    this.theme = theme13;
+  uploadState = inject(UploadStateService);
+  translate = inject(TranslateService);
+  locationStrategy = inject(LocationStrategy);
+  theme = inject(ThemeService);
+  production = environment.production;
+  constructor() {
     effect(() => {
       this.theme.darkMode();
       this.updateNodeStyles(this.iaChart, 0);
@@ -44186,12 +45307,13 @@ var IaStructureComponent = class _IaStructureComponent {
       return;
     }
     const findAndDelete = (nodes) => {
-      for (let i = 0; i < nodes.length; i++) {
-        const children = nodes[i].children || [];
+      for (const node of nodes) {
+        const children = node.children ?? [];
         const childIndex = children.findIndex((c) => c === nodeToDelete);
         if (childIndex > -1) {
-          this.undoArray.push({ node: nodeToDelete, parent: nodes[i], index: childIndex });
+          this.undoArray.push({ node: nodeToDelete, parent: node, index: childIndex });
           children.splice(childIndex, 1);
+          node.children = children.length ? children : void 0;
           return true;
         }
         if (children.length && findAndDelete(children)) {
@@ -44249,21 +45371,24 @@ var IaStructureComponent = class _IaStructureComponent {
     window.open(shareLink, "_blank");
   }
   handleNodeDrop(event) {
-    if ((event.dropNode.data.isContainer || event.dropNode.parent?.data?.isContainer) && event.dragNode.data.isContainer)
+    const dragNode = event.dragNode;
+    const dropNode = event.dropNode;
+    if (!dragNode || !dropNode)
       return;
-    event.accept();
-    if (event.dragNode.data.customStyleKey === "move") {
-      event.dragNode.data.customStyleKey = "";
-      event.dragNode.data.borderStyle = "border-2 border-primary border-round shadow-2";
+    if ((dropNode.data.isContainer || dropNode.parent?.data?.isContainer) && dragNode.data.isContainer)
+      return;
+    event.accept?.();
+    if (dragNode.data.customStyleKey === "move") {
+      dragNode.data.customStyleKey = "";
+      dragNode.data.borderStyle = "border-2 border-primary border-round shadow-2";
     }
-    const targetEl = event.originalEvent.target;
+    const targetEl = event.originalEvent?.target;
     const tag = targetEl.tagName.toLowerCase();
     const droppedOnNode = tag !== "li";
-    const dragParentUrl = event.dragNode.data.originalParent;
-    const dropUrl = event.dropNode.data.url;
-    const dropParentUrl = event.dropNode.parent?.data?.url ?? "";
-    const dropGrandparentUrl = event.dropNode.parent?.data?.originalParent ?? "";
-    console.log("Tag should be a if dropped on node:\n", tag);
+    const dragParentUrl = dragNode.data.originalParent;
+    const dropUrl = dropNode.data.url;
+    const dropParentUrl = dropNode.parent?.data?.url ?? "";
+    const dropGrandparentUrl = dropNode.parent?.data?.originalParent ?? "";
     if (droppedOnNode) {
       console.log("Dropped on node");
       console.log("Checking if parentUrl matches node Url:\n", dropUrl);
@@ -44271,23 +45396,20 @@ var IaStructureComponent = class _IaStructureComponent {
       console.log("Dropped between nodes");
       console.log("Checking if parentUrl matches sibling parent Url:\n", dropParentUrl);
     }
-    console.log("Drag parentUrl:\n", dragParentUrl);
     const droppedOnParent = droppedOnNode && dragParentUrl === dropUrl;
     const reorderedSiblings = !droppedOnNode && dragParentUrl === dropParentUrl;
-    console.log("Sibling reorder: ", reorderedSiblings);
-    console.log("Dropped on parent: ", droppedOnParent);
-    const droppedOnContainerSibling = event.dropNode.data.isContainer && droppedOnNode && dragParentUrl === dropParentUrl;
-    const droppedBetweenContainerSibling = event.dropNode.parent?.data?.isContainer && !droppedOnNode && dragParentUrl === dropGrandparentUrl;
-    console.log("Dropped on container sibling: ", droppedOnContainerSibling);
-    console.log("Dropped between container sibling: ", droppedBetweenContainerSibling);
-    const isCustom = event.dragNode.data.customStyle;
-    console.log("Container or dummy node: ", isCustom);
-    console.log("Event drop", event);
-    if (!(droppedOnParent || reorderedSiblings || droppedOnContainerSibling || droppedBetweenContainerSibling || isCustom || event.dragNode.data.customStyleKey === "new")) {
-      event.dragNode.data.customStyleKey = "move";
-      event.dragNode.data.borderStyle = "border-2 border-primary border-round border-dashed shadow-2";
+    const droppedOnContainerSibling = dropNode.data.isContainer && droppedOnNode && dragParentUrl === dropParentUrl;
+    const droppedBetweenContainerSibling = dropNode.parent?.data?.isContainer && !droppedOnNode && dragParentUrl === dropGrandparentUrl;
+    const isCustom = dragNode.data.customStyle;
+    if (!(droppedOnParent || reorderedSiblings || droppedOnContainerSibling || droppedBetweenContainerSibling || isCustom || dragNode.data.customStyleKey === "new")) {
+      dragNode.data.customStyleKey = "move";
+      dragNode.data.borderStyle = "border-2 border-primary border-round border-dashed shadow-2";
     }
-    console.log("Drag parent URL", event.dragNode.data.originalParent);
+    const treeRoot = targetEl.closest(".p-tree");
+    treeRoot?.querySelectorAll(".p-tree-node-dragover").forEach((el) => {
+      el.classList.remove("p-tree-node-dragover");
+    });
+    console.log("Drag parent URL", dragNode.data.originalParent);
     this.updateNodeStyles(this.iaChart, 0);
   }
   updateNodeStyles(nodes, level = 0) {
@@ -44305,7 +45427,7 @@ var IaStructureComponent = class _IaStructureComponent {
     }
   }
   static \u0275fac = function IaStructureComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _IaStructureComponent)(\u0275\u0275directiveInject(UploadStateService), \u0275\u0275directiveInject(TranslateService), \u0275\u0275directiveInject(LocationStrategy), \u0275\u0275directiveInject(ThemeService));
+    return new (__ngFactoryType__ || _IaStructureComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _IaStructureComponent, selectors: [["ca-ia-structure"]], viewQuery: function IaStructureComponent_Query(rf, ctx) {
     if (rf & 1) {
@@ -44354,7 +45476,7 @@ var IaStructureComponent = class _IaStructureComponent {
       \u0275\u0275advance();
       \u0275\u0275property("ngIf", ctx.iaChart);
       \u0275\u0275advance();
-      \u0275\u0275property("ngIf", ctx.iaChart);
+      \u0275\u0275property("ngIf", ctx.iaChart && !ctx.production);
       \u0275\u0275advance();
       \u0275\u0275property("ngIf", ctx.iaChart);
     }
@@ -44478,7 +45600,7 @@ var IaStructureComponent = class _IaStructureComponent {
 </ng-container>\r
 \r
 <!--IA Table-->\r
-<ng-container *ngIf="iaChart">\r
+<ng-container *ngIf="iaChart && !production">\r
     <h2>IA structure table</h2>\r
     <p-treeTable [value]="iaChart" styleClass="p-treetable-sm" [scrollable]="true">\r
         <ng-template #header>\r
@@ -44520,7 +45642,7 @@ var IaStructureComponent = class _IaStructureComponent {
         </ng-template>\r
     </p-table>\r
 </ng-container>`, styles: ["/* angular:styles/component:css;282dc0c926a358c7e7f17f3e75bfd07f4819790983dec331bff836691565b3ef;C:/Users/rosaz/translation-assistant/content-assistant/src/app/views/page-assistant/components/tools/ia-structure.component.ts */\n.ia-label {\n  white-space: pre-line;\n  display: inline-block;\n  color: var(--text-color) !important;\n  text-decoration: none !important;\n}\n::ng-deep .p-tree li[class*=text-white] > .p-tree-node-content .ia-label {\n  color: #ffffff !important;\n}\n::ng-deep .p-tree li[class*=text-black] > .p-tree-node-content .ia-label {\n  color: #000000 !important;\n}\n::ng-deep .p-tree .p-tree-node-content:hover {\n  background-color: unset !important;\n}\n::ng-deep .ia-chart-container .p-organizationchart-node a {\n  color: var(--text-color) !important;\n  text-decoration: none !important;\n}\n::ng-deep .ia-chart-container .p-organizationchart-node.text-white a {\n  color: #ffffff !important;\n}\n::ng-deep .ia-chart-container .p-organizationchart-node.text-black a {\n  color: #000000 !important;\n}\n/*# sourceMappingURL=ia-structure.component.css.map */\n"] }]
-  }], () => [{ type: UploadStateService }, { type: TranslateService }, { type: LocationStrategy }, { type: ThemeService }], { chartContainer: [{
+  }], () => [], { chartContainer: [{
     type: ViewChild,
     args: ["chartContainer"]
   }], cm: [{
@@ -44529,7 +45651,7 @@ var IaStructureComponent = class _IaStructureComponent {
   }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(IaStructureComponent, { className: "IaStructureComponent", filePath: "src/app/views/page-assistant/components/tools/ia-structure.component.ts", lineNumber: 76 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(IaStructureComponent, { className: "IaStructureComponent", filePath: "src/app/views/page-assistant/components/tools/ia-structure.component.ts", lineNumber: 79 });
 })();
 
 // src/app/views/page-assistant/data/css-list.config.ts
@@ -44718,9 +45840,9 @@ var guidanceMap = [
     patterns: [/^alert(-(danger|dismissable|dismissible|info|link|success|warning))?$/]
   },
   {
-    name: "page.tools.guidance.craVariant.headings.title",
-    url: "page.tools.guidance.craVariant.headings.url",
-    patterns: [/^h[1-6]$/]
+    name: "page.tools.guidance.craVariant.doormats.title",
+    url: "page.tools.guidance.craVariant.doormats.url",
+    patterns: [/^(gc-srvinfo|list-group)$/]
   },
   {
     name: "page.tools.guidance.craVariant.fieldflow.title",
@@ -44771,6 +45893,104 @@ var guidanceMap = [
     name: "page.tools.guidance.gcCore.calendar.title",
     url: "page.tools.guidance.gcCore.calendar.url",
     patterns: ["wb-calevt"]
+  },
+  {
+    name: "page.tools.guidance.gcCore.carousel.title",
+    url: "page.tools.guidance.gcCore.carousel.url",
+    patterns: [
+      /^carousel(-(caption|control|indicators|inner|s[12]))?$/,
+      /\b(fd-(slider|wdgt)(-(bar|handle|range))?|slide|slidefade|slidevert)\b/
+    ]
+  },
+  {
+    name: "page.tools.guidance.gcCore.charts.title",
+    url: "page.tools.guidance.gcCore.charts.url",
+    patterns: ["wb-charts"]
+  },
+  {
+    name: "page.tools.guidance.gcCore.features.title",
+    url: "page.tools.guidance.gcCore.features.url",
+    patterns: ["gc-features"]
+  },
+  {
+    name: "page.tools.guidance.gcCore.inview.title",
+    url: "page.tools.guidance.gcCore.inview.url",
+    patterns: ["wb-inview"]
+  },
+  {
+    name: "page.tools.guidance.gcCore.dismissable.title",
+    url: "page.tools.guidance.gcCore.dismissable.url",
+    patterns: ["wb-dismissable"]
+  },
+  {
+    name: "page.tools.guidance.gcCore.equalHeight.title",
+    url: "page.tools.guidance.gcCore.equalHeight.url",
+    patterns: ["wb-eqht"]
+  },
+  {
+    name: "page.tools.guidance.gcCore.footnote.title",
+    url: "page.tools.guidance.gcCore.footnote.url",
+    patterns: ["wb-fnote"]
+  },
+  {
+    name: "page.tools.guidance.gcCore.forms.title",
+    url: "page.tools.guidance.gcCore.forms.url",
+    patterns: [
+      /^btn(-(block|call-to-action|cnt|danger|default|group(-(justified|lg|sm|vertical|xs))?|info|lg|link|primary|sm|success|toolbar|warning|xs|all-services))?$/,
+      /^form-(control(-(feedback|static))?|group(-(lg|sm))?|horizontal|inline)$/,
+      /\b(checkbox(-inline|-standalone)?|radio(-inline)?|control(-label)?|controls|inputs-zone|submit|reset|picker-overlay|datepicker-format)\b/,
+      /^(input-(group(-(addon|btn|lg|sm))?|lg|sm)|form-(control(-(feedback|static))?|group(-(lg|sm))?|horizontal|inline))$/,
+      /\b(active|disabled|selected|hover|required(-no-asterisk)?)\b/,
+      /\b(buttons|basic-link|legend-brdr-bttm|legend-label-only)\b/,
+      /^dropdown-?(backdrop|header|menu-?(left|right)?|toggle)?$|^dropup$/
+    ]
+  },
+  {
+    name: "page.tools.guidance.gcCore.forms.title",
+    url: "page.tools.guidance.gcCore.forms.url",
+    patterns: [
+      /^col-?(xs|sm|md|lg)?-?([0-9]{1,2}|auto)?$/,
+      /^col-(xs|sm|md|lg)-(offset|push|pull)-[0-9]{1,2}$/,
+      /^colcount-(xxs|xs|sm|md|lg|xl)-[2-4]$/,
+      "colcount-no-break",
+      /^row(border)?$/
+    ]
+  },
+  {
+    name: "page.tools.guidance.gcCore.hidden.title",
+    url: "page.tools.guidance.gcCore.hidden.url",
+    patterns: [
+      /^visible-(xs|sm|md|lg|print)(-(block|inline|inline-block))?$/,
+      /^hidden(-(xs|sm|md|lg|print|hd))?$/,
+      /^sr-only(-focusable)?$/
+    ]
+  },
+  {
+    name: "page.tools.guidance.gcCore.label.title",
+    url: "page.tools.guidance.gcCore.label.url",
+    patterns: ["label"]
+  },
+  {
+    name: "page.tools.guidance.gcCore.checkboxAndRadio.title",
+    url: "page.tools.guidance.gcCore.checkboxAndRadio.url",
+    patterns: ["gc-chckbxrdio"]
+  },
+  {
+    name: "page.tools.guidance.gcCore.margin.title",
+    url: "page.tools.guidance.gcCore.margin.url",
+    patterns: [
+      /^mrgn-(tp|bttm|lft|rght)-(0|xs|sm|md|lg|xl)$/,
+      /^(m|p)([trblxy]?)-(auto|[0-5])$/,
+      /^(m|p)([trblxy]?)-(lg|md|sm)-?(auto|[0-5])$/,
+      /^margin-(top|bottom)-(none|large|medium)$/
+    ]
+  }
+];
+var guidanceExclusionMap = [
+  {
+    name: "page.tools.guidance.craVariant.basicPage.title",
+    url: "page.tools.guidance.craVariant.basicPage.url",
+    patterns: [/^(gc-srvinfo|list-group)$/, /^gc-subway(-pagination)?$/]
   }
 ];
 var guidanceContentMap = [
@@ -44799,15 +46019,39 @@ var guidanceContentMap = [
     patterns: [/^.*?$/]
   },
   {
-    name: "page.tools.guidance.craVariant.basicPage.title",
-    url: "page.tools.guidance.craVariant.basicPage.url",
-    tag: "p",
-    patterns: [/^BANANA$/]
+    name: "page.tools.guidance.craVariant.headings.title",
+    url: "page.tools.guidance.craVariant.headings.url",
+    tag: /^h[1-6]$/,
+    patterns: [/^.*?$/]
   },
   {
     name: "page.tools.guidance.craVariant.borders.title",
     url: "page.tools.guidance.craVariant.borders.url",
     tag: "br",
+    patterns: [/^.*?$/]
+  },
+  {
+    name: "page.tools.guidance.gcCore.code.title",
+    url: "page.tools.guidance.gcCore.code.url",
+    tag: /^(code|pre)$/,
+    patterns: [/^.*?$/]
+  },
+  {
+    name: "page.tools.guidance.gcCore.exHide.title",
+    url: "page.tools.guidance.gcCore.exHide.url",
+    tag: /^(details|summary)$/,
+    patterns: [/^.*?$/]
+  },
+  {
+    name: "page.tools.guidance.gcCore.images.title",
+    url: "page.tools.guidance.gcCore.images.url",
+    tag: "img",
+    patterns: [/^.*?$/]
+  },
+  {
+    name: "page.tools.guidance.gcCore.keyboardKeys.title",
+    url: "page.tools.guidance.gcCore.keyboardKeys.url",
+    tag: "kbd",
     patterns: [/^.*?$/]
   }
 ];
@@ -44880,6 +46124,7 @@ var ValidatorService = class _ValidatorService {
     const found = /* @__PURE__ */ new Map();
     this.walkForGuidance(doc.body, found);
     this.walkForContentGuidance(doc.body, found);
+    this.walkForGuidanceByExclusion(doc.body, found);
     return Array.from(found.values());
   }
   walkForGuidance(node, found) {
@@ -44904,7 +46149,8 @@ var ValidatorService = class _ValidatorService {
       const text = node.textContent?.trim();
       if (text) {
         for (const group of guidanceContentMap) {
-          if (group.tag === tagName && group.patterns.some((pat) => typeof pat === "string" ? pat === text : pat.test(text))) {
+          const tagMatches = typeof group.tag === "string" ? group.tag === tagName : group.tag.test(tagName);
+          if (tagMatches && group.patterns.some((pat) => typeof pat === "string" ? pat === text : pat.test(text))) {
             found.set(group.url, { name: group.name, url: group.url });
           }
         }
@@ -44915,6 +46161,21 @@ var ValidatorService = class _ValidatorService {
         this.walkForContentGuidance(child, found);
       }
     });
+  }
+  //Adds guidance if specific classes aren't found (example: it's probably a basic page if no doormats or subway pattern detected)
+  walkForGuidanceByExclusion(root, found) {
+    for (const group of guidanceExclusionMap) {
+      const hasExclusion = group.patterns.some((pat) => {
+        if (typeof pat === "string") {
+          return root.querySelector(`.${pat}`) !== null;
+        } else {
+          return Array.from(root.querySelectorAll("[class]")).some((el) => el.className.split(/\s+/).some((cls) => pat.test(cls)));
+        }
+      });
+      if (!hasExclusion) {
+        found.set(group.url, { name: group.name, url: group.url });
+      }
+    }
   }
   static \u0275fac = function ValidatorService_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _ValidatorService)();
@@ -44931,7 +46192,7 @@ var ValidatorService = class _ValidatorService {
 })();
 
 // src/app/views/page-assistant/components/tools/component-guidance.component.ts
-function ComponentGuidanceComponent_li_12_Template(rf, ctx) {
+function ComponentGuidanceComponent_li_3_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "li")(1, "a", 3);
     \u0275\u0275pipe(2, "translate");
@@ -44948,29 +46209,62 @@ function ComponentGuidanceComponent_li_12_Template(rf, ctx) {
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(4, 4, item_r1.name));
   }
 }
-function ComponentGuidanceComponent_li_18_Template(rf, ctx) {
+function ComponentGuidanceComponent_ng_container_4_li_15_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "li");
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const v_r2 = ctx.$implicit;
+    const v_r4 = ctx.$implicit;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate2(" ", v_r2.type, ": ", v_r2.detail, " ");
+    \u0275\u0275textInterpolate2(" ", v_r4.type, ": ", v_r4.detail, " ");
+  }
+}
+function ComponentGuidanceComponent_ng_container_4_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r2 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275elementStart(1, "p", 5);
+    \u0275\u0275text(2, "Unfinished. Will add fxn to:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "ul")(4, "li");
+    \u0275\u0275text(5, "detect which components are used on the page and link to relevant UCDG guidance (in progress)");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "li");
+    \u0275\u0275text(7, "warn user if they are using a depracated version of a component");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(8, "li");
+    \u0275\u0275text(9, "auto-fix deprecated code w/ option to accept & merge with page");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(10, "p");
+    \u0275\u0275text(11, "This button just checks if you have any classes or elements that aren't in theme.min.css");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(12, "p-button", 6);
+    \u0275\u0275listener("click", function ComponentGuidanceComponent_ng_container_4_Template_p_button_click_12_listener() {
+      \u0275\u0275restoreView(_r2);
+      const ctx_r2 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r2.runValidation());
+    });
+    \u0275\u0275text(13, "Check classes and elements");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(14, "ul");
+    \u0275\u0275template(15, ComponentGuidanceComponent_ng_container_4_li_15_Template, 2, 2, "li", 1);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext();
+    \u0275\u0275advance(15);
+    \u0275\u0275property("ngForOf", ctx_r2.violations);
   }
 }
 var ComponentGuidanceComponent = class _ComponentGuidanceComponent {
-  uploadState;
-  translate;
-  validator;
-  http;
-  constructor(uploadState, translate, validator, http) {
-    this.uploadState = uploadState;
-    this.translate = translate;
-    this.validator = validator;
-    this.http = http;
-  }
+  uploadState = inject(UploadStateService);
+  translate = inject(TranslateService);
+  validator = inject(ValidatorService);
+  http = inject(HttpClient);
+  production = environment.production;
   ngOnInit() {
     const data = this.uploadState.getUploadData();
     if (data?.originalHtml) {
@@ -44993,59 +46287,37 @@ var ComponentGuidanceComponent = class _ComponentGuidanceComponent {
     return __async(this, null, function* () {
       const css = yield firstValueFrom(this.http.get(url, { responseType: "text" }));
       const classPattern = /\.([a-zA-Z0-9_-]+)/g;
-      const classes13 = /* @__PURE__ */ new Set();
+      const classes14 = /* @__PURE__ */ new Set();
       let match;
       while ((match = classPattern.exec(css)) !== null) {
-        classes13.add(match[1]);
+        classes14.add(match[1]);
       }
-      return [...classes13].sort();
+      return [...classes14].sort();
     });
   }
   static \u0275fac = function ComponentGuidanceComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ComponentGuidanceComponent)(\u0275\u0275directiveInject(UploadStateService), \u0275\u0275directiveInject(TranslateService), \u0275\u0275directiveInject(ValidatorService), \u0275\u0275directiveInject(HttpClient));
+    return new (__ngFactoryType__ || _ComponentGuidanceComponent)();
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ComponentGuidanceComponent, selectors: [["ca-component-guidance"]], decls: 19, vars: 2, consts: [[1, "m-0"], [4, "ngFor", "ngForOf"], ["severity", "primary", 1, "mt-2", 3, "click"], ["target", "_blank", "rel", "noopener", 3, "href"], [1, "pi", "pi-external-link", "ml-1", 2, "font-size", ".75rem"]], template: function ComponentGuidanceComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ComponentGuidanceComponent, selectors: [["ca-component-guidance"]], decls: 5, vars: 2, consts: [[1, "mt-0"], [4, "ngFor", "ngForOf"], [4, "ngIf"], ["target", "_blank", "rel", "noopener", 3, "href"], [1, "pi", "pi-external-link", "ml-1", 2, "font-size", ".75rem"], [1, "m-0"], ["severity", "primary", 1, "mt-2", 3, "click"]], template: function ComponentGuidanceComponent_Template(rf, ctx) {
     if (rf & 1) {
-      \u0275\u0275elementStart(0, "p", 0);
-      \u0275\u0275text(1, "Unfinished. Will add fxn to:");
+      \u0275\u0275elementStart(0, "h2", 0);
+      \u0275\u0275text(1, "Guidance");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(2, "ul")(3, "li");
-      \u0275\u0275text(4, "detect which components are used on the page and link to relevant UCDG guidance (in progress)");
+      \u0275\u0275elementStart(2, "ul");
+      \u0275\u0275template(3, ComponentGuidanceComponent_li_3_Template, 6, 6, "li", 1);
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(5, "li");
-      \u0275\u0275text(6, "warn user if they are using a depracated version of a component");
-      \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(7, "li");
-      \u0275\u0275text(8, "auto-fix deprecated code w/ option to accept & merge with page");
-      \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(9, "h2");
-      \u0275\u0275text(10, "Guidance");
-      \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(11, "ul");
-      \u0275\u0275template(12, ComponentGuidanceComponent_li_12_Template, 6, 6, "li", 1);
-      \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(13, "p");
-      \u0275\u0275text(14, "This button just checks if you have any classes or elements that aren't in theme.min.css");
-      \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(15, "p-button", 2);
-      \u0275\u0275listener("click", function ComponentGuidanceComponent_Template_p_button_click_15_listener() {
-        return ctx.runValidation();
-      });
-      \u0275\u0275text(16, "Check classes and elements");
-      \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(17, "ul");
-      \u0275\u0275template(18, ComponentGuidanceComponent_li_18_Template, 2, 2, "li", 1);
-      \u0275\u0275elementEnd();
+      \u0275\u0275template(4, ComponentGuidanceComponent_ng_container_4_Template, 16, 1, "ng-container", 2);
     }
     if (rf & 2) {
-      \u0275\u0275advance(12);
+      \u0275\u0275advance(3);
       \u0275\u0275property("ngForOf", ctx.guidanceList);
-      \u0275\u0275advance(6);
-      \u0275\u0275property("ngForOf", ctx.violations);
+      \u0275\u0275advance();
+      \u0275\u0275property("ngIf", !ctx.production);
     }
   }, dependencies: [
     CommonModule,
     NgForOf,
+    NgIf,
     FormsModule,
     TranslateModule,
     TranslatePipe,
@@ -45061,29 +46333,31 @@ var ComponentGuidanceComponent = class _ComponentGuidanceComponent {
       FormsModule,
       TranslateModule,
       ButtonModule
-    ], template: `<p class="m-0">Unfinished. Will add fxn to:</p>\r
-<ul>\r
-    <li>detect which components are used on the page and link to relevant UCDG guidance (in progress)</li>\r
-    <li>warn user if they are using a depracated version of a component</li>\r
-    <li>auto-fix deprecated code w/ option to accept & merge with page</li>\r
-</ul>\r
-<h2>Guidance</h2>\r
+    ], template: `<h2 class="mt-0">Guidance</h2>\r
 <ul>\r
     <li *ngFor="let item of guidanceList">\r
         <a [href]="item.url | translate" target="_blank" rel="noopener">{{ item.name | translate }}<i class="pi pi-external-link ml-1" style="font-size: .75rem"></i></a>\r
     </li>\r
 </ul>\r
-<p>This button just checks if you have any classes or elements that aren't in theme.min.css</p>\r
-<p-button severity="primary" (click)="runValidation()" class="mt-2">Check classes and elements</p-button>\r
-<ul>\r
-    <li *ngFor="let v of violations">\r
-        {{v.type}}: {{v.detail}}\r
-    </li>\r
-</ul>` }]
-  }], () => [{ type: UploadStateService }, { type: TranslateService }, { type: ValidatorService }, { type: HttpClient }], null);
+<ng-container *ngIf="!production">\r
+    <p class="m-0">Unfinished. Will add fxn to:</p>\r
+    <ul>\r
+        <li>detect which components are used on the page and link to relevant UCDG guidance (in progress)</li>\r
+        <li>warn user if they are using a depracated version of a component</li>\r
+        <li>auto-fix deprecated code w/ option to accept & merge with page</li>\r
+    </ul>\r
+    <p>This button just checks if you have any classes or elements that aren't in theme.min.css</p>\r
+    <p-button severity="primary" (click)="runValidation()" class="mt-2">Check classes and elements</p-button>\r
+    <ul>\r
+        <li *ngFor="let v of violations">\r
+            {{v.type}}: {{v.detail}}\r
+        </li>\r
+    </ul>\r
+</ng-container>` }]
+  }], null, null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ComponentGuidanceComponent, { className: "ComponentGuidanceComponent", filePath: "src/app/views/page-assistant/components/tools/component-guidance.component.ts", lineNumber: 23 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ComponentGuidanceComponent, { className: "ComponentGuidanceComponent", filePath: "src/app/views/page-assistant/components/tools/component-guidance.component.ts", lineNumber: 25 });
 })();
 
 // src/app/views/page-assistant/components/tools/seo.component.ts
@@ -45140,12 +46414,8 @@ function SeoComponent_ng_container_5_Template(rf, ctx) {
   }
 }
 var SeoComponent = class _SeoComponent {
-  uploadState;
-  translate;
-  constructor(uploadState, translate) {
-    this.uploadState = uploadState;
-    this.translate = translate;
-  }
+  uploadState = inject(UploadStateService);
+  translate = inject(TranslateService);
   ngOnInit() {
     const data = this.uploadState.getUploadData();
     this.metadata = data?.metadata || [];
@@ -45170,7 +46440,7 @@ var SeoComponent = class _SeoComponent {
     console.log(text);
   }
   static \u0275fac = function SeoComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _SeoComponent)(\u0275\u0275directiveInject(UploadStateService), \u0275\u0275directiveInject(TranslateService));
+    return new (__ngFactoryType__ || _SeoComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SeoComponent, selectors: [["ca-seo"]], decls: 17, vars: 5, consts: [[1, "mt-0"], [1, "flex", "flex-row", "flex-wrap", "gap-3"], ["label", "Get GenAI metadata recomendations", "severity", "help", "icon", "pi pi-sparkles", 3, "click", "loading"], ["label", "Get GenAI content SEO recomendations", "severity", "help", "icon", "pi pi-sparkles", 3, "click", "loading"], [4, "ngIf"], [1, "flex", "flex-column", "gap-3"], ["variant", "in", 1, "flex-1"], ["pTextarea", "", "id", "search", "pTooltip", "Used to update lead-in content and keywords", "rows", "1", "autoResize", "", "fluid", "", 3, "ngModelChange", "ngModel"], ["for", "search"], ["pTextarea", "", "id", "search", "pTooltip", "Used to update lead-in content", "rows", "1", "autoResize", "", "fluid", "", 3, "ngModelChange", "ngModel"], ["pTextarea", "", "id", "title", "rows", "1", "autoResize", "", "fluid", "", 3, "ngModelChange", "ngModel"], ["for", "title"], ["pTextarea", "", "id", "description", "rows", "1", "autoResize", "", "fluid", "", 3, "ngModelChange", "ngModel"], ["for", "description"], ["pTextarea", "", "id", "keywords", "rows", "1", "autoResize", "", "fluid", "", 3, "ngModelChange", "ngModel"], ["for", "keywords"]], template: function SeoComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -45281,7 +46551,7 @@ var SeoComponent = class _SeoComponent {
         <label for="search">Google search terms</label>\r
     </p-ifta-label>\r
 </div>` }]
-  }], () => [{ type: UploadStateService }, { type: TranslateService }], null);
+  }], null, null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SeoComponent, { className: "SeoComponent", filePath: "src/app/views/page-assistant/components/tools/seo.component.ts", lineNumber: 22 });
@@ -45289,10 +46559,7 @@ var SeoComponent = class _SeoComponent {
 
 // src/app/views/page-assistant/components/tools/user-insights.component.ts
 var UserInsightsComponent = class _UserInsightsComponent {
-  translate;
-  constructor(translate) {
-    this.translate = translate;
-  }
+  translate = inject(TranslateService);
   isLoading = false;
   //UPD data (placeholders for future function)
   task = "";
@@ -45302,7 +46569,7 @@ var UserInsightsComponent = class _UserInsightsComponent {
     console.log(text);
   }
   static \u0275fac = function UserInsightsComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _UserInsightsComponent)(\u0275\u0275directiveInject(TranslateService));
+    return new (__ngFactoryType__ || _UserInsightsComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _UserInsightsComponent, selectors: [["ca-user-insights"]], decls: 19, vars: 4, consts: [[1, "mt-0"], [1, "flex", "flex-row", "flex-wrap", "gap-3"], ["label", "Get GenAI recomendations based on user data", "severity", "help", "icon", "pi pi-sparkles", 3, "click", "loading"], [1, "flex", "flex-column", "gap-3"], ["variant", "in", 1, "flex-1"], ["pTextarea", "", "id", "task", "pTooltip", "Used to update content", "rows", "1", "autoResize", "", "fluid", "", 3, "ngModelChange", "ngModel"], ["for", "task"], ["pTextarea", "", "id", "feedback", "pTooltip", "Used to update content", "rows", "1", "autoResize", "", "fluid", "", 3, "ngModelChange", "ngModel"], ["for", "feedback"], ["pTextarea", "", "id", "ux", "pTooltip", "Used to update content", "rows", "1", "autoResize", "", "fluid", "", 3, "ngModelChange", "ngModel"], ["for", "ux"]], template: function UserInsightsComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -45399,37 +46666,812 @@ var UserInsightsComponent = class _UserInsightsComponent {
         <label for="ux">UX test findings</label>\r
     </p-ifta-label>\r
 </div>` }]
-  }], () => [{ type: TranslateService }], null);
+  }], null, null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(UserInsightsComponent, { className: "UserInsightsComponent", filePath: "src/app/views/page-assistant/components/tools/user-insights.component.ts", lineNumber: 19 });
 })();
 
-// src/app/views/page-assistant/components/tools/link-report.component.ts
-var _c016 = () => ({ "min-width": "50rem" });
-function LinkReportComponent_ng_template_1_th_2_Template(rf, ctx) {
+// node_modules/primeng/fesm2022/primeng-overlaypanel.mjs
+var _c016 = ["content"];
+var _c121 = ["closeicon"];
+var _c214 = ["*"];
+var _c314 = (a0, a1) => ({
+  showTransitionParams: a0,
+  hideTransitionParams: a1
+});
+var _c413 = (a0, a1) => ({
+  value: a0,
+  params: a1
+});
+function OverlayPanel_div_0_ng_container_3_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "th");
-    \u0275\u0275text(1);
-    \u0275\u0275elementEnd();
+    \u0275\u0275elementContainer(0);
+  }
+}
+function OverlayPanel_div_0_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 1);
+    \u0275\u0275listener("click", function OverlayPanel_div_0_Template_div_click_0_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.onOverlayClick($event));
+    })("@animation.start", function OverlayPanel_div_0_Template_div_animation_animation_start_0_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.onAnimationStart($event));
+    })("@animation.done", function OverlayPanel_div_0_Template_div_animation_animation_done_0_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.onAnimationEnd($event));
+    });
+    \u0275\u0275elementStart(1, "div", 2);
+    \u0275\u0275listener("click", function OverlayPanel_div_0_Template_div_click_1_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.onContentClick($event));
+    })("mousedown", function OverlayPanel_div_0_Template_div_mousedown_1_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.onContentClick($event));
+    });
+    \u0275\u0275projection(2);
+    \u0275\u0275template(3, OverlayPanel_div_0_ng_container_3_Template, 1, 0, "ng-container", 3);
+    \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
-    const col_r1 = ctx.$implicit;
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275classMap(ctx_r1.styleClass);
+    \u0275\u0275property("ngClass", "p-popover p-component")("ngStyle", ctx_r1.style)("@animation", \u0275\u0275pureFunction2(12, _c413, ctx_r1.overlayVisible ? "open" : "close", \u0275\u0275pureFunction2(9, _c314, ctx_r1.showTransitionOptions, ctx_r1.hideTransitionOptions)));
+    \u0275\u0275attribute("aria-modal", ctx_r1.overlayVisible)("aria-label", ctx_r1.ariaLabel)("aria-labelledBy", ctx_r1.ariaLabelledBy);
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngTemplateOutlet", ctx_r1.contentTemplate || ctx_r1._contentTemplate);
+  }
+}
+var theme13 = ({
+  dt
+}) => `
+.p-popover {
+    margin-top: ${dt("popover.gutter")};
+    background: ${dt("popover.background")};
+    color: ${dt("popover.color")};
+    border: 1px solid ${dt("popover.border.color")};
+    border-radius: ${dt("popover.border.radius")};
+    box-shadow: ${dt("popover.shadow")};
+    position: absolute
+}
+
+.p-popover-content {
+    padding: ${dt("popover.content.padding")};
+}
+
+.p-popover-flipped {
+    margin-top: calc(${dt("popover.gutter")} * -1);
+    margin-bottom: ${dt("popover.gutter")};
+}
+
+.p-popover-enter-from {
+    opacity: 0;
+    transform: scaleY(0.8);
+}
+
+.p-popover-leave-to {
+    opacity: 0;
+}
+
+.p-popover-enter-active {
+    transition: transform 0.12s cubic-bezier(0, 0, 0.2, 1), opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
+}
+
+.p-popover-leave-active {
+    transition: opacity 0.1s linear;
+}
+
+.p-popover:after,
+.p-popover:before {
+    bottom: 100%;
+    left: calc(${dt("popover.arrow.offset")} + ${dt("popover.arrow.left")});
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.p-popover:after {
+    border-width: calc(${dt("popover.gutter")} - 2px);
+    margin-left: calc(-1 * (${dt("popover.gutter")} - 2px));
+    border-style: solid;
+    border-color: transparent;
+    border-bottom-color: ${dt("popover.background")};
+}
+
+.p-popover:before {
+    border-width: ${dt("popover.gutter")};
+    margin-left: calc(-1 * ${dt("popover.gutter")});
+    border-style: solid;
+    border-color: transparent;
+    border-bottom-color: ${dt("popover.border.color")};
+}
+
+.p-popover-flipped:after,
+.p-popover-flipped:before {
+    bottom: auto;
+    top: 100%;
+}
+
+.p-popover.p-popover-flipped:after {
+    border-bottom-color: transparent;
+    border-top-color: ${dt("popover.background")};
+}
+
+.p-popover.p-popover-flipped:before {
+    border-bottom-color: transparent;
+    border-top-color: ${dt("popover.border.color")};
+}
+
+`;
+var classes13 = {
+  root: "p-popover p-component",
+  content: "p-popover-content"
+};
+var PopoverStyle = class _PopoverStyle extends BaseStyle {
+  name = "popover";
+  theme = theme13;
+  classes = classes13;
+  static \u0275fac = /* @__PURE__ */ (() => {
+    let \u0275PopoverStyle_BaseFactory;
+    return function PopoverStyle_Factory(__ngFactoryType__) {
+      return (\u0275PopoverStyle_BaseFactory || (\u0275PopoverStyle_BaseFactory = \u0275\u0275getInheritedFactory(_PopoverStyle)))(__ngFactoryType__ || _PopoverStyle);
+    };
+  })();
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+    token: _PopoverStyle,
+    factory: _PopoverStyle.\u0275fac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(PopoverStyle, [{
+    type: Injectable
+  }], null, null);
+})();
+var PopoverClasses;
+(function(PopoverClasses2) {
+  PopoverClasses2["root"] = "p-popover";
+  PopoverClasses2["content"] = "p-popover-content";
+})(PopoverClasses || (PopoverClasses = {}));
+var OverlayPanel = class _OverlayPanel extends BaseComponent {
+  zone;
+  overlayService;
+  /**
+   * Defines a string that labels the input for accessibility.
+   * @group Props
+   */
+  ariaLabel;
+  /**
+   * Establishes relationships between the component and label(s) where its value should be one or more element IDs.
+   * @group Props
+   */
+  ariaLabelledBy;
+  /**
+   * Enables to hide the overlay when outside is clicked.
+   * @group Props
+   */
+  dismissable = true;
+  /**
+   * When enabled, displays a close icon at top right corner.
+   * @group Props
+   */
+  showCloseIcon;
+  /**
+   * Inline style of the component.
+   * @group Props
+   */
+  style;
+  /**
+   * Style class of the component.
+   * @group Props
+   */
+  styleClass;
+  /**
+   *  Target element to attach the panel, valid values are "body" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]="mydiv" for a div element having #mydiv as variable name).
+   * @group Props
+   */
+  appendTo = "body";
+  /**
+   * Whether to automatically manage layering.
+   * @group Props
+   */
+  autoZIndex = true;
+  /**
+   * Aria label of the close icon.
+   * @group Props
+   */
+  ariaCloseLabel;
+  /**
+   * Base zIndex value to use in layering.
+   * @group Props
+   */
+  baseZIndex = 0;
+  /**
+   * When enabled, first button receives focus on show.
+   * @group Props
+   */
+  focusOnShow = true;
+  /**
+   * Transition options of the show animation.
+   * @group Props
+   */
+  showTransitionOptions = ".12s cubic-bezier(0, 0, 0.2, 1)";
+  /**
+   * Transition options of the hide animation.
+   * @group Props
+   */
+  hideTransitionOptions = ".1s linear";
+  /**
+   * Callback to invoke when an overlay becomes visible.
+   * @group Emits
+   */
+  onShow = new EventEmitter();
+  /**
+   * Callback to invoke when an overlay gets hidden.
+   * @group Emits
+   */
+  onHide = new EventEmitter();
+  container;
+  overlayVisible = false;
+  render = false;
+  isOverlayAnimationInProgress = false;
+  selfClick = false;
+  documentClickListener;
+  target;
+  willHide;
+  scrollHandler;
+  documentResizeListener;
+  contentTemplate;
+  closeIconTemplate;
+  templates;
+  _contentTemplate;
+  destroyCallback;
+  overlayEventListener;
+  overlaySubscription;
+  _componentStyle = inject(PopoverStyle);
+  constructor(zone, overlayService) {
+    super();
+    this.zone = zone;
+    this.overlayService = overlayService;
+    console.log("OverlayPanel is deprecated. Use Popover instead.");
+  }
+  ngAfterContentInit() {
+    this.templates?.forEach((item) => {
+      switch (item.getType()) {
+        case "content":
+          this._contentTemplate = item.template;
+          break;
+        default:
+          this._contentTemplate = item.template;
+          break;
+      }
+      this.cd.markForCheck();
+    });
+  }
+  bindDocumentClickListener() {
+    if (isPlatformBrowser(this.platformId)) {
+      if (!this.documentClickListener) {
+        let documentEvent = isIOS() ? "touchstart" : "click";
+        const documentTarget = this.el ? this.el.nativeElement.ownerDocument : this.document;
+        this.documentClickListener = this.renderer.listen(documentTarget, documentEvent, (event) => {
+          if (!this.dismissable) {
+            return;
+          }
+          if (!this.container?.contains(event.target) && this.target !== event.target && !this.target.contains(event.target) && !this.selfClick) {
+            this.hide();
+          }
+          this.selfClick = false;
+          this.cd.markForCheck();
+        });
+      }
+    }
+  }
+  unbindDocumentClickListener() {
+    if (this.documentClickListener) {
+      this.documentClickListener();
+      this.documentClickListener = null;
+      this.selfClick = false;
+    }
+  }
+  /**
+   * Toggles the visibility of the panel.
+   * @param {Event} event - Browser event
+   * @param {Target} target - Target element.
+   * @group Method
+   */
+  toggle(event, target) {
+    if (this.isOverlayAnimationInProgress) {
+      return;
+    }
+    if (this.overlayVisible) {
+      if (this.hasTargetChanged(event, target)) {
+        this.destroyCallback = () => {
+          this.show(null, target || event.currentTarget || event.target);
+        };
+      }
+      this.hide();
+    } else {
+      this.show(event, target);
+    }
+  }
+  /**
+   * Displays the panel.
+   * @param {Event} event - Browser event
+   * @param {Target} target - Target element.
+   * @group Method
+   */
+  show(event, target) {
+    target && event && event.stopPropagation();
+    if (this.isOverlayAnimationInProgress) {
+      return;
+    }
+    this.target = target || event.currentTarget || event.target;
+    this.overlayVisible = true;
+    this.render = true;
+    this.cd.markForCheck();
+  }
+  onOverlayClick(event) {
+    this.overlayService.add({
+      originalEvent: event,
+      target: this.el.nativeElement
+    });
+    this.selfClick = true;
+  }
+  onContentClick(event) {
+    const targetElement = event.target;
+    this.selfClick = event.offsetX < targetElement.clientWidth && event.offsetY < targetElement.clientHeight;
+  }
+  hasTargetChanged(event, target) {
+    return this.target != null && this.target !== (target || event.currentTarget || event.target);
+  }
+  appendContainer() {
+    if (this.appendTo) {
+      if (this.appendTo === "body") this.renderer.appendChild(this.document.body, this.container);
+      else appendChild(this.appendTo, this.container);
+    }
+  }
+  restoreAppend() {
+    if (this.container && this.appendTo) {
+      this.renderer.appendChild(this.el.nativeElement, this.container);
+    }
+  }
+  align() {
+    if (this.autoZIndex) {
+      zindexutils.set("overlay", this.container, this.baseZIndex + this.config.zIndex.overlay);
+    }
+    absolutePosition(this.container, this.target, false);
+    const containerOffset = getOffset(this.container);
+    const targetOffset = getOffset(this.target);
+    const borderRadius = this.document.defaultView?.getComputedStyle(this.container).getPropertyValue("border-radius");
+    let arrowLeft = 0;
+    if (containerOffset.left < targetOffset.left) {
+      arrowLeft = targetOffset.left - containerOffset.left - parseFloat(borderRadius) * 2;
+    }
+    this.container?.style.setProperty($dt("popover.arrow.left").name, `${arrowLeft}px`);
+    if (containerOffset.top < targetOffset.top) {
+      this.container.setAttribute("data-p-popover-flipped", "true");
+      addClass(this.container, "p-popover-flipped");
+      if (this.showCloseIcon) {
+        this.renderer.setStyle(this.container, "margin-top", "-30px");
+      }
+    }
+  }
+  onAnimationStart(event) {
+    if (event.toState === "open") {
+      this.container = event.element;
+      this.appendContainer();
+      this.align();
+      this.bindDocumentClickListener();
+      this.bindDocumentResizeListener();
+      this.bindScrollListener();
+      if (this.focusOnShow) {
+        this.focus();
+      }
+      this.overlayEventListener = (e) => {
+        if (this.container && this.container.contains(e.target)) {
+          this.selfClick = true;
+        }
+      };
+      this.overlaySubscription = this.overlayService.clickObservable.subscribe(this.overlayEventListener);
+      this.onShow.emit(null);
+    }
+    this.isOverlayAnimationInProgress = true;
+  }
+  onAnimationEnd(event) {
+    switch (event.toState) {
+      case "void":
+        if (this.destroyCallback) {
+          this.destroyCallback();
+          this.destroyCallback = null;
+        }
+        if (this.overlaySubscription) {
+          this.overlaySubscription.unsubscribe();
+        }
+        break;
+      case "close":
+        if (this.autoZIndex) {
+          zindexutils.clear(this.container);
+        }
+        if (this.overlaySubscription) {
+          this.overlaySubscription.unsubscribe();
+        }
+        this.onContainerDestroy();
+        this.onHide.emit({});
+        this.render = false;
+        break;
+    }
+    this.isOverlayAnimationInProgress = false;
+  }
+  focus() {
+    let focusable = findSingle(this.container, "[autofocus]");
+    if (focusable) {
+      this.zone.runOutsideAngular(() => {
+        setTimeout(() => focusable.focus(), 5);
+      });
+    }
+  }
+  /**
+   * Hides the panel.
+   * @group Method
+   */
+  hide() {
+    this.overlayVisible = false;
+    this.cd.markForCheck();
+  }
+  onCloseClick(event) {
+    this.hide();
+    event.preventDefault();
+  }
+  onEscapeKeydown(event) {
+    this.hide();
+  }
+  onWindowResize() {
+    if (this.overlayVisible && !isTouchDevice()) {
+      this.hide();
+    }
+  }
+  bindDocumentResizeListener() {
+    if (isPlatformBrowser(this.platformId)) {
+      if (!this.documentResizeListener) {
+        const window2 = this.document.defaultView;
+        this.documentResizeListener = this.renderer.listen(window2, "resize", this.onWindowResize.bind(this));
+      }
+    }
+  }
+  unbindDocumentResizeListener() {
+    if (this.documentResizeListener) {
+      this.documentResizeListener();
+      this.documentResizeListener = null;
+    }
+  }
+  bindScrollListener() {
+    if (isPlatformBrowser(this.platformId)) {
+      if (!this.scrollHandler) {
+        this.scrollHandler = new ConnectedOverlayScrollHandler(this.target, () => {
+          if (this.overlayVisible) {
+            this.hide();
+          }
+        });
+      }
+      this.scrollHandler.bindScrollListener();
+    }
+  }
+  unbindScrollListener() {
+    if (this.scrollHandler) {
+      this.scrollHandler.unbindScrollListener();
+    }
+  }
+  onContainerDestroy() {
+    if (!this.cd.destroyed) {
+      this.target = null;
+    }
+    this.unbindDocumentClickListener();
+    this.unbindDocumentResizeListener();
+    this.unbindScrollListener();
+  }
+  ngOnDestroy() {
+    if (this.scrollHandler) {
+      this.scrollHandler.destroy();
+      this.scrollHandler = null;
+    }
+    if (this.container && this.autoZIndex) {
+      zindexutils.clear(this.container);
+    }
+    if (!this.cd.destroyed) {
+      this.target = null;
+    }
+    this.destroyCallback = null;
+    if (this.container) {
+      this.restoreAppend();
+      this.onContainerDestroy();
+    }
+    if (this.overlaySubscription) {
+      this.overlaySubscription.unsubscribe();
+    }
+    super.ngOnDestroy();
+  }
+  static \u0275fac = function OverlayPanel_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _OverlayPanel)(\u0275\u0275directiveInject(NgZone), \u0275\u0275directiveInject(OverlayService));
+  };
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
+    type: _OverlayPanel,
+    selectors: [["p-overlayPanel"], ["p-overlaypanel"]],
+    contentQueries: function OverlayPanel_ContentQueries(rf, ctx, dirIndex) {
+      if (rf & 1) {
+        \u0275\u0275contentQuery(dirIndex, _c016, 4);
+        \u0275\u0275contentQuery(dirIndex, _c121, 4);
+        \u0275\u0275contentQuery(dirIndex, PrimeTemplate, 4);
+      }
+      if (rf & 2) {
+        let _t;
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.contentTemplate = _t.first);
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.closeIconTemplate = _t.first);
+        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.templates = _t);
+      }
+    },
+    hostBindings: function OverlayPanel_HostBindings(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275listener("keydown.escape", function OverlayPanel_keydown_escape_HostBindingHandler($event) {
+          return ctx.onEscapeKeydown($event);
+        }, false, \u0275\u0275resolveDocument);
+      }
+    },
+    inputs: {
+      ariaLabel: "ariaLabel",
+      ariaLabelledBy: "ariaLabelledBy",
+      dismissable: [2, "dismissable", "dismissable", booleanAttribute],
+      showCloseIcon: [2, "showCloseIcon", "showCloseIcon", booleanAttribute],
+      style: "style",
+      styleClass: "styleClass",
+      appendTo: "appendTo",
+      autoZIndex: [2, "autoZIndex", "autoZIndex", booleanAttribute],
+      ariaCloseLabel: "ariaCloseLabel",
+      baseZIndex: [2, "baseZIndex", "baseZIndex", numberAttribute],
+      focusOnShow: [2, "focusOnShow", "focusOnShow", booleanAttribute],
+      showTransitionOptions: "showTransitionOptions",
+      hideTransitionOptions: "hideTransitionOptions"
+    },
+    outputs: {
+      onShow: "onShow",
+      onHide: "onHide"
+    },
+    standalone: false,
+    features: [\u0275\u0275ProvidersFeature([PopoverStyle]), \u0275\u0275InheritDefinitionFeature],
+    ngContentSelectors: _c214,
+    decls: 1,
+    vars: 1,
+    consts: [["role", "dialog", 3, "ngClass", "ngStyle", "class", "click", 4, "ngIf"], ["role", "dialog", 3, "click", "ngClass", "ngStyle"], [1, "p-popover-content", 3, "click", "mousedown"], [4, "ngTemplateOutlet"]],
+    template: function OverlayPanel_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275projectionDef();
+        \u0275\u0275template(0, OverlayPanel_div_0_Template, 4, 15, "div", 0);
+      }
+      if (rf & 2) {
+        \u0275\u0275property("ngIf", ctx.render);
+      }
+    },
+    dependencies: [NgClass, NgIf, NgTemplateOutlet, NgStyle],
+    encapsulation: 2,
+    data: {
+      animation: [trigger("animation", [state("void", style({
+        transform: "scaleY(0.8)",
+        opacity: 0
+      })), state("close", style({
+        opacity: 0
+      })), state("open", style({
+        transform: "translateY(0)",
+        opacity: 1
+      })), transition("void => open", animate("{{showTransitionParams}}")), transition("open => close", animate("{{hideTransitionParams}}"))])]
+    },
+    changeDetection: 0
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(OverlayPanel, [{
+    type: Component,
+    args: [{
+      selector: "p-overlayPanel, p-overlaypanel",
+      standalone: false,
+      template: `
+        <div
+            *ngIf="render"
+            [ngClass]="'p-popover p-component'"
+            [ngStyle]="style"
+            [class]="styleClass"
+            (click)="onOverlayClick($event)"
+            [@animation]="{
+                value: overlayVisible ? 'open' : 'close',
+                params: { showTransitionParams: showTransitionOptions, hideTransitionParams: hideTransitionOptions }
+            }"
+            (@animation.start)="onAnimationStart($event)"
+            (@animation.done)="onAnimationEnd($event)"
+            role="dialog"
+            [attr.aria-modal]="overlayVisible"
+            [attr.aria-label]="ariaLabel"
+            [attr.aria-labelledBy]="ariaLabelledBy"
+        >
+            <div class="p-popover-content" (click)="onContentClick($event)" (mousedown)="onContentClick($event)">
+                <ng-content></ng-content>
+                <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate"></ng-container>
+            </div>
+        </div>
+    `,
+      animations: [trigger("animation", [state("void", style({
+        transform: "scaleY(0.8)",
+        opacity: 0
+      })), state("close", style({
+        opacity: 0
+      })), state("open", style({
+        transform: "translateY(0)",
+        opacity: 1
+      })), transition("void => open", animate("{{showTransitionParams}}")), transition("open => close", animate("{{hideTransitionParams}}"))])],
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      encapsulation: ViewEncapsulation.None,
+      providers: [PopoverStyle]
+    }]
+  }], () => [{
+    type: NgZone
+  }, {
+    type: OverlayService
+  }], {
+    ariaLabel: [{
+      type: Input
+    }],
+    ariaLabelledBy: [{
+      type: Input
+    }],
+    dismissable: [{
+      type: Input,
+      args: [{
+        transform: booleanAttribute
+      }]
+    }],
+    showCloseIcon: [{
+      type: Input,
+      args: [{
+        transform: booleanAttribute
+      }]
+    }],
+    style: [{
+      type: Input
+    }],
+    styleClass: [{
+      type: Input
+    }],
+    appendTo: [{
+      type: Input
+    }],
+    autoZIndex: [{
+      type: Input,
+      args: [{
+        transform: booleanAttribute
+      }]
+    }],
+    ariaCloseLabel: [{
+      type: Input
+    }],
+    baseZIndex: [{
+      type: Input,
+      args: [{
+        transform: numberAttribute
+      }]
+    }],
+    focusOnShow: [{
+      type: Input,
+      args: [{
+        transform: booleanAttribute
+      }]
+    }],
+    showTransitionOptions: [{
+      type: Input
+    }],
+    hideTransitionOptions: [{
+      type: Input
+    }],
+    onShow: [{
+      type: Output
+    }],
+    onHide: [{
+      type: Output
+    }],
+    contentTemplate: [{
+      type: ContentChild,
+      args: ["content", {
+        descendants: false
+      }]
+    }],
+    closeIconTemplate: [{
+      type: ContentChild,
+      args: ["closeicon", {
+        descendants: false
+      }]
+    }],
+    templates: [{
+      type: ContentChildren,
+      args: [PrimeTemplate]
+    }],
+    onEscapeKeydown: [{
+      type: HostListener,
+      args: ["document:keydown.escape", ["$event"]]
+    }]
+  });
+})();
+var OverlayPanelModule = class _OverlayPanelModule {
+  static \u0275fac = function OverlayPanelModule_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _OverlayPanelModule)();
+  };
+  static \u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
+    type: _OverlayPanelModule,
+    declarations: [OverlayPanel],
+    imports: [CommonModule, Ripple, SharedModule, TimesIcon],
+    exports: [OverlayPanel, SharedModule]
+  });
+  static \u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({
+    imports: [CommonModule, SharedModule, TimesIcon, SharedModule]
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(OverlayPanelModule, [{
+    type: NgModule,
+    args: [{
+      imports: [CommonModule, Ripple, SharedModule, TimesIcon],
+      exports: [OverlayPanel, SharedModule],
+      declarations: [OverlayPanel]
+    }]
+  }], null, null);
+})();
+
+// src/app/views/page-assistant/components/tools/link-report.component.ts
+var _c017 = ["typePanel"];
+var _c127 = () => ({ "min-width": "50rem" });
+function LinkReportComponent_ng_template_1_th_2_button_4_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r2 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 16);
+    \u0275\u0275listener("click", function LinkReportComponent_ng_template_1_th_2_button_4_Template_button_click_0_listener($event) {
+      \u0275\u0275restoreView(_r2);
+      \u0275\u0275nextContext(3);
+      const typePanel_r3 = \u0275\u0275reference(4);
+      return \u0275\u0275resetView(typePanel_r3 == null ? null : typePanel_r3.toggle($event));
+    });
+    \u0275\u0275elementEnd();
+  }
+}
+function LinkReportComponent_ng_template_1_th_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "th")(1, "div", 14)(2, "span");
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(4, LinkReportComponent_ng_template_1_th_2_button_4_Template, 1, 0, "button", 15);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const col_r4 = ctx.$implicit;
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(col_r4.header);
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(col_r1.header);
+    \u0275\u0275property("ngIf", col_r4.field === "type");
   }
 }
 function LinkReportComponent_ng_template_1_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "tr");
-    \u0275\u0275element(1, "th", 3);
-    \u0275\u0275template(2, LinkReportComponent_ng_template_1_th_2_Template, 2, 1, "th", 4);
+    \u0275\u0275element(1, "th", 12);
+    \u0275\u0275template(2, LinkReportComponent_ng_template_1_th_2_Template, 5, 2, "th", 13);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const ctx_r1 = \u0275\u0275nextContext();
+    const ctx_r4 = \u0275\u0275nextContext();
     \u0275\u0275advance(2);
-    \u0275\u0275property("ngForOf", ctx_r1.cols);
+    \u0275\u0275property("ngForOf", ctx_r4.cols);
   }
 }
 function LinkReportComponent_ng_template_2_td_3_span_2_Template(rf, ctx) {
@@ -45439,9 +47481,9 @@ function LinkReportComponent_ng_template_2_td_3_span_2_Template(rf, ctx) {
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const rowData_r3 = \u0275\u0275nextContext(2).$implicit;
+    const rowData_r6 = \u0275\u0275nextContext(2).$implicit;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(rowData_r3.order);
+    \u0275\u0275textInterpolate(rowData_r6.order);
   }
 }
 function LinkReportComponent_ng_template_2_td_3_span_3_Template(rf, ctx) {
@@ -45451,81 +47493,81 @@ function LinkReportComponent_ng_template_2_td_3_span_3_Template(rf, ctx) {
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const rowData_r3 = \u0275\u0275nextContext(2).$implicit;
+    const rowData_r6 = \u0275\u0275nextContext(2).$implicit;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(rowData_r3.type);
+    \u0275\u0275textInterpolate(rowData_r6.type);
   }
 }
 function LinkReportComponent_ng_template_2_td_3_span_4_div_2_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 15);
+    \u0275\u0275elementStart(0, "div", 27);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const rowData_r3 = \u0275\u0275nextContext(3).$implicit;
+    const rowData_r6 = \u0275\u0275nextContext(3).$implicit;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1("(", rowData_r3.href, ")");
+    \u0275\u0275textInterpolate1("(", rowData_r6.href, ")");
   }
 }
 function LinkReportComponent_ng_template_2_td_3_span_4_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 13);
+    \u0275\u0275elementStart(0, "span", 25);
     \u0275\u0275text(1);
-    \u0275\u0275template(2, LinkReportComponent_ng_template_2_td_3_span_4_div_2_Template, 2, 1, "div", 14);
+    \u0275\u0275template(2, LinkReportComponent_ng_template_2_td_3_span_4_div_2_Template, 2, 1, "div", 26);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const rowData_r3 = \u0275\u0275nextContext(2).$implicit;
-    const ctx_r1 = \u0275\u0275nextContext();
-    \u0275\u0275property("ngClass", ctx_r1.getTextClass(rowData_r3))("ngStyle", ctx_r1.getTextStyle(rowData_r3));
+    const rowData_r6 = \u0275\u0275nextContext(2).$implicit;
+    const ctx_r4 = \u0275\u0275nextContext();
+    \u0275\u0275property("ngClass", ctx_r4.getTextClass(rowData_r6))("ngStyle", ctx_r4.getTextStyle(rowData_r6));
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", rowData_r3.text, " ");
+    \u0275\u0275textInterpolate1(" ", rowData_r6.text, " ");
     \u0275\u0275advance();
-    \u0275\u0275property("ngIf", rowData_r3.href);
+    \u0275\u0275property("ngIf", rowData_r6.href);
   }
 }
 function LinkReportComponent_ng_template_2_td_3_span_5_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 16);
+    \u0275\u0275elementStart(0, "span", 28);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const rowData_r3 = \u0275\u0275nextContext(2).$implicit;
+    const rowData_r6 = \u0275\u0275nextContext(2).$implicit;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", rowData_r3.destH1 || "\u2014", " ");
+    \u0275\u0275textInterpolate1(" ", rowData_r6.destH1 || "\u2014", " ");
   }
 }
 function LinkReportComponent_ng_template_2_td_3_span_6_i_1_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "i", 21);
+    \u0275\u0275element(0, "i", 33);
   }
 }
 function LinkReportComponent_ng_template_2_td_3_span_6_i_2_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "i", 22);
+    \u0275\u0275element(0, "i", 34);
   }
 }
 function LinkReportComponent_ng_template_2_td_3_span_6_i_3_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "i", 23);
+    \u0275\u0275element(0, "i", 35);
   }
 }
 function LinkReportComponent_ng_template_2_td_3_span_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 17);
-    \u0275\u0275template(1, LinkReportComponent_ng_template_2_td_3_span_6_i_1_Template, 1, 0, "i", 18)(2, LinkReportComponent_ng_template_2_td_3_span_6_i_2_Template, 1, 0, "i", 19)(3, LinkReportComponent_ng_template_2_td_3_span_6_i_3_Template, 1, 0, "i", 20);
+    \u0275\u0275elementStart(0, "span", 29);
+    \u0275\u0275template(1, LinkReportComponent_ng_template_2_td_3_span_6_i_1_Template, 1, 0, "i", 30)(2, LinkReportComponent_ng_template_2_td_3_span_6_i_2_Template, 1, 0, "i", 31)(3, LinkReportComponent_ng_template_2_td_3_span_6_i_3_Template, 1, 0, "i", 32);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const rowData_r3 = \u0275\u0275nextContext(2).$implicit;
+    const rowData_r6 = \u0275\u0275nextContext(2).$implicit;
     \u0275\u0275advance();
-    \u0275\u0275property("ngIf", rowData_r3.matchStatus === "match");
+    \u0275\u0275property("ngIf", rowData_r6.matchStatus === "match");
     \u0275\u0275advance();
-    \u0275\u0275property("ngIf", rowData_r3.matchStatus === "mismatch");
+    \u0275\u0275property("ngIf", rowData_r6.matchStatus === "mismatch");
     \u0275\u0275advance();
-    \u0275\u0275property("ngIf", rowData_r3.matchStatus === "unknown" || rowData_r3.matchStatus === "na");
+    \u0275\u0275property("ngIf", rowData_r6.matchStatus === "unknown" || rowData_r6.matchStatus === "na");
   }
 }
 function LinkReportComponent_ng_template_2_td_3_span_7_Template(rf, ctx) {
@@ -45535,24 +47577,24 @@ function LinkReportComponent_ng_template_2_td_3_span_7_Template(rf, ctx) {
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const col_r4 = \u0275\u0275nextContext().$implicit;
-    const rowData_r3 = \u0275\u0275nextContext().$implicit;
+    const col_r7 = \u0275\u0275nextContext().$implicit;
+    const rowData_r6 = \u0275\u0275nextContext().$implicit;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(rowData_r3[col_r4.field]);
+    \u0275\u0275textInterpolate(rowData_r6[col_r7.field] || "\u2014");
   }
 }
 function LinkReportComponent_ng_template_2_td_3_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "td");
-    \u0275\u0275elementContainerStart(1, 7);
-    \u0275\u0275template(2, LinkReportComponent_ng_template_2_td_3_span_2_Template, 2, 1, "span", 8)(3, LinkReportComponent_ng_template_2_td_3_span_3_Template, 2, 1, "span", 8)(4, LinkReportComponent_ng_template_2_td_3_span_4_Template, 3, 4, "span", 9)(5, LinkReportComponent_ng_template_2_td_3_span_5_Template, 2, 1, "span", 10)(6, LinkReportComponent_ng_template_2_td_3_span_6_Template, 4, 3, "span", 11)(7, LinkReportComponent_ng_template_2_td_3_span_7_Template, 2, 1, "span", 12);
+    \u0275\u0275elementContainerStart(1, 19);
+    \u0275\u0275template(2, LinkReportComponent_ng_template_2_td_3_span_2_Template, 2, 1, "span", 20)(3, LinkReportComponent_ng_template_2_td_3_span_3_Template, 2, 1, "span", 20)(4, LinkReportComponent_ng_template_2_td_3_span_4_Template, 3, 4, "span", 21)(5, LinkReportComponent_ng_template_2_td_3_span_5_Template, 2, 1, "span", 22)(6, LinkReportComponent_ng_template_2_td_3_span_6_Template, 4, 3, "span", 23)(7, LinkReportComponent_ng_template_2_td_3_span_7_Template, 2, 1, "span", 24);
     \u0275\u0275elementContainerEnd();
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const col_r4 = ctx.$implicit;
+    const col_r7 = ctx.$implicit;
     \u0275\u0275advance();
-    \u0275\u0275property("ngSwitch", col_r4.field);
+    \u0275\u0275property("ngSwitch", col_r7.field);
     \u0275\u0275advance();
     \u0275\u0275property("ngSwitchCase", "order");
     \u0275\u0275advance();
@@ -45567,41 +47609,172 @@ function LinkReportComponent_ng_template_2_td_3_Template(rf, ctx) {
 }
 function LinkReportComponent_ng_template_2_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "tr", 5)(1, "td");
-    \u0275\u0275element(2, "span", 6);
+    \u0275\u0275elementStart(0, "tr", 17)(1, "td");
+    \u0275\u0275element(2, "span", 18);
     \u0275\u0275elementEnd();
-    \u0275\u0275template(3, LinkReportComponent_ng_template_2_td_3_Template, 8, 6, "td", 4);
+    \u0275\u0275template(3, LinkReportComponent_ng_template_2_td_3_Template, 8, 6, "td", 13);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const rowData_r3 = ctx.$implicit;
-    const rowIndex_r5 = ctx.rowIndex;
-    const ctx_r1 = \u0275\u0275nextContext();
-    \u0275\u0275property("pReorderableRow", rowIndex_r5)("pSelectableRow", rowData_r3);
+    const rowData_r6 = ctx.$implicit;
+    const rowIndex_r8 = ctx.rowIndex;
+    const ctx_r4 = \u0275\u0275nextContext();
+    \u0275\u0275property("pReorderableRow", rowIndex_r8)("pSelectableRow", rowData_r6);
     \u0275\u0275advance(3);
-    \u0275\u0275property("ngForOf", ctx_r1.cols);
+    \u0275\u0275property("ngForOf", ctx_r4.cols);
   }
+}
+function LinkReportComponent_div_11_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r9 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 6)(1, "p-checkbox", 36);
+    \u0275\u0275twoWayListener("ngModelChange", function LinkReportComponent_div_11_Template_p_checkbox_ngModelChange_1_listener($event) {
+      const t_r10 = \u0275\u0275restoreView(_r9).$implicit;
+      const ctx_r4 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r4.typeChecks[t_r10], $event) || (ctx_r4.typeChecks[t_r10] = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275listener("onChange", function LinkReportComponent_div_11_Template_p_checkbox_onChange_1_listener() {
+      const t_r10 = \u0275\u0275restoreView(_r9).$implicit;
+      const ctx_r4 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r4.onTypeToggle(t_r10));
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(2, "label", 37);
+    \u0275\u0275listener("click", function LinkReportComponent_div_11_Template_label_click_2_listener() {
+      const t_r10 = \u0275\u0275restoreView(_r9).$implicit;
+      const ctx_r4 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r4.toggleType(t_r10));
+    });
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const t_r10 = ctx.$implicit;
+    const i_r11 = ctx.index;
+    const ctx_r4 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275twoWayProperty("ngModel", ctx_r4.typeChecks[t_r10]);
+    \u0275\u0275property("disabled", ctx_r4.allSelected)("inputId", "type-" + i_r11);
+    \u0275\u0275advance();
+    \u0275\u0275attribute("for", "type-" + i_r11);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", t_r10, " ");
+  }
+}
+function LinkReportComponent_div_12_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 38);
+    \u0275\u0275text(1, " All types are currently included. ");
+    \u0275\u0275elementEnd();
+  }
+}
+var CANADA_ORIGIN = "https://www.canada.ca";
+function isCanadaHost(u) {
+  const h = u.hostname.toLowerCase().replace(/^www\./, "");
+  return h === "canada.ca";
+}
+function canonicalizeCanadaHref(href) {
+  if (!href)
+    return href;
+  href = href.replace(/^https?:\/\/(?:www\.)?canada\.ca\/content\/canadasite/i, CANADA_ORIGIN);
+  href = href.replace(/^\/content\/canadasite/i, "");
+  return href;
+}
+function isFootnoteLink(a) {
+  const hrefAttr = (a.getAttribute("href") || "").trim();
+  const textish = (a.textContent || "") + " " + (a.getAttribute("aria-label") || "") + " " + (a.title || "");
+  if (a.closest('.footnote, .footnotes, #footnotes, section.footnotes, ol.footnotes, .ref-list, .references, [role="doc-footnote"], [role="doc-endnotes"], [role="doc-backlink"], nav[aria-label="Footnotes"]'))
+    return true;
+  if (a.closest("sup"))
+    return true;
+  const hash = (() => {
+    try {
+      return new URL(hrefAttr, "https://x").hash || hrefAttr;
+    } catch {
+      return hrefAttr;
+    }
+  })();
+  if (/^#(?:fn|fnref|footnote)\w*/i.test(hash) || /#(?:fn|footnote)\d+(?:[-:_][\w]+)*$/i.test(hash))
+    return true;
+  if (/\b(return|back)\s+to\s+footnote\b/i.test(textish))
+    return true;
+  if (/\breferrer\b/i.test(textish) && /footnote/i.test(textish))
+    return true;
+  if (/\b(doc-noteref|noteref|fnref|fn-rtn|return-footnote|footnote-back)\b/i.test(a.className))
+    return true;
+  return false;
+}
+function stripFootnoteText(text) {
+  return (text || "").replace(/\[\d+\]/g, "").replace(/(?:^|\s)\(\s*footnote\s*\d+\s*\)/gi, "").replace(/[*†‡§¶]+/g, "").replace(/\s+/g, " ").trim();
 }
 var LinkReportComponent = class _LinkReportComponent {
   uploadState;
   constructor(uploadState) {
     this.uploadState = uploadState;
   }
-  // table data & selection
+  // Expose the overlay panel referenced as #typePanel in the template
+  typePanel;
+  // data & selection
   headings = [];
   selectedHeading;
-  // 5 columns exactly
+  // columns (with placeholders at the end)
   cols = [
     { field: "order", header: "Index" },
     { field: "type", header: "Link Type" },
     { field: "text", header: "Link name on page" },
     { field: "destH1", header: "Destination link header (H1)" },
-    { field: "matchStatus", header: "Match" }
+    { field: "matchStatus", header: "Match" },
+    { field: "searchTerm", header: "Search term" },
+    { field: "clicks", header: "Clicks" }
   ];
   sourceVersion = "original";
-  concurrency = 4;
-  // Origin of the page being analyzed (from upload state / base tag / pageUrl)
-  baseOrigin = null;
+  // ----- Filter state (dropdown with ALL + 6 types) -----
+  linkTypes = [
+    "Canada.ca",
+    "external",
+    "anchor",
+    "tel",
+    "mailto",
+    "download"
+  ];
+  /** ALL is checked by default (means: include all types). */
+  allSelected = true;
+  /** Individual type checkboxes are listed, initially unchecked. */
+  typeChecks = {
+    "Canada.ca": false,
+    external: false,
+    anchor: false,
+    tel: false,
+    mailto: false,
+    download: false
+  };
+  /** Toggle ALL; when turning ALL on, keep individuals unchecked but ignored. */
+  onAllToggle() {
+  }
+  /** Toggle an individual type; any individual selection disables ALL. */
+  onTypeToggle(_t) {
+    if (this.allSelected)
+      this.allSelected = false;
+  }
+  /** Optional: click label to toggle (if your HTML uses a label click handler). */
+  toggleType(t) {
+    if (this.allSelected)
+      this.allSelected = false;
+    this.typeChecks[t] = !this.typeChecks[t];
+  }
+  /** Active set used by the table. */
+  activeTypes() {
+    if (this.allSelected)
+      return new Set(this.linkTypes);
+    const picked = this.linkTypes.filter((t) => this.typeChecks[t]);
+    return new Set(picked);
+  }
+  /** Table feeds from filtered rows */
+  get filteredHeadings() {
+    const active = this.activeTypes();
+    return this.headings.filter((r) => active.has(r.type));
+  }
   ngOnInit() {
     this.extractLinks();
   }
@@ -45613,22 +47786,23 @@ var LinkReportComponent = class _LinkReportComponent {
         return;
       }
       const doc = new DOMParser().parseFromString(html, "text/html");
-      const anchors = Array.from(doc.querySelectorAll("body a[href]"));
+      const anchors = Array.from(doc.querySelectorAll("body a[href]")).filter((a) => !isFootnoteLink(a));
       this.headings = anchors.map((a, i) => {
-        const href = (a.getAttribute("href") || "").trim();
-        const absUrl = this.resolveUrl(href, baseUrl);
-        const text = (a.textContent || a.getAttribute("aria-label") || a.title || "").trim();
-        const type = this.classify(href, absUrl);
+        const rawHref = (a.getAttribute("href") || "").trim();
+        const absUrl = this.resolveUrl(rawHref, baseUrl);
+        const visible = a.textContent || a.getAttribute("aria-label") || a.title || "";
+        const text = stripFootnoteText(visible);
+        const type = this.classify(rawHref, absUrl, a);
         let destH1 = null;
         let matchStatus = "unknown";
         if (type === "anchor") {
           const h1 = doc.querySelector("h1");
           destH1 = h1 ? (h1.textContent || "").trim() : null;
           matchStatus = this.smartMatch(text, destH1);
-        } else if (type === "mailto" || type === "tel" || type === "file") {
+        } else if (type === "mailto" || type === "tel" || type === "download") {
           matchStatus = "na";
-        } else if (type === "external") {
-          const { guess, pathTokens } = this.smartSlugGuess(text, absUrl || href);
+        } else {
+          const { guess, pathTokens } = this.smartSlugGuess(text, absUrl || rawHref);
           destH1 = guess;
           matchStatus = this.smartMatch(text, destH1, pathTokens);
         }
@@ -45636,17 +47810,19 @@ var LinkReportComponent = class _LinkReportComponent {
           order: i + 1,
           type,
           text,
-          href,
+          href: rawHref,
           absUrl,
           destH1,
-          matchStatus
+          matchStatus,
+          searchTerm: "",
+          // placeholder
+          clicks: null
+          // placeholder
         };
       });
-      const tasks = this.headings.filter((r) => r.type === "internal" && !r.destH1 && r.absUrl && this.isSameOrigin(r.absUrl)).map((r) => () => this.resolveDestH1(r));
-      yield this.runWithConcurrency(tasks, this.concurrency);
     });
   }
-  // ---------- helpers (no server required) ----------
+  // ---------- helpers ----------
   getHtmlToAnalyze() {
     const data = this.uploadState.getUploadData?.();
     if (!data)
@@ -45664,13 +47840,6 @@ var LinkReportComponent = class _LinkReportComponent {
     }
     if (!baseUrl && data.pageUrl)
       baseUrl = data.pageUrl;
-    this.baseOrigin = null;
-    if (baseUrl) {
-      try {
-        this.baseOrigin = new URL(baseUrl).origin;
-      } catch {
-      }
-    }
     return { html, baseUrl };
   }
   resolveUrl(href, baseUrl) {
@@ -45679,6 +47848,13 @@ var LinkReportComponent = class _LinkReportComponent {
         return null;
       if (href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:"))
         return href;
+      if (/^\/(?:content\/canadasite|en|fr)\//i.test(href)) {
+        const canon = canonicalizeCanadaHref(href);
+        return new URL(canon, CANADA_ORIGIN).toString();
+      }
+      if (/^https?:\/\/(?:www\.)?canada\.ca\/content\/canadasite/i.test(href)) {
+        return canonicalizeCanadaHref(href);
+      }
       if (baseUrl)
         return new URL(href, baseUrl).toString();
       return new URL(href).toString();
@@ -45686,62 +47862,38 @@ var LinkReportComponent = class _LinkReportComponent {
       return null;
     }
   }
-  classify(href, absUrl) {
-    if (!href)
-      return "internal";
-    if (href.startsWith("#"))
+  /** 6-type classifier; order matters. Canada.ca = apex or www only. */
+  classify(href, absUrl, anchorEl) {
+    const raw = (href || "").trim();
+    if (raw.startsWith("#"))
       return "anchor";
-    if (href.startsWith("mailto:"))
+    if (/^mailto:/i.test(raw))
       return "mailto";
-    if (href.startsWith("tel:"))
+    if (/^tel:/i.test(raw))
       return "tel";
-    if (/\.(pdf|docx?|pptx?|xlsx?|zip)$/i.test(href))
-      return "file";
-    if (/^https?:\/\//i.test(href)) {
-      if (absUrl && this.baseOrigin) {
-        try {
-          return new URL(absUrl).origin === this.baseOrigin ? "internal" : "external";
-        } catch {
-          return "external";
-        }
-      }
-      return "external";
-    }
-    return "internal";
-  }
-  isSameOrigin(absUrl) {
+    const pathForTest = absUrl || raw;
+    const isPdf = /\.pdf(\?|#|$)/i.test(pathForTest);
+    const hasDownloadAttr = !!anchorEl?.hasAttribute("download");
+    let isWebform = false;
     try {
-      return this.baseOrigin ? new URL(absUrl).origin === this.baseOrigin : false;
+      const u = new URL(absUrl || raw, CANADA_ORIGIN);
+      isWebform = /\/webform(s)?\//i.test(u.pathname);
     } catch {
-      return false;
     }
-  }
-  // same-origin internal: fetch and compute match against real H1
-  resolveDestH1(row) {
-    return __async(this, null, function* () {
-      if (!row.absUrl)
-        return;
-      try {
-        const resp = yield fetch(row.absUrl, { credentials: "same-origin" });
-        if (!resp.ok)
-          throw new Error("fetch failed");
-        const html = yield resp.text();
-        const doc = new DOMParser().parseFromString(html, "text/html");
-        const h1 = doc.querySelector("h1");
-        row.destH1 = h1 ? (h1.textContent || "").trim() : null;
-        row.matchStatus = this.smartMatch(row.text, row.destH1);
-      } catch {
-        if (!row.destH1)
-          row.matchStatus = "unknown";
-      }
-    });
+    if (isPdf || hasDownloadAttr || isWebform)
+      return "download";
+    try {
+      const u = new URL(absUrl || raw, CANADA_ORIGIN);
+      if (isCanadaHost(u))
+        return "Canada.ca";
+    } catch {
+    }
+    return "external";
   }
   // ---------- smart slug + smart match ----------
-  /** Normalize: strip accents, lowercase, treat /-_ as separators, remove punctuation */
   normalizeText(s) {
     return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[\/\-_]+/g, " ").replace(/[^\p{L}\p{N}\s]/gu, " ").replace(/\s+/g, " ").trim();
   }
-  /** Tokenize & drop light stopwords */
   tokenize(s) {
     const STOP = /* @__PURE__ */ new Set([
       "a",
@@ -45773,7 +47925,6 @@ var LinkReportComponent = class _LinkReportComponent {
     ]);
     return this.normalizeText(s).split(" ").filter((w) => w && !STOP.has(w));
   }
-  /** Decode path segments and strip common extensions */
   pathSegments(urlStr) {
     if (!urlStr)
       return [];
@@ -45785,11 +47936,6 @@ var LinkReportComponent = class _LinkReportComponent {
       return [];
     }
   }
-  /**
-   * Smart slug guess:
-   * - score each segment against link text (coverage + Jaccard)
-   * - return best segment as guess, plus all path tokens for matching
-   */
   smartSlugGuess(linkText, absUrl) {
     const linkTokens = this.tokenize(linkText);
     const segs = this.pathSegments(absUrl);
@@ -45822,7 +47968,6 @@ var LinkReportComponent = class _LinkReportComponent {
     }
     return { guess: bestGuess, pathTokens: allTokens };
   }
-  /** Token-aware loose match: exact → containment (with path tokens) → Jaccard */
   smartMatch(linkText, candidate, extraTokens) {
     if (!candidate && (!extraTokens || extraTokens.size === 0))
       return "unknown";
@@ -45846,20 +47991,6 @@ var LinkReportComponent = class _LinkReportComponent {
     const j = inter / union;
     return j >= 0.6 ? "match" : "mismatch";
   }
-  // Concurrency runner
-  runWithConcurrency(tasks, limit) {
-    return __async(this, null, function* () {
-      const q = tasks.slice();
-      const workers = [];
-      for (let i = 0; i < Math.min(limit, q.length); i++) {
-        workers.push((() => __async(null, null, function* () {
-          while (q.length)
-            yield q.shift()();
-        }))());
-      }
-      yield Promise.all(workers);
-    });
-  }
   // style hooks used by template
   getTextStyle(_row) {
     return {};
@@ -45870,27 +48001,69 @@ var LinkReportComponent = class _LinkReportComponent {
   static \u0275fac = function LinkReportComponent_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _LinkReportComponent)(\u0275\u0275directiveInject(UploadStateService));
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _LinkReportComponent, selectors: [["ca-link-report"]], decls: 3, vars: 4, consts: [["size", "small", "stripedRows", "", "selectionMode", "single", "dataKey", "order", "metaKeySelection", "false", 3, "selectionChange", "value", "tableStyle", "selection"], ["pTemplate", "header"], ["pTemplate", "body"], [2, "width", "3rem"], [4, "ngFor", "ngForOf"], [3, "pReorderableRow", "pSelectableRow"], ["pReorderableRowHandle", "", 1, "pi", "pi-bars"], [3, "ngSwitch"], [4, "ngSwitchCase"], [3, "ngClass", "ngStyle", 4, "ngSwitchCase"], ["class", "break-all", 4, "ngSwitchCase"], ["class", "flex justify-center", 4, "ngSwitchCase"], [4, "ngSwitchDefault"], [3, "ngClass", "ngStyle"], ["class", "muted", 4, "ngIf"], [1, "muted"], [1, "break-all"], [1, "flex", "justify-center"], ["class", "pi pi-check-circle text-ok", "title", "Match", 4, "ngIf"], ["class", "pi pi-times-circle text-bad", "title", "Mismatch", 4, "ngIf"], ["class", "pi pi-question-circle text-unk", "title", "Unknown", 4, "ngIf"], ["title", "Match", 1, "pi", "pi-check-circle", "text-ok"], ["title", "Mismatch", 1, "pi", "pi-times-circle", "text-bad"], ["title", "Unknown", 1, "pi", "pi-question-circle", "text-unk"]], template: function LinkReportComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _LinkReportComponent, selectors: [["ca-link-report"]], viewQuery: function LinkReportComponent_Query(rf, ctx) {
     if (rf & 1) {
-      \u0275\u0275elementStart(0, "p-table", 0);
-      \u0275\u0275twoWayListener("selectionChange", function LinkReportComponent_Template_p_table_selectionChange_0_listener($event) {
-        \u0275\u0275twoWayBindingSet(ctx.selectedHeading, $event) || (ctx.selectedHeading = $event);
-        return $event;
-      });
-      \u0275\u0275template(1, LinkReportComponent_ng_template_1_Template, 3, 1, "ng-template", 1)(2, LinkReportComponent_ng_template_2_Template, 4, 3, "ng-template", 2);
-      \u0275\u0275elementEnd();
+      \u0275\u0275viewQuery(_c017, 5);
     }
     if (rf & 2) {
-      \u0275\u0275property("value", ctx.headings)("tableStyle", \u0275\u0275pureFunction0(3, _c016));
-      \u0275\u0275twoWayProperty("selection", ctx.selectedHeading);
+      let _t;
+      \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.typePanel = _t.first);
     }
-  }, dependencies: [CommonModule, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TableModule, Table, PrimeTemplate, SelectableRow, ReorderableRowHandle, ReorderableRow], styles: ["\n\n.text-ok[_ngcontent-%COMP%] {\n  color: #16a34a;\n}\n.text-bad[_ngcontent-%COMP%] {\n  color: #dc2626;\n}\n.text-unk[_ngcontent-%COMP%] {\n  color: #64748b;\n}\n.break-all[_ngcontent-%COMP%] {\n  word-break: break-all;\n}\n.muted[_ngcontent-%COMP%] {\n  color: #6b7280;\n  font-size: 12px;\n}\n.flex[_ngcontent-%COMP%] {\n  display: flex;\n}\n.justify-center[_ngcontent-%COMP%] {\n  justify-content: center;\n}\n/*# sourceMappingURL=link-report.component.css.map */"] });
+  }, decls: 13, vars: 10, consts: [["typePanel", ""], ["size", "small", "stripedRows", "", "selectionMode", "single", "dataKey", "order", "metaKeySelection", "false", 3, "selectionChange", "value", "tableStyle", "selection"], ["pTemplate", "header"], ["pTemplate", "body"], [3, "dismissable", "showCloseIcon", "appendTo"], [1, "filter-panel"], [1, "filter-row"], ["inputId", "allTypes", "binary", "true", 3, "ngModelChange", "onChange", "ngModel"], ["for", "allTypes", 1, "filter-label"], [1, "divider"], ["class", "filter-row", 4, "ngFor", "ngForOf"], ["class", "filter-muted", 4, "ngIf"], [2, "width", "3rem"], [4, "ngFor", "ngForOf"], [1, "header-with-filter"], ["pButton", "", "type", "button", "class", "p-button-text p-button-sm", "icon", "pi pi-chevron-down", "aria-label", "Filter link types", 3, "click", 4, "ngIf"], ["pButton", "", "type", "button", "icon", "pi pi-chevron-down", "aria-label", "Filter link types", 1, "p-button-text", "p-button-sm", 3, "click"], [3, "pReorderableRow", "pSelectableRow"], ["pReorderableRowHandle", "", 1, "pi", "pi-bars"], [3, "ngSwitch"], [4, "ngSwitchCase"], [3, "ngClass", "ngStyle", 4, "ngSwitchCase"], ["class", "break-all", 4, "ngSwitchCase"], ["class", "flex justify-center", 4, "ngSwitchCase"], [4, "ngSwitchDefault"], [3, "ngClass", "ngStyle"], ["class", "muted", 4, "ngIf"], [1, "muted"], [1, "break-all"], [1, "flex", "justify-center"], ["class", "pi pi-check-circle text-ok", "title", "Match", 4, "ngIf"], ["class", "pi pi-times-circle text-bad", "title", "Mismatch", 4, "ngIf"], ["class", "pi pi-question-circle text-unk", "title", "Unknown", 4, "ngIf"], ["title", "Match", 1, "pi", "pi-check-circle", "text-ok"], ["title", "Mismatch", 1, "pi", "pi-times-circle", "text-bad"], ["title", "Unknown", 1, "pi", "pi-question-circle", "text-unk"], ["binary", "true", 3, "ngModelChange", "onChange", "ngModel", "disabled", "inputId"], [1, "filter-label", 3, "click"], [1, "filter-muted"]], template: function LinkReportComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      const _r1 = \u0275\u0275getCurrentView();
+      \u0275\u0275elementStart(0, "p-table", 1);
+      \u0275\u0275twoWayListener("selectionChange", function LinkReportComponent_Template_p_table_selectionChange_0_listener($event) {
+        \u0275\u0275restoreView(_r1);
+        \u0275\u0275twoWayBindingSet(ctx.selectedHeading, $event) || (ctx.selectedHeading = $event);
+        return \u0275\u0275resetView($event);
+      });
+      \u0275\u0275template(1, LinkReportComponent_ng_template_1_Template, 3, 1, "ng-template", 2)(2, LinkReportComponent_ng_template_2_Template, 4, 3, "ng-template", 3);
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(3, "p-overlayPanel", 4, 0)(5, "div", 5)(6, "div", 6)(7, "p-checkbox", 7);
+      \u0275\u0275twoWayListener("ngModelChange", function LinkReportComponent_Template_p_checkbox_ngModelChange_7_listener($event) {
+        \u0275\u0275restoreView(_r1);
+        \u0275\u0275twoWayBindingSet(ctx.allSelected, $event) || (ctx.allSelected = $event);
+        return \u0275\u0275resetView($event);
+      });
+      \u0275\u0275listener("onChange", function LinkReportComponent_Template_p_checkbox_onChange_7_listener() {
+        \u0275\u0275restoreView(_r1);
+        return \u0275\u0275resetView(ctx.onAllToggle());
+      });
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(8, "label", 8);
+      \u0275\u0275text(9, "ALL");
+      \u0275\u0275elementEnd()();
+      \u0275\u0275element(10, "div", 9);
+      \u0275\u0275template(11, LinkReportComponent_div_11_Template, 4, 5, "div", 10)(12, LinkReportComponent_div_12_Template, 2, 0, "div", 11);
+      \u0275\u0275elementEnd()();
+    }
+    if (rf & 2) {
+      \u0275\u0275property("value", ctx.filteredHeadings)("tableStyle", \u0275\u0275pureFunction0(9, _c127));
+      \u0275\u0275twoWayProperty("selection", ctx.selectedHeading);
+      \u0275\u0275advance(3);
+      \u0275\u0275property("dismissable", true)("showCloseIcon", true)("appendTo", "body");
+      \u0275\u0275advance(4);
+      \u0275\u0275twoWayProperty("ngModel", ctx.allSelected);
+      \u0275\u0275advance(4);
+      \u0275\u0275property("ngForOf", ctx.linkTypes);
+      \u0275\u0275advance();
+      \u0275\u0275property("ngIf", ctx.allSelected);
+    }
+  }, dependencies: [CommonModule, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, NgControlStatus, NgModel, TableModule, Table, PrimeTemplate, SelectableRow, ReorderableRowHandle, ReorderableRow, OverlayPanelModule, OverlayPanel, CheckboxModule, Checkbox, ButtonModule, ButtonDirective], styles: ["\n\n.text-ok[_ngcontent-%COMP%] {\n  color: #16a34a;\n}\n.text-bad[_ngcontent-%COMP%] {\n  color: #dc2626;\n}\n.text-unk[_ngcontent-%COMP%] {\n  color: #64748b;\n}\n.break-all[_ngcontent-%COMP%] {\n  word-break: break-all;\n}\n.muted[_ngcontent-%COMP%] {\n  color: #6b7280;\n  font-size: 12px;\n}\n.flex[_ngcontent-%COMP%] {\n  display: flex;\n}\n.justify-center[_ngcontent-%COMP%] {\n  justify-content: center;\n}\n.header-with-filter[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.p-button-sm[_ngcontent-%COMP%] {\n  padding: 0.15rem 0.35rem;\n  height: 1.6rem;\n  width: 1.6rem;\n}\n.filter-panel[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.25rem;\n  padding: 0.25rem 0.25rem 0.1rem;\n}\n.filter-row[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  line-height: 1.2;\n}\n.divider[_ngcontent-%COMP%] {\n  height: 1px;\n  background: #e5e7eb;\n  margin: 0.25rem 0;\n}\n.filter-label[_ngcontent-%COMP%] {\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n}\n.filter-muted[_ngcontent-%COMP%] {\n  color: #6b7280;\n  font-size: 12px;\n}\n/*# sourceMappingURL=link-report.component.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(LinkReportComponent, [{
     type: Component,
-    args: [{ selector: "ca-link-report", standalone: true, imports: [CommonModule, FormsModule, TableModule], template: `<p-table\r
-  [value]="headings"\r
+    args: [{ selector: "ca-link-report", standalone: true, imports: [
+      CommonModule,
+      FormsModule,
+      TableModule,
+      OverlayPanelModule,
+      CheckboxModule,
+      ButtonModule
+    ], template: `<p-table\r
+  [value]="filteredHeadings"\r
   size="small"\r
   stripedRows\r
   [tableStyle]="{ 'min-width': '50rem' }"\r
@@ -45899,15 +48072,29 @@ var LinkReportComponent = class _LinkReportComponent {
   dataKey="order"\r
   metaKeySelection="false"\r
 >\r
-  <!-- \u53EA\u7528\u4F60\u81EA\u5DF1\u7684 cols \u6E32\u67D3\u8868\u5934 -->\r
   <ng-template pTemplate="header">\r
     <tr>\r
       <th style="width: 3rem"></th>\r
-      <th *ngFor="let col of cols">{{ col.header }}</th>\r
+\r
+      <th *ngFor="let col of cols">\r
+        <div class="header-with-filter">\r
+          <span>{{ col.header }}</span>\r
+\r
+          <!-- Down-arrow filter button ONLY for Link Type -->\r
+          <button\r
+            *ngIf="col.field === 'type'"\r
+            pButton\r
+            type="button"\r
+            class="p-button-text p-button-sm"\r
+            icon="pi pi-chevron-down"\r
+            (click)="typePanel?.toggle($event)"\r
+            aria-label="Filter link types"\r
+          ></button>\r
+        </div>\r
+      </th>\r
     </tr>\r
   </ng-template>\r
 \r
-  <!-- \u53EA\u7528\u4F60\u81EA\u5DF1\u7684 cols \u6E32\u67D3\u8868\u4F53 -->\r
   <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">\r
     <tr [pReorderableRow]="rowIndex" [pSelectableRow]="rowData">\r
       <td><span class="pi pi-bars" pReorderableRowHandle></span></td>\r
@@ -45915,6 +48102,7 @@ var LinkReportComponent = class _LinkReportComponent {
       <td *ngFor="let col of cols">\r
         <ng-container [ngSwitch]="col.field">\r
           <span *ngSwitchCase="'order'">{{ rowData.order }}</span>\r
+\r
           <span *ngSwitchCase="'type'">{{ rowData.type }}</span>\r
 \r
           <span\r
@@ -45951,17 +48139,66 @@ var LinkReportComponent = class _LinkReportComponent {
             ></i>\r
           </span>\r
 \r
-          <span *ngSwitchDefault>{{ rowData[col.field] }}</span>\r
+          <!-- Search term / Clicks and any other fields -->\r
+          <span *ngSwitchDefault>{{ rowData[col.field] || "\u2014" }}</span>\r
         </ng-container>\r
       </td>\r
     </tr>\r
   </ng-template>\r
 </p-table>\r
-`, styles: ["/* angular:styles/component:css;fbb9b1e938c6e536662de9e9abb3c037d6f99e568d5c1313dece8acd203a770f;C:/Users/rosaz/translation-assistant/content-assistant/src/app/views/page-assistant/components/tools/link-report.component.ts */\n.text-ok {\n  color: #16a34a;\n}\n.text-bad {\n  color: #dc2626;\n}\n.text-unk {\n  color: #64748b;\n}\n.break-all {\n  word-break: break-all;\n}\n.muted {\n  color: #6b7280;\n  font-size: 12px;\n}\n.flex {\n  display: flex;\n}\n.justify-center {\n  justify-content: center;\n}\n/*# sourceMappingURL=link-report.component.css.map */\n"] }]
-  }], () => [{ type: UploadStateService }], null);
+\r
+<!-- Move the overlay OUTSIDE the table to avoid table parser issues -->\r
+<p-overlayPanel\r
+  #typePanel\r
+  [dismissable]="true"\r
+  [showCloseIcon]="true"\r
+  [appendTo]="'body'"\r
+>\r
+  <div class="filter-panel">\r
+    <!-- ALL (default checked) -->\r
+    <div class="filter-row">\r
+      <p-checkbox\r
+        [(ngModel)]="allSelected"\r
+        (onChange)="onAllToggle()"\r
+        inputId="allTypes"\r
+        binary="true"\r
+      ></p-checkbox>\r
+      <label class="filter-label" for="allTypes">ALL</label>\r
+    </div>\r
+\r
+    <div class="divider"></div>\r
+\r
+    <!-- Six types (default unchecked; disabled while ALL is checked) -->\r
+    <div class="filter-row" *ngFor="let t of linkTypes; let i = index">\r
+      <p-checkbox\r
+        [(ngModel)]="typeChecks[t]"\r
+        (onChange)="onTypeToggle(t)"\r
+        [disabled]="allSelected"\r
+        [inputId]="'type-' + i"\r
+        binary="true"\r
+      ></p-checkbox>\r
+      <label\r
+        class="filter-label"\r
+        [attr.for]="'type-' + i"\r
+        (click)="toggleType(t)"\r
+      >\r
+        {{ t }}\r
+      </label>\r
+    </div>\r
+\r
+    <div class="filter-muted" *ngIf="allSelected">\r
+      All types are currently included.\r
+    </div>\r
+  </div>\r
+</p-overlayPanel>\r
+`, styles: ["/* angular:styles/component:css;f867ed4ff822b366cb9432ca0b7c19af5afc1fceac7a7483c72da2155928f42a;C:/Users/rosaz/translation-assistant/content-assistant/src/app/views/page-assistant/components/tools/link-report.component.ts */\n.text-ok {\n  color: #16a34a;\n}\n.text-bad {\n  color: #dc2626;\n}\n.text-unk {\n  color: #64748b;\n}\n.break-all {\n  word-break: break-all;\n}\n.muted {\n  color: #6b7280;\n  font-size: 12px;\n}\n.flex {\n  display: flex;\n}\n.justify-center {\n  justify-content: center;\n}\n.header-with-filter {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.p-button-sm {\n  padding: 0.15rem 0.35rem;\n  height: 1.6rem;\n  width: 1.6rem;\n}\n.filter-panel {\n  display: flex;\n  flex-direction: column;\n  gap: 0.25rem;\n  padding: 0.25rem 0.25rem 0.1rem;\n}\n.filter-row {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  line-height: 1.2;\n}\n.divider {\n  height: 1px;\n  background: #e5e7eb;\n  margin: 0.25rem 0;\n}\n.filter-label {\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n}\n.filter-muted {\n  color: #6b7280;\n  font-size: 12px;\n}\n/*# sourceMappingURL=link-report.component.css.map */\n"] }]
+  }], () => [{ type: UploadStateService }], { typePanel: [{
+    type: ViewChild,
+    args: ["typePanel"]
+  }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(LinkReportComponent, { className: "LinkReportComponent", filePath: "src/app/views/page-assistant/components/tools/link-report.component.ts", lineNumber: 58 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(LinkReportComponent, { className: "LinkReportComponent", filePath: "src/app/views/page-assistant/components/tools/link-report.component.ts", lineNumber: 197 });
 })();
 
 // src/app/views/page-assistant/components/tools/template-conversion.component.ts
@@ -45991,56 +48228,142 @@ var TemplateConversionComponent = class _TemplateConversionComponent {
 })();
 
 // src/app/views/page-assistant/components/tools.component.ts
-function PageToolsComponent_p_6_Template(rf, ctx) {
+function PageToolsComponent_p_accordion_panel_3_p_3_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 4);
+    \u0275\u0275elementStart(0, "p", 6);
     \u0275\u0275text(1, "View or reorganize your heading structure.");
     \u0275\u0275elementEnd();
   }
 }
-function PageToolsComponent_p_12_Template(rf, ctx) {
+function PageToolsComponent_p_accordion_panel_3_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 4);
+    \u0275\u0275elementStart(0, "p-accordion-panel", 2)(1, "p-accordion-header");
+    \u0275\u0275text(2, "Heading structure");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(3, PageToolsComponent_p_accordion_panel_3_p_3_Template, 2, 0, "p", 3);
+    \u0275\u0275elementStart(4, "p-accordion-content");
+    \u0275\u0275element(5, "ca-heading-structure");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275property("value", 0);
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngIf", !ctx_r0.isPanelOpen(0));
+  }
+}
+function PageToolsComponent_p_7_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 6);
     \u0275\u0275text(1, "Check if your page is an IA orphan and view its current IA diagram.");
     \u0275\u0275elementEnd();
   }
 }
-function PageToolsComponent_p_18_Template(rf, ctx) {
+function PageToolsComponent_p_13_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 4);
+    \u0275\u0275elementStart(0, "p", 6);
     \u0275\u0275text(1, "Find guidance on the components used on your page and check for deprecated code or unexpected classes or elements.");
     \u0275\u0275elementEnd();
   }
 }
-function PageToolsComponent_p_24_Template(rf, ctx) {
+function PageToolsComponent_p_accordion_panel_16_p_3_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 4);
+    \u0275\u0275elementStart(0, "p", 6);
     \u0275\u0275text(1, "Add doormat text.");
     \u0275\u0275elementEnd();
   }
 }
-function PageToolsComponent_p_30_Template(rf, ctx) {
+function PageToolsComponent_p_accordion_panel_16_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 4);
+    \u0275\u0275elementStart(0, "p-accordion-panel", 4)(1, "p-accordion-header");
+    \u0275\u0275text(2, "SEO");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(3, PageToolsComponent_p_accordion_panel_16_p_3_Template, 2, 0, "p", 3);
+    \u0275\u0275elementStart(4, "p-accordion-content");
+    \u0275\u0275element(5, "ca-seo");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275property("value", 3);
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngIf", !ctx_r0.isPanelOpen(3));
+  }
+}
+function PageToolsComponent_p_accordion_panel_17_p_3_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 6);
     \u0275\u0275text(1, "Add doormat text.");
     \u0275\u0275elementEnd();
   }
 }
-function PageToolsComponent_p_36_Template(rf, ctx) {
+function PageToolsComponent_p_accordion_panel_17_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 4);
+    \u0275\u0275elementStart(0, "p-accordion-panel", 4)(1, "p-accordion-header");
+    \u0275\u0275text(2, "User insights");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(3, PageToolsComponent_p_accordion_panel_17_p_3_Template, 2, 0, "p", 3);
+    \u0275\u0275elementStart(4, "p-accordion-content");
+    \u0275\u0275element(5, "ca-user-insights");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275property("value", 4);
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngIf", !ctx_r0.isPanelOpen(4));
+  }
+}
+function PageToolsComponent_p_accordion_panel_18_p_3_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 6);
     \u0275\u0275text(1, "Add doormat text.");
     \u0275\u0275elementEnd();
   }
 }
-function PageToolsComponent_p_42_Template(rf, ctx) {
+function PageToolsComponent_p_accordion_panel_18_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 4);
+    \u0275\u0275elementStart(0, "p-accordion-panel", 4)(1, "p-accordion-header");
+    \u0275\u0275text(2, "Link report");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(3, PageToolsComponent_p_accordion_panel_18_p_3_Template, 2, 0, "p", 3);
+    \u0275\u0275elementStart(4, "p-accordion-content");
+    \u0275\u0275element(5, "ca-link-report");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275property("value", 5);
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngIf", !ctx_r0.isPanelOpen(5));
+  }
+}
+function PageToolsComponent_p_accordion_panel_19_p_3_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 6);
     \u0275\u0275text(1, "Add doormat text.");
     \u0275\u0275elementEnd();
+  }
+}
+function PageToolsComponent_p_accordion_panel_19_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p-accordion-panel", 2)(1, "p-accordion-header");
+    \u0275\u0275text(2, "Template conversion");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(3, PageToolsComponent_p_accordion_panel_19_p_3_Template, 2, 0, "p", 3);
+    \u0275\u0275elementStart(4, "p-accordion-content");
+    \u0275\u0275element(5, "ca-template-conversion");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275property("value", 6);
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngIf", !ctx_r0.isPanelOpen(6));
   }
 }
 var PageToolsComponent = class _PageToolsComponent {
+  production = environment.production;
   activePanels = [];
   isPanelOpen(panelIndex) {
     return this.activePanels.includes(panelIndex);
@@ -46048,7 +48371,7 @@ var PageToolsComponent = class _PageToolsComponent {
   static \u0275fac = function PageToolsComponent_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _PageToolsComponent)();
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _PageToolsComponent, selectors: [["ca-page-tools"]], decls: 45, vars: 16, consts: [[1, "flex", "flex-column", "gap-3", 3, "valueChange", "value", "multiple"], [1, "border-1", "border-round-md", "border-surface", 3, "value"], ["class", "mt-0 ml-4 text-color-secondary", 4, "ngIf"], [1, "border-1", "border-round-sm", "border-surface", 3, "value"], [1, "mt-0", "ml-4", "text-color-secondary"]], template: function PageToolsComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _PageToolsComponent, selectors: [["ca-page-tools"]], decls: 20, vars: 11, consts: [[1, "flex", "flex-column", "gap-3", 3, "valueChange", "value", "multiple"], ["class", "border-1 border-round-md border-surface", 3, "value", 4, "ngIf"], [1, "border-1", "border-round-md", "border-surface", 3, "value"], ["class", "mt-0 ml-4 text-color-secondary", 4, "ngIf"], [1, "border-1", "border-round-sm", "border-surface", 3, "value"], ["class", "border-1 border-round-sm border-surface", 3, "value", 4, "ngIf"], [1, "mt-0", "ml-4", "text-color-secondary"]], template: function PageToolsComponent_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "p");
       \u0275\u0275text(1, "Use these tools to analyze and improve your web page. You can restructure headings, generate an IA diagram, find guidance on the components used in your page, integrate SEO and user insights into your updates, check your link quality, or convert your page to a different template.");
@@ -46058,65 +48381,31 @@ var PageToolsComponent = class _PageToolsComponent {
         \u0275\u0275twoWayBindingSet(ctx.activePanels, $event) || (ctx.activePanels = $event);
         return $event;
       });
-      \u0275\u0275elementStart(3, "p-accordion-panel", 1)(4, "p-accordion-header");
-      \u0275\u0275text(5, "Heading structure");
+      \u0275\u0275template(3, PageToolsComponent_p_accordion_panel_3_Template, 6, 2, "p-accordion-panel", 1);
+      \u0275\u0275elementStart(4, "p-accordion-panel", 2)(5, "p-accordion-header");
+      \u0275\u0275text(6, "IA structure");
       \u0275\u0275elementEnd();
-      \u0275\u0275template(6, PageToolsComponent_p_6_Template, 2, 0, "p", 2);
-      \u0275\u0275elementStart(7, "p-accordion-content");
-      \u0275\u0275element(8, "ca-heading-structure");
+      \u0275\u0275template(7, PageToolsComponent_p_7_Template, 2, 0, "p", 3);
+      \u0275\u0275elementStart(8, "p-accordion-content");
+      \u0275\u0275element(9, "ca-ia-structure");
       \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(9, "p-accordion-panel", 1)(10, "p-accordion-header");
-      \u0275\u0275text(11, "IA structure");
+      \u0275\u0275elementStart(10, "p-accordion-panel", 4)(11, "p-accordion-header");
+      \u0275\u0275text(12, "Component guidance");
       \u0275\u0275elementEnd();
-      \u0275\u0275template(12, PageToolsComponent_p_12_Template, 2, 0, "p", 2);
-      \u0275\u0275elementStart(13, "p-accordion-content");
-      \u0275\u0275element(14, "ca-ia-structure");
+      \u0275\u0275template(13, PageToolsComponent_p_13_Template, 2, 0, "p", 3);
+      \u0275\u0275elementStart(14, "p-accordion-content");
+      \u0275\u0275element(15, "ca-component-guidance");
       \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(15, "p-accordion-panel", 3)(16, "p-accordion-header");
-      \u0275\u0275text(17, "Component guidance");
+      \u0275\u0275template(16, PageToolsComponent_p_accordion_panel_16_Template, 6, 2, "p-accordion-panel", 5)(17, PageToolsComponent_p_accordion_panel_17_Template, 6, 2, "p-accordion-panel", 5)(18, PageToolsComponent_p_accordion_panel_18_Template, 6, 2, "p-accordion-panel", 5)(19, PageToolsComponent_p_accordion_panel_19_Template, 6, 2, "p-accordion-panel", 1);
       \u0275\u0275elementEnd();
-      \u0275\u0275template(18, PageToolsComponent_p_18_Template, 2, 0, "p", 2);
-      \u0275\u0275elementStart(19, "p-accordion-content");
-      \u0275\u0275element(20, "ca-component-guidance");
-      \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(21, "p-accordion-panel", 3)(22, "p-accordion-header");
-      \u0275\u0275text(23, "SEO");
-      \u0275\u0275elementEnd();
-      \u0275\u0275template(24, PageToolsComponent_p_24_Template, 2, 0, "p", 2);
-      \u0275\u0275elementStart(25, "p-accordion-content");
-      \u0275\u0275element(26, "ca-seo");
-      \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(27, "p-accordion-panel", 3)(28, "p-accordion-header");
-      \u0275\u0275text(29, "User insights");
-      \u0275\u0275elementEnd();
-      \u0275\u0275template(30, PageToolsComponent_p_30_Template, 2, 0, "p", 2);
-      \u0275\u0275elementStart(31, "p-accordion-content");
-      \u0275\u0275element(32, "ca-user-insights");
-      \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(33, "p-accordion-panel", 3)(34, "p-accordion-header");
-      \u0275\u0275text(35, "Link report");
-      \u0275\u0275elementEnd();
-      \u0275\u0275template(36, PageToolsComponent_p_36_Template, 2, 0, "p", 2);
-      \u0275\u0275elementStart(37, "p-accordion-content");
-      \u0275\u0275element(38, "ca-link-report");
-      \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(39, "p-accordion-panel", 1)(40, "p-accordion-header");
-      \u0275\u0275text(41, "Template conversion");
-      \u0275\u0275elementEnd();
-      \u0275\u0275template(42, PageToolsComponent_p_42_Template, 2, 0, "p", 2);
-      \u0275\u0275elementStart(43, "p-accordion-content");
-      \u0275\u0275element(44, "ca-template-conversion");
-      \u0275\u0275elementEnd()()();
     }
     if (rf & 2) {
       \u0275\u0275advance(2);
       \u0275\u0275twoWayProperty("value", ctx.activePanels);
       \u0275\u0275property("multiple", true);
       \u0275\u0275advance();
-      \u0275\u0275property("value", 0);
-      \u0275\u0275advance(3);
-      \u0275\u0275property("ngIf", !ctx.isPanelOpen(0));
-      \u0275\u0275advance(3);
+      \u0275\u0275property("ngIf", !ctx.production);
+      \u0275\u0275advance();
       \u0275\u0275property("value", 1);
       \u0275\u0275advance(3);
       \u0275\u0275property("ngIf", !ctx.isPanelOpen(1));
@@ -46125,21 +48414,13 @@ var PageToolsComponent = class _PageToolsComponent {
       \u0275\u0275advance(3);
       \u0275\u0275property("ngIf", !ctx.isPanelOpen(2));
       \u0275\u0275advance(3);
-      \u0275\u0275property("value", 3);
-      \u0275\u0275advance(3);
-      \u0275\u0275property("ngIf", !ctx.isPanelOpen(3));
-      \u0275\u0275advance(3);
-      \u0275\u0275property("value", 4);
-      \u0275\u0275advance(3);
-      \u0275\u0275property("ngIf", !ctx.isPanelOpen(4));
-      \u0275\u0275advance(3);
-      \u0275\u0275property("value", 5);
-      \u0275\u0275advance(3);
-      \u0275\u0275property("ngIf", !ctx.isPanelOpen(5));
-      \u0275\u0275advance(3);
-      \u0275\u0275property("value", 6);
-      \u0275\u0275advance(3);
-      \u0275\u0275property("ngIf", !ctx.isPanelOpen(6));
+      \u0275\u0275property("ngIf", !ctx.production);
+      \u0275\u0275advance();
+      \u0275\u0275property("ngIf", !ctx.production);
+      \u0275\u0275advance();
+      \u0275\u0275property("ngIf", !ctx.production);
+      \u0275\u0275advance();
+      \u0275\u0275property("ngIf", !ctx.production);
     }
   }, dependencies: [
     CommonModule,
@@ -46173,1156 +48454,19 @@ var PageToolsComponent = class _PageToolsComponent {
       ComponentGuidanceComponent,
       HeadingStructureComponent,
       IaStructureComponent
-    ], template: '<p>Use these tools to analyze and improve your web page. You can restructure headings, generate an IA diagram, find guidance on the components used in your page, integrate SEO and user insights into your updates, check your link quality, or convert your page to a different template.</p>\r\n\r\n<p-accordion [(value)]="activePanels" [multiple]="true" class="flex flex-column gap-3">\r\n\r\n    <p-accordion-panel [value]="0" class="border-1 border-round-md border-surface">\r\n        <p-accordion-header>Heading structure</p-accordion-header>\r\n        <p class="mt-0 ml-4 text-color-secondary" *ngIf="!isPanelOpen(0)">View or reorganize your heading structure.</p>\r\n        <p-accordion-content>\r\n            <ca-heading-structure></ca-heading-structure>\r\n        </p-accordion-content>\r\n    </p-accordion-panel>\r\n\r\n    <p-accordion-panel [value]="1" class="border-1 border-round-md border-surface">\r\n        <p-accordion-header>IA structure</p-accordion-header>\r\n        <p class="mt-0 ml-4 text-color-secondary" *ngIf="!isPanelOpen(1)">Check if your page is an IA orphan and view its current IA diagram.</p>\r\n        <p-accordion-content>\r\n            <ca-ia-structure></ca-ia-structure>\r\n        </p-accordion-content>\r\n    </p-accordion-panel>\r\n\r\n    <p-accordion-panel [value]="2" class="border-1 border-round-sm border-surface">\r\n        <p-accordion-header>Component guidance</p-accordion-header>\r\n        <p class="mt-0 ml-4 text-color-secondary" *ngIf="!isPanelOpen(2)">Find guidance on the components used on your page and check for deprecated code or unexpected classes or elements.</p>\r\n        <p-accordion-content>\r\n            <ca-component-guidance></ca-component-guidance>\r\n        </p-accordion-content>\r\n    </p-accordion-panel>\r\n\r\n    <p-accordion-panel [value]="3" class="border-1 border-round-sm border-surface">\r\n        <p-accordion-header>SEO</p-accordion-header>\r\n        <p class="mt-0 ml-4 text-color-secondary" *ngIf="!isPanelOpen(3)">Add doormat text.</p>\r\n        <p-accordion-content>\r\n            <ca-seo></ca-seo>\r\n        </p-accordion-content>\r\n    </p-accordion-panel>\r\n\r\n    <p-accordion-panel [value]="4" class="border-1 border-round-sm border-surface">\r\n        <p-accordion-header>User insights</p-accordion-header>\r\n        <p class="mt-0 ml-4 text-color-secondary" *ngIf="!isPanelOpen(4)">Add doormat text.</p>\r\n        <p-accordion-content>\r\n            <ca-user-insights></ca-user-insights>\r\n        </p-accordion-content>\r\n    </p-accordion-panel>\r\n\r\n    <p-accordion-panel [value]="5" class="border-1 border-round-sm border-surface">\r\n        <p-accordion-header>Link report</p-accordion-header>\r\n        <p class="mt-0 ml-4 text-color-secondary" *ngIf="!isPanelOpen(5)">Add doormat text.</p>\r\n        <p-accordion-content>\r\n            <ca-link-report></ca-link-report>\r\n        </p-accordion-content>\r\n    </p-accordion-panel>\r\n\r\n    <p-accordion-panel [value]="6" class="border-1 border-round-md border-surface">\r\n        <p-accordion-header>Template conversion</p-accordion-header>\r\n        <p class="mt-0 ml-4 text-color-secondary" *ngIf="!isPanelOpen(6)">Add doormat text.</p>\r\n        <p-accordion-content>\r\n            <ca-template-conversion></ca-template-conversion>\r\n        </p-accordion-content>\r\n    </p-accordion-panel>\r\n\r\n</p-accordion>', styles: ["/* angular:styles/component:css;219558ef63f119a92210704329b58a3cdceaa4fb296db559e672f74512827dc7;C:/Users/rosaz/translation-assistant/content-assistant/src/app/views/page-assistant/components/tools.component.ts */\n:host {\n  display: block;\n}\n/*# sourceMappingURL=tools.component.css.map */\n"] }]
+    ], template: '<p>Use these tools to analyze and improve your web page. You can restructure headings, generate an IA diagram, find guidance on the components used in your page, integrate SEO and user insights into your updates, check your link quality, or convert your page to a different template.</p>\r\n\r\n<!--REMINDER: remove *ngIf="!production" as tools are finished (or close enough for people to use them)-->\r\n\r\n<p-accordion [(value)]="activePanels" [multiple]="true" class="flex flex-column gap-3">\r\n\r\n    <p-accordion-panel [value]="0" class="border-1 border-round-md border-surface" *ngIf="!production">\r\n        <p-accordion-header>Heading structure</p-accordion-header>\r\n        <p class="mt-0 ml-4 text-color-secondary" *ngIf="!isPanelOpen(0)">View or reorganize your heading structure.</p>\r\n        <p-accordion-content>\r\n            <ca-heading-structure></ca-heading-structure>\r\n        </p-accordion-content>\r\n    </p-accordion-panel>\r\n\r\n    <p-accordion-panel [value]="1" class="border-1 border-round-md border-surface">\r\n        <p-accordion-header>IA structure</p-accordion-header>\r\n        <p class="mt-0 ml-4 text-color-secondary" *ngIf="!isPanelOpen(1)">Check if your page is an IA orphan and view its current IA diagram.</p>\r\n        <p-accordion-content>\r\n            <ca-ia-structure></ca-ia-structure>\r\n        </p-accordion-content>\r\n    </p-accordion-panel>\r\n\r\n    <p-accordion-panel [value]="2" class="border-1 border-round-sm border-surface">\r\n        <p-accordion-header>Component guidance</p-accordion-header>\r\n        <p class="mt-0 ml-4 text-color-secondary" *ngIf="!isPanelOpen(2)">Find guidance on the components used on your page and check for deprecated code or unexpected classes or elements.</p>\r\n        <p-accordion-content>\r\n            <ca-component-guidance></ca-component-guidance>\r\n        </p-accordion-content>\r\n    </p-accordion-panel>\r\n\r\n    <p-accordion-panel [value]="3" class="border-1 border-round-sm border-surface" *ngIf="!production">\r\n        <p-accordion-header>SEO</p-accordion-header>\r\n        <p class="mt-0 ml-4 text-color-secondary" *ngIf="!isPanelOpen(3)">Add doormat text.</p>\r\n        <p-accordion-content>\r\n            <ca-seo></ca-seo>\r\n        </p-accordion-content>\r\n    </p-accordion-panel>\r\n\r\n    <p-accordion-panel [value]="4" class="border-1 border-round-sm border-surface" *ngIf="!production">\r\n        <p-accordion-header>User insights</p-accordion-header>\r\n        <p class="mt-0 ml-4 text-color-secondary" *ngIf="!isPanelOpen(4)">Add doormat text.</p>\r\n        <p-accordion-content>\r\n            <ca-user-insights></ca-user-insights>\r\n        </p-accordion-content>\r\n    </p-accordion-panel>\r\n\r\n    <p-accordion-panel [value]="5" class="border-1 border-round-sm border-surface" *ngIf="!production">\r\n        <p-accordion-header>Link report</p-accordion-header>\r\n        <p class="mt-0 ml-4 text-color-secondary" *ngIf="!isPanelOpen(5)">Add doormat text.</p>\r\n        <p-accordion-content>\r\n            <ca-link-report></ca-link-report>\r\n        </p-accordion-content>\r\n    </p-accordion-panel>\r\n\r\n    <p-accordion-panel [value]="6" class="border-1 border-round-md border-surface" *ngIf="!production">\r\n        <p-accordion-header>Template conversion</p-accordion-header>\r\n        <p class="mt-0 ml-4 text-color-secondary" *ngIf="!isPanelOpen(6)">Add doormat text.</p>\r\n        <p-accordion-content>\r\n            <ca-template-conversion></ca-template-conversion>\r\n        </p-accordion-content>\r\n    </p-accordion-panel>\r\n\r\n</p-accordion>', styles: ["/* angular:styles/component:css;219558ef63f119a92210704329b58a3cdceaa4fb296db559e672f74512827dc7;C:/Users/rosaz/translation-assistant/content-assistant/src/app/views/page-assistant/components/tools.component.ts */\n:host {\n  display: block;\n}\n/*# sourceMappingURL=tools.component.css.map */\n"] }]
   }], null, null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(PageToolsComponent, { className: "PageToolsComponent", filePath: "src/app/views/page-assistant/components/tools.component.ts", lineNumber: 31 });
-})();
-
-// src/app/views/page-assistant/services/source-diff.service.ts
-var import_diff2html_ui_slim = __toESM(require_diff2html_ui_slim());
-
-// node_modules/diff/libesm/diff/base.js
-var Diff = class {
-  diff(oldStr, newStr, options = {}) {
-    let callback;
-    if (typeof options === "function") {
-      callback = options;
-      options = {};
-    } else if ("callback" in options) {
-      callback = options.callback;
-    }
-    const oldString = this.castInput(oldStr, options);
-    const newString = this.castInput(newStr, options);
-    const oldTokens = this.removeEmpty(this.tokenize(oldString, options));
-    const newTokens = this.removeEmpty(this.tokenize(newString, options));
-    return this.diffWithOptionsObj(oldTokens, newTokens, options, callback);
-  }
-  diffWithOptionsObj(oldTokens, newTokens, options, callback) {
-    var _a;
-    const done = (value) => {
-      value = this.postProcess(value, options);
-      if (callback) {
-        setTimeout(function() {
-          callback(value);
-        }, 0);
-        return void 0;
-      } else {
-        return value;
-      }
-    };
-    const newLen = newTokens.length, oldLen = oldTokens.length;
-    let editLength = 1;
-    let maxEditLength = newLen + oldLen;
-    if (options.maxEditLength != null) {
-      maxEditLength = Math.min(maxEditLength, options.maxEditLength);
-    }
-    const maxExecutionTime = (_a = options.timeout) !== null && _a !== void 0 ? _a : Infinity;
-    const abortAfterTimestamp = Date.now() + maxExecutionTime;
-    const bestPath = [{
-      oldPos: -1,
-      lastComponent: void 0
-    }];
-    let newPos = this.extractCommon(bestPath[0], newTokens, oldTokens, 0, options);
-    if (bestPath[0].oldPos + 1 >= oldLen && newPos + 1 >= newLen) {
-      return done(this.buildValues(bestPath[0].lastComponent, newTokens, oldTokens));
-    }
-    let minDiagonalToConsider = -Infinity, maxDiagonalToConsider = Infinity;
-    const execEditLength = () => {
-      for (let diagonalPath = Math.max(minDiagonalToConsider, -editLength); diagonalPath <= Math.min(maxDiagonalToConsider, editLength); diagonalPath += 2) {
-        let basePath;
-        const removePath = bestPath[diagonalPath - 1], addPath = bestPath[diagonalPath + 1];
-        if (removePath) {
-          bestPath[diagonalPath - 1] = void 0;
-        }
-        let canAdd = false;
-        if (addPath) {
-          const addPathNewPos = addPath.oldPos - diagonalPath;
-          canAdd = addPath && 0 <= addPathNewPos && addPathNewPos < newLen;
-        }
-        const canRemove = removePath && removePath.oldPos + 1 < oldLen;
-        if (!canAdd && !canRemove) {
-          bestPath[diagonalPath] = void 0;
-          continue;
-        }
-        if (!canRemove || canAdd && removePath.oldPos < addPath.oldPos) {
-          basePath = this.addToPath(addPath, true, false, 0, options);
-        } else {
-          basePath = this.addToPath(removePath, false, true, 1, options);
-        }
-        newPos = this.extractCommon(basePath, newTokens, oldTokens, diagonalPath, options);
-        if (basePath.oldPos + 1 >= oldLen && newPos + 1 >= newLen) {
-          return done(this.buildValues(basePath.lastComponent, newTokens, oldTokens)) || true;
-        } else {
-          bestPath[diagonalPath] = basePath;
-          if (basePath.oldPos + 1 >= oldLen) {
-            maxDiagonalToConsider = Math.min(maxDiagonalToConsider, diagonalPath - 1);
-          }
-          if (newPos + 1 >= newLen) {
-            minDiagonalToConsider = Math.max(minDiagonalToConsider, diagonalPath + 1);
-          }
-        }
-      }
-      editLength++;
-    };
-    if (callback) {
-      (function exec() {
-        setTimeout(function() {
-          if (editLength > maxEditLength || Date.now() > abortAfterTimestamp) {
-            return callback(void 0);
-          }
-          if (!execEditLength()) {
-            exec();
-          }
-        }, 0);
-      })();
-    } else {
-      while (editLength <= maxEditLength && Date.now() <= abortAfterTimestamp) {
-        const ret = execEditLength();
-        if (ret) {
-          return ret;
-        }
-      }
-    }
-  }
-  addToPath(path, added, removed, oldPosInc, options) {
-    const last = path.lastComponent;
-    if (last && !options.oneChangePerToken && last.added === added && last.removed === removed) {
-      return {
-        oldPos: path.oldPos + oldPosInc,
-        lastComponent: {
-          count: last.count + 1,
-          added,
-          removed,
-          previousComponent: last.previousComponent
-        }
-      };
-    } else {
-      return {
-        oldPos: path.oldPos + oldPosInc,
-        lastComponent: {
-          count: 1,
-          added,
-          removed,
-          previousComponent: last
-        }
-      };
-    }
-  }
-  extractCommon(basePath, newTokens, oldTokens, diagonalPath, options) {
-    const newLen = newTokens.length, oldLen = oldTokens.length;
-    let oldPos = basePath.oldPos, newPos = oldPos - diagonalPath, commonCount = 0;
-    while (newPos + 1 < newLen && oldPos + 1 < oldLen && this.equals(oldTokens[oldPos + 1], newTokens[newPos + 1], options)) {
-      newPos++;
-      oldPos++;
-      commonCount++;
-      if (options.oneChangePerToken) {
-        basePath.lastComponent = {
-          count: 1,
-          previousComponent: basePath.lastComponent,
-          added: false,
-          removed: false
-        };
-      }
-    }
-    if (commonCount && !options.oneChangePerToken) {
-      basePath.lastComponent = {
-        count: commonCount,
-        previousComponent: basePath.lastComponent,
-        added: false,
-        removed: false
-      };
-    }
-    basePath.oldPos = oldPos;
-    return newPos;
-  }
-  equals(left, right, options) {
-    if (options.comparator) {
-      return options.comparator(left, right);
-    } else {
-      return left === right || !!options.ignoreCase && left.toLowerCase() === right.toLowerCase();
-    }
-  }
-  removeEmpty(array) {
-    const ret = [];
-    for (let i = 0; i < array.length; i++) {
-      if (array[i]) {
-        ret.push(array[i]);
-      }
-    }
-    return ret;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  castInput(value, options) {
-    return value;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  tokenize(value, options) {
-    return Array.from(value);
-  }
-  join(chars) {
-    return chars.join("");
-  }
-  postProcess(changeObjects, options) {
-    return changeObjects;
-  }
-  get useLongestToken() {
-    return false;
-  }
-  buildValues(lastComponent, newTokens, oldTokens) {
-    const components = [];
-    let nextComponent;
-    while (lastComponent) {
-      components.push(lastComponent);
-      nextComponent = lastComponent.previousComponent;
-      delete lastComponent.previousComponent;
-      lastComponent = nextComponent;
-    }
-    components.reverse();
-    const componentLen = components.length;
-    let componentPos = 0, newPos = 0, oldPos = 0;
-    for (; componentPos < componentLen; componentPos++) {
-      const component = components[componentPos];
-      if (!component.removed) {
-        if (!component.added && this.useLongestToken) {
-          let value = newTokens.slice(newPos, newPos + component.count);
-          value = value.map(function(value2, i) {
-            const oldValue = oldTokens[oldPos + i];
-            return oldValue.length > value2.length ? oldValue : value2;
-          });
-          component.value = this.join(value);
-        } else {
-          component.value = this.join(newTokens.slice(newPos, newPos + component.count));
-        }
-        newPos += component.count;
-        if (!component.added) {
-          oldPos += component.count;
-        }
-      } else {
-        component.value = this.join(oldTokens.slice(oldPos, oldPos + component.count));
-        oldPos += component.count;
-      }
-    }
-    return components;
-  }
-};
-
-// node_modules/diff/libesm/diff/line.js
-var LineDiff = class extends Diff {
-  constructor() {
-    super(...arguments);
-    this.tokenize = tokenize;
-  }
-  equals(left, right, options) {
-    if (options.ignoreWhitespace) {
-      if (!options.newlineIsToken || !left.includes("\n")) {
-        left = left.trim();
-      }
-      if (!options.newlineIsToken || !right.includes("\n")) {
-        right = right.trim();
-      }
-    } else if (options.ignoreNewlineAtEof && !options.newlineIsToken) {
-      if (left.endsWith("\n")) {
-        left = left.slice(0, -1);
-      }
-      if (right.endsWith("\n")) {
-        right = right.slice(0, -1);
-      }
-    }
-    return super.equals(left, right, options);
-  }
-};
-var lineDiff = new LineDiff();
-function diffLines(oldStr, newStr, options) {
-  return lineDiff.diff(oldStr, newStr, options);
-}
-function tokenize(value, options) {
-  if (options.stripTrailingCr) {
-    value = value.replace(/\r\n/g, "\n");
-  }
-  const retLines = [], linesAndNewlines = value.split(/(\n|\r\n)/);
-  if (!linesAndNewlines[linesAndNewlines.length - 1]) {
-    linesAndNewlines.pop();
-  }
-  for (let i = 0; i < linesAndNewlines.length; i++) {
-    const line = linesAndNewlines[i];
-    if (i % 2 && !options.newlineIsToken) {
-      retLines[retLines.length - 1] += line;
-    } else {
-      retLines.push(line);
-    }
-  }
-  return retLines;
-}
-
-// node_modules/diff/libesm/patch/create.js
-function structuredPatch(oldFileName, newFileName, oldStr, newStr, oldHeader, newHeader, options) {
-  let optionsObj;
-  if (!options) {
-    optionsObj = {};
-  } else if (typeof options === "function") {
-    optionsObj = {
-      callback: options
-    };
-  } else {
-    optionsObj = options;
-  }
-  if (typeof optionsObj.context === "undefined") {
-    optionsObj.context = 4;
-  }
-  const context = optionsObj.context;
-  if (optionsObj.newlineIsToken) {
-    throw new Error("newlineIsToken may not be used with patch-generation functions, only with diffing functions");
-  }
-  if (!optionsObj.callback) {
-    return diffLinesResultToPatch(diffLines(oldStr, newStr, optionsObj));
-  } else {
-    const {
-      callback
-    } = optionsObj;
-    diffLines(oldStr, newStr, Object.assign(Object.assign({}, optionsObj), {
-      callback: (diff) => {
-        const patch = diffLinesResultToPatch(diff);
-        callback(patch);
-      }
-    }));
-  }
-  function diffLinesResultToPatch(diff) {
-    if (!diff) {
-      return;
-    }
-    diff.push({
-      value: "",
-      lines: []
-    });
-    function contextLines(lines) {
-      return lines.map(function(entry) {
-        return " " + entry;
-      });
-    }
-    const hunks = [];
-    let oldRangeStart = 0, newRangeStart = 0, curRange = [], oldLine = 1, newLine = 1;
-    for (let i = 0; i < diff.length; i++) {
-      const current = diff[i], lines = current.lines || splitLines(current.value);
-      current.lines = lines;
-      if (current.added || current.removed) {
-        if (!oldRangeStart) {
-          const prev = diff[i - 1];
-          oldRangeStart = oldLine;
-          newRangeStart = newLine;
-          if (prev) {
-            curRange = context > 0 ? contextLines(prev.lines.slice(-context)) : [];
-            oldRangeStart -= curRange.length;
-            newRangeStart -= curRange.length;
-          }
-        }
-        for (const line of lines) {
-          curRange.push((current.added ? "+" : "-") + line);
-        }
-        if (current.added) {
-          newLine += lines.length;
-        } else {
-          oldLine += lines.length;
-        }
-      } else {
-        if (oldRangeStart) {
-          if (lines.length <= context * 2 && i < diff.length - 2) {
-            for (const line of contextLines(lines)) {
-              curRange.push(line);
-            }
-          } else {
-            const contextSize = Math.min(lines.length, context);
-            for (const line of contextLines(lines.slice(0, contextSize))) {
-              curRange.push(line);
-            }
-            const hunk = {
-              oldStart: oldRangeStart,
-              oldLines: oldLine - oldRangeStart + contextSize,
-              newStart: newRangeStart,
-              newLines: newLine - newRangeStart + contextSize,
-              lines: curRange
-            };
-            hunks.push(hunk);
-            oldRangeStart = 0;
-            newRangeStart = 0;
-            curRange = [];
-          }
-        }
-        oldLine += lines.length;
-        newLine += lines.length;
-      }
-    }
-    for (const hunk of hunks) {
-      for (let i = 0; i < hunk.lines.length; i++) {
-        if (hunk.lines[i].endsWith("\n")) {
-          hunk.lines[i] = hunk.lines[i].slice(0, -1);
-        } else {
-          hunk.lines.splice(i + 1, 0, "\\ No newline at end of file");
-          i++;
-        }
-      }
-    }
-    return {
-      oldFileName,
-      newFileName,
-      oldHeader,
-      newHeader,
-      hunks
-    };
-  }
-}
-function formatPatch(patch) {
-  if (Array.isArray(patch)) {
-    return patch.map(formatPatch).join("\n");
-  }
-  const ret = [];
-  if (patch.oldFileName == patch.newFileName) {
-    ret.push("Index: " + patch.oldFileName);
-  }
-  ret.push("===================================================================");
-  ret.push("--- " + patch.oldFileName + (typeof patch.oldHeader === "undefined" ? "" : "	" + patch.oldHeader));
-  ret.push("+++ " + patch.newFileName + (typeof patch.newHeader === "undefined" ? "" : "	" + patch.newHeader));
-  for (let i = 0; i < patch.hunks.length; i++) {
-    const hunk = patch.hunks[i];
-    if (hunk.oldLines === 0) {
-      hunk.oldStart -= 1;
-    }
-    if (hunk.newLines === 0) {
-      hunk.newStart -= 1;
-    }
-    ret.push("@@ -" + hunk.oldStart + "," + hunk.oldLines + " +" + hunk.newStart + "," + hunk.newLines + " @@");
-    for (const line of hunk.lines) {
-      ret.push(line);
-    }
-  }
-  return ret.join("\n") + "\n";
-}
-function createTwoFilesPatch(oldFileName, newFileName, oldStr, newStr, oldHeader, newHeader, options) {
-  if (typeof options === "function") {
-    options = {
-      callback: options
-    };
-  }
-  if (!(options === null || options === void 0 ? void 0 : options.callback)) {
-    const patchObj = structuredPatch(oldFileName, newFileName, oldStr, newStr, oldHeader, newHeader, options);
-    if (!patchObj) {
-      return;
-    }
-    return formatPatch(patchObj);
-  } else {
-    const {
-      callback
-    } = options;
-    structuredPatch(oldFileName, newFileName, oldStr, newStr, oldHeader, newHeader, Object.assign(Object.assign({}, options), {
-      callback: (patchObj) => {
-        if (!patchObj) {
-          callback(void 0);
-        } else {
-          callback(formatPatch(patchObj));
-        }
-      }
-    }));
-  }
-}
-function createPatch(fileName, oldStr, newStr, oldHeader, newHeader, options) {
-  return createTwoFilesPatch(fileName, fileName, oldStr, newStr, oldHeader, newHeader, options);
-}
-function splitLines(text) {
-  const hasTrailingNl = text.endsWith("\n");
-  const result = text.split("\n").map((line) => line + "\n");
-  if (hasTrailingNl) {
-    result.pop();
-  } else {
-    result.push(result.pop().slice(0, -1));
-  }
-  return result;
-}
-
-// src/app/views/page-assistant/services/source-diff.service.ts
-var SourceDiffService = class _SourceDiffService {
-  constructor() {
-  }
-  //Update source code views
-  generateSourceContent(container, viewType, originalHtml, modifiedHtml, originalUrl, modifiedUrl) {
-    return __async(this, null, function* () {
-      this.clearDiffContainer(container);
-      switch (viewType) {
-        case "original":
-          this.renderSource(container, originalHtml);
-          break;
-        case "modified":
-          this.renderSource(container, modifiedHtml);
-          break;
-        case "side-by-side":
-          yield this.renderSourceDiff(container, originalHtml, modifiedHtml, originalUrl, modifiedUrl, "side-by-side");
-          break;
-        case "line-by-line":
-          yield this.renderSourceDiff(container, originalHtml, modifiedHtml, originalUrl, modifiedUrl, "line-by-line");
-          break;
-      }
-    });
-  }
-  renderSource(container, html) {
-    return __async(this, null, function* () {
-      const { default: Prism } = yield import("./chunk-TEKHY7GD.js");
-      yield import("./chunk-RGWANRPM.js");
-      this.loadPrismTheme();
-      const escapedHtml = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-      container.innerHTML = `<pre class="m-0"><code class="language-html">${escapedHtml}</code></pre>`;
-      const codeBlock = container.querySelector("code");
-      if (codeBlock) {
-        Prism.highlightElement(codeBlock);
-      }
-    });
-  }
-  //Generate source code diff
-  renderSourceDiff(container, originalHtml, modifiedHtml, originalUrl, modifiedUrl, diffStyle = "side-by-side") {
-    return __async(this, null, function* () {
-      try {
-        const patch = createPatch("", originalHtml, modifiedHtml, originalUrl, modifiedUrl, {
-          ignoreWhitespace: true
-        });
-        const diffOptions = {
-          outputFormat: diffStyle,
-          drawFileList: false,
-          fileContentToggle: false,
-          matching: "words",
-          synchronisedScroll: true,
-          highlight: true
-        };
-        container.innerHTML = "";
-        const diff2 = new import_diff2html_ui_slim.Diff2HtmlUI(container, patch, diffOptions);
-        diff2.highlightCode();
-        diff2.draw();
-      } catch (error) {
-        console.error("Error generating diff2html:", error);
-        container.innerHTML = '<p class="p-error">Error generating diff view.</p>';
-      }
-    });
-  }
-  //Clear diff container
-  clearDiffContainer(container) {
-    if (container) {
-      container.innerHTML = "";
-    }
-  }
-  //Toggle theme for light/dark mode
-  loadPrismTheme() {
-    const isDarkMode = document.documentElement.classList.contains("dark-mode");
-    const existingLink = document.getElementById("prism-theme");
-    const newHref = isDarkMode ? "css/prism-okaidia.min.css" : "css/prism.min.css";
-    if (existingLink) {
-      if (existingLink.href.endsWith(newHref))
-        return;
-      existingLink.href = newHref;
-    } else {
-      const link = document.createElement("link");
-      link.id = "prism-theme";
-      link.rel = "stylesheet";
-      link.href = newHref;
-      document.head.appendChild(link);
-    }
-    const diffWrappers = document.querySelectorAll(".d2h-wrapper");
-    diffWrappers.forEach((diffWrapper) => {
-      diffWrapper.classList.remove("d2h-dark-color-scheme", "d2h-light-color-scheme");
-      diffWrapper.classList.add(isDarkMode ? "d2h-dark-color-scheme" : "d2h-light-color-scheme");
-    });
-  }
-  static \u0275fac = function SourceDiffService_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _SourceDiffService)();
-  };
-  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _SourceDiffService, factory: _SourceDiffService.\u0275fac, providedIn: "root" });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(SourceDiffService, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], () => [], null);
-})();
-
-// src/app/views/page-assistant/services/web-diff.service.ts
-var WebDiffService = class _WebDiffService {
-  constructor() {
-  }
-  //Generate HTML diff (web page view) using htmldiff-js
-  generateHtmlDiff(originalHtml, modifiedHtml) {
-    return __async(this, null, function* () {
-      const options = {
-        repeatingWordsAccuracy: 0,
-        ignoreWhiteSpaceDifferences: true,
-        orphanMatchThreshold: 0,
-        matchGranularity: 4,
-        combineWords: true
-      };
-      const { Diff: Diff2 } = yield import("./chunk-G5CPTNTY.js");
-      const diffResult = Diff2.execute(originalHtml, modifiedHtml, options).replace(
-        /<(ins|del)[^>]*>(\s|&nbsp;|&#32;|&#160;|&#x00e2;|&#x0080;|&#x00af;|&#x202f;|&#xa0;)+<\/(ins|del)>/gis,
-        // Remove empty or whitespace-only <ins>/<del> tags
-        " "
-      );
-      return diffResult;
-    });
-  }
-  //Styles for HTML diff
-  getRenderedDiffStyles() {
-    return `
-      /* Import canada.ca CSS */
-        @import url('https://use.fontawesome.com/releases/v5.15.4/css/all.css');
-        @import url('https://www.canada.ca/etc/designs/canada/wet-boew/css/theme.min.css');
-        @import url('https://www.canada.ca/etc/designs/canada/wet-boew/m\xE9li-m\xE9lo/2024-09-kejimkujik.min.css');
-
-    /* Shadow DOM container and layout fixes */
-      :host {
-        all: initial;
-        display: block;
-        width: 100%;
-        box-sizing: border-box;
-      }
-
-      .rendered-content {
-        margin: 0;
-        padding: 0;
-        background-color: #ffffff !important; 
-        width: 100%;
-        max-width: 100%;
-        overflow-wrap: break-word;
-        box-sizing: border-box;
-        font-family: sans-serif;
-      }
-
-      .rendered-content table {
-        width: 100%;
-        table-layout: auto;
-      }
-
-      .rendered-content td, .rendered-content th, .rendered-content pre {
-        word-break: break-word;
-      }
-
-      .rendered-content pre {
-        white-space: pre-wrap;
-      }
-      
-      /* Base styling for ins, del, and updated-link */
-      ins,
-      del,
-      .updated-link {
-        display: inline;
-        padding: 0 0.3em;
-        height: auto;
-        border-radius: 0.3em;
-        -webkit-box-decoration-break: clone;
-        -o-box-decoration-break: clone;
-        box-decoration-break: clone;
-        margin-left: 0.07em;
-        margin-right: 0.07em;
-        font-weight: 500;
-      }
-
-      /* Inserted text (ins) */
-      .rendered-content ins {
-        background-color: #d4edda !important;
-        color: #155724 !important;
-        text-decoration: none !important;
-        padding: 2px 4px;
-        border-radius: 3px;
-        border: 1px solid #c3e6cb;
-      }
-
-      /* Deleted text (del) */
-      .rendered-content del {
-        background-color: #f8d7da !important;
-        color: #721c24 !important;
-        text-decoration: line-through !important;
-        padding: 2px 4px;
-        border-radius: 3px;
-        border: 1px solid #f5c6cb;
-      }
-
-      /* Updated links */
-      .updated-link {
-        background-color: #FFEE8C;
-      }
-
-      /* Highlighting for inserted, deleted, and updated elements */
-      del.highlight,
-      ins.highlight,
-      span.diff-group.highlight,
-      .updated-link.highlight:not(.overlay-wrapper.updated-link) {
-        outline: 3px dotted #6e2ea7;
-        padding-left: 0.35em;
-        padding-right: 0.35em;
-        line-height: unset;
-        position: unset;
-        top: unset;
-        height: unset;
-        transition: padding-left ease 0.3s, padding-right ease 0.3s, color ease 0.7s;
-      }
-
-      /* Overlay wrapper styles */
-      .overlay-wrapper {
-        position: relative;
-        display: inline-block;
-        width: 100%;
-        height: 100%;
-      }
-
-      .overlay-wrapper::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(131, 213, 168, 0.4);
-        z-index: 10;
-        border-radius: 5px;
-        pointer-events: none;
-      }
-
-      .overlay-wrapper.del::before {
-        background: rgba(243, 165, 157, 0.5);
-      }
-
-      .overlay-wrapper.del::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background: rgba(24, 21, 21, 0.5);
-        z-index: 20;
-        pointer-events: none;
-        opacity: 0.8;
-      }
-
-      .overlay-wrapper.updated-link::before {
-        background: rgba(250, 237, 165, 0.23);
-      }
-
-      .overlay-wrapper.highlight::before {
-        border: 2px dotted #000;
-      }
-
-      .overlay-wrapper img {
-        width: 100%;
-        display: block;
-      }
-
-      /* Optional connection type styling */
-      .cnjnctn-type-or > [class*=cnjnctn-col]:not(:first-child):before {
-        content: "or";
-      }
-    `;
-  }
-  static \u0275fac = function WebDiffService_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _WebDiffService)();
-  };
-  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _WebDiffService, factory: _WebDiffService.\u0275fac, providedIn: "root" });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(WebDiffService, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], () => [], null);
-})();
-
-// src/app/views/page-assistant/services/shadowdom.service.ts
-var ShadowDomService = class _ShadowDomService {
-  webDiffService;
-  constructor(webDiffService) {
-    this.webDiffService = webDiffService;
-  }
-  //Initialize shadowDOM on an element
-  initializeShadowDOM(element) {
-    if (element && !element.shadowRoot) {
-      return element.attachShadow({ mode: "open" });
-    }
-    return element?.shadowRoot || null;
-  }
-  //Clear shadowDom content
-  clearShadowDOM(shadowRoot) {
-    if (shadowRoot) {
-      shadowRoot.innerHTML = "";
-    }
-  }
-  //Generate shadow DOM content based on view type
-  generateShadowDOMContent(shadowRoot, viewType, originalHtml, modifiedHtml) {
-    return __async(this, null, function* () {
-      if (!shadowRoot) {
-        console.error("Shadow DOM not available");
-        return;
-      }
-      this.clearShadowDOM(shadowRoot);
-      const style2 = document.createElement("style");
-      style2.textContent = this.webDiffService.getRenderedDiffStyles();
-      shadowRoot.insertBefore(style2, shadowRoot.firstChild);
-      const diffContainer = document.createElement("div");
-      diffContainer.className = "rendered-diff-container";
-      const renderedContent = document.createElement("div");
-      renderedContent.classList.add("rendered-content");
-      switch (viewType) {
-        case "original":
-          this.renderHtml(renderedContent, originalHtml, "original-html");
-          break;
-        case "modified":
-          this.renderHtml(renderedContent, modifiedHtml, "modified-html");
-          break;
-        case "diff":
-          yield this.renderDiffHtml(renderedContent, originalHtml, modifiedHtml, "diff-content");
-          break;
-      }
-      diffContainer.appendChild(renderedContent);
-      shadowRoot.appendChild(diffContainer);
-    });
-  }
-  //Render HTML
-  renderHtml(container, html, className) {
-    container.classList.add(className);
-    container.innerHTML = `<div id="editable" contenteditable="false">${html}</div>`;
-  }
-  //Render Diff
-  renderDiffHtml(container, originalHtml, modifiedHtml, className) {
-    return __async(this, null, function* () {
-      const diffResult = yield this.webDiffService.generateHtmlDiff(originalHtml, modifiedHtml);
-      const adjustedDiff = yield this.adjustDOM(originalHtml, diffResult);
-      container.classList.add(className);
-      container.innerHTML = adjustedDiff;
-    });
-  }
-  //Adjust diff result (mark changed links, images, remove nested diff tags)
-  adjustDOM(originalHtml, diffResult) {
-    return __async(this, null, function* () {
-      const parser = new DOMParser();
-      const diffDoc = parser.parseFromString(diffResult, "text/html");
-      const beforeDoc = parser.parseFromString(originalHtml, "text/html");
-      diffDoc.querySelectorAll("del > del, ins > ins").forEach((el) => {
-        const parent = el.parentElement;
-        if (parent && parent.textContent?.trim() === el.textContent?.trim()) {
-          parent.replaceWith(el);
-        }
-      });
-      diffDoc.querySelectorAll("del > ins, ins > del").forEach((el) => {
-        const parent = el.parentElement;
-        if (parent && parent.textContent?.trim() === el.textContent?.trim()) {
-          parent.replaceWith(el);
-        }
-      });
-      const uniqueElements = Array.from(diffDoc.querySelectorAll("ins.diffins, del.diffdel, del.diffmod, .updated-link")).map((el, index) => {
-        if (el.matches("del.diffmod") && el.nextElementSibling?.matches("ins.diffmod")) {
-          const wrapper = diffDoc.createElement("span");
-          wrapper.classList.add("diff-group");
-          const matchingIns = el.nextElementSibling;
-          el.parentNode?.insertBefore(wrapper, el);
-          wrapper.appendChild(el);
-          wrapper.appendChild(matchingIns);
-          el = wrapper;
-        }
-        const parent = el.parentElement;
-        return {
-          element: el,
-          outerHTML: parent?.innerHTML?.replace(/\n/g, "").trim() || "",
-          id: index + 1
-        };
-      });
-      uniqueElements.forEach(({ element, id }) => {
-        element.setAttribute("data-id", `${id}`);
-      });
-      return diffDoc.body.innerHTML;
-    });
-  }
-  //Handle clicks inside Shadow DOM
-  handleDocumentClick(shadowRoot, updateCurrentIndex) {
-    const clickHandler = (event) => {
-      let target = event.target;
-      while (target && target.tagName !== "A") {
-        target = target.parentElement;
-      }
-      if (target?.tagName === "A") {
-        const href = target.getAttribute("href") ?? "";
-        if (href.startsWith("#")) {
-          event.preventDefault();
-          const sectionId = target.getAttribute("href")?.substring(1);
-          const targetSection = shadowRoot.getElementById(sectionId ?? "");
-          if (targetSection) {
-            targetSection.scrollIntoView({
-              behavior: "smooth",
-              block: "start"
-            });
-          }
-        }
-        if (!href.startsWith("#")) {
-          event.preventDefault();
-        }
-      }
-      const changeElements = this.getDataIdElements(shadowRoot);
-      if (!changeElements.length)
-        return;
-      const clickedElement = changeElements.find((el) => el.contains(event.target));
-      if (!clickedElement)
-        return;
-      const index = changeElements.indexOf(clickedElement);
-      this.scrollToElement(clickedElement);
-      if (updateCurrentIndex) {
-        updateCurrentIndex(index);
-        this.lastSelection = { count: 1, startId: null, endId: null };
-      }
-    };
-    shadowRoot.addEventListener("click", clickHandler);
-    return () => {
-      shadowRoot.removeEventListener("click", clickHandler);
-    };
-  }
-  //Handle text selection inside Shadow DOM
-  handleSelection(shadowRoot) {
-    const selectionHandler = () => {
-      this.highlightSelected(shadowRoot);
-    };
-    shadowRoot.addEventListener("mouseup", selectionHandler);
-    shadowRoot.addEventListener("keyup", selectionHandler);
-    return () => {
-      shadowRoot.removeEventListener("mouseup", selectionHandler);
-      shadowRoot.removeEventListener("keyup", selectionHandler);
-    };
-  }
-  //Helper functions for next/prev buttons
-  getDataIdElements(shadowRoot) {
-    return Array.from(shadowRoot.querySelectorAll("[data-id]"));
-  }
-  highlightElement(el, highlightClass = "highlight") {
-    this.clearHighlights(el.getRootNode(), highlightClass);
-    el.classList.add(highlightClass);
-  }
-  clearHighlights(shadowRoot, highlightClass = "highlight") {
-    shadowRoot.querySelectorAll(`.${highlightClass}`).forEach((node) => {
-      node.classList.remove(highlightClass);
-    });
-  }
-  scrollToElement(el) {
-    const shadowRoot = el.getRootNode();
-    shadowRoot.querySelectorAll(".highlight").forEach((h) => h.classList.remove("highlight"));
-    el.classList.add("highlight");
-    el.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
-  openParentDetails(el) {
-    const detailsEl = el.closest("details");
-    if (detailsEl) {
-      detailsEl.open = true;
-    }
-  }
-  closeAllDetailsExcept(shadowRoot, keepOpenEl) {
-    shadowRoot.querySelectorAll("details").forEach((details) => {
-      if (details !== keepOpenEl.closest("details")) {
-        details.open = false;
-      }
-    });
-  }
-  lastSelection = { count: 1, startId: null, endId: null };
-  highlightSelected(shadowRoot) {
-    const selection = window.getSelection();
-    if (!shadowRoot || !selection) {
-      this.lastSelection = { count: 0, startId: null, endId: null };
-      return;
-    }
-    ;
-    const selectedText = normalize(selection.toString());
-    if (!selectedText)
-      return;
-    try {
-      this.clearHighlights(shadowRoot);
-      findSelectionInShadow(shadowRoot, selectedText);
-      const dataIdElements = this.getDataIdElements(shadowRoot);
-      const matches = dataIdElements.map((element) => {
-        const text = normalize(element.textContent || "");
-        return {
-          element,
-          dataId: parseInt(element.getAttribute("data-id") || "0"),
-          text,
-          textLength: text.length
-        };
-      }).filter((item) => item.text && selectedText.includes(item.text));
-      if (matches.length === 0) {
-        throw new Error("No diffs found in selected text.");
-      }
-      console.log("All matches:", matches.map((m) => `${m.dataId}: "${m.text}"`));
-      let bestMatch = matches.reduce((prev, current) => current.textLength > prev.textLength ? current : prev);
-      console.log(`Initial best match: data-id="${bestMatch.dataId}", text: "${bestMatch.text}" (${bestMatch.textLength} chars)`);
-      if (bestMatch.text.length <= 20) {
-        console.log("Selected text: ", selectedText);
-        const expanded = expandBestMatch(bestMatch.element, selectedText.length, 3);
-        if (!selectedText.includes(expanded)) {
-          console.log("Initial best match was wrong, checking others.");
-          console.log("EXPANDED SHADOWDOM TEXT");
-          console.log(expanded);
-          const sortedMatches = matches.sort((a, b) => b.textLength - a.textLength);
-          let found = false;
-          console.log(sortedMatches);
-          for (const possibleMatch of sortedMatches) {
-            const expanded2 = expandBestMatch(possibleMatch.element, selectedText.length, 3);
-            console.log("Checking: ", expanded2);
-            if (selectedText.includes(expanded2)) {
-              bestMatch = possibleMatch;
-              found = true;
-              console.log(`New best match: data-id="${bestMatch.dataId}", text: "${bestMatch.text}" (${bestMatch.textLength} chars)`);
-              console.log("EXPANDED SHADOWDOM TEXT");
-              console.log(expanded2);
-              break;
-            }
-          }
-          if (!found) {
-            throw new Error("No expanded matches match the selected text.");
-          }
-        }
-      }
-      const matchedDataIds = new Set(matches.map((m) => m.dataId));
-      let startId = bestMatch.dataId;
-      let endId = bestMatch.dataId;
-      let finalText = checkRange(shadowRoot, startId, endId);
-      while (startId > 0) {
-        const includeText = checkRange(shadowRoot, startId - 1, endId);
-        if (includeText) {
-          startId--;
-          finalText = includeText;
-        } else {
-          break;
-        }
-      }
-      while (true) {
-        const includeText = checkRange(shadowRoot, startId, endId + 1);
-        if (includeText) {
-          endId++;
-          finalText = includeText;
-        } else {
-          break;
-        }
-      }
-      console.log(`Final match between ${startId} and ${endId}:`, finalText);
-      let highlightedCount = 0;
-      const elementById = Object.fromEntries(dataIdElements.map((el) => [parseInt(el.getAttribute("data-id") || "0"), el]));
-      for (let id = startId; id <= endId; id++) {
-        if (matchedDataIds.has(id)) {
-          const element = elementById[id];
-          if (element) {
-            element.classList.add("highlight");
-            highlightedCount++;
-          }
-        }
-      }
-      console.log(`Highlighted ${highlightedCount} elements from data-id ${startId} to ${endId}`);
-      this.lastSelection = { count: highlightedCount, startId, endId };
-      return;
-    } catch (err) {
-      console.error(err);
-      this.lastSelection = { count: 0, startId: null, endId: null };
-      return;
-    }
-    function normalize(text) {
-      return text.replace(/\s+/g, " ").trim();
-    }
-    function extractShadowText(shadowRoot2) {
-      const walker = document.createTreeWalker(shadowRoot2, NodeFilter.SHOW_TEXT, null);
-      let text = "";
-      let node = walker.nextNode();
-      while (node) {
-        text += node.textContent || "";
-        node = walker.nextNode();
-      }
-      return normalize(text);
-    }
-    function findSelectionInShadow(shadowRoot2, selectedText2) {
-      const shadowText = extractShadowText(shadowRoot2);
-      if (!selectedText2)
-        return -1;
-      let idx = shadowText.indexOf(selectedText2);
-      if (idx === -1) {
-        throw new Error("Selection not found in shadowDOM.");
-      }
-      let secondIdx = shadowText.indexOf(selectedText2, idx + 1);
-      if (secondIdx !== -1) {
-        throw new Error("Selected text is not unique in shadowDOM.");
-      }
-      return idx;
-    }
-    function checkRange(root, startId, endId) {
-      const startEl = root.querySelector(`[data-id="${startId}"]`);
-      const endEl = root.querySelector(`[data-id="${endId}"]`);
-      if (!startEl || !endEl) {
-        return null;
-      }
-      const range = document.createRange();
-      range.setStartBefore(startEl);
-      range.setEndAfter(endEl);
-      const rangeText = normalize(range.toString());
-      return selectedText.includes(rangeText) ? rangeText : null;
-    }
-    function expandBestMatch(element, maxLength, chars = 5) {
-      let text = normalize(element.textContent || "");
-      if (text.length >= maxLength)
-        return text.slice(0, maxLength);
-      let remaining = Math.min(chars, maxLength - text.length);
-      let prevNode = element.previousSibling;
-      while (remaining > 0 && prevNode) {
-        if (prevNode.nodeType === Node.TEXT_NODE) {
-          const slice = prevNode.textContent?.slice(-remaining) || "";
-          text = joinStrings(slice, text);
-          remaining -= slice.length;
-        }
-        prevNode = prevNode.previousSibling;
-      }
-      remaining = Math.min(chars, maxLength - text.length);
-      let nextNode = element.nextSibling;
-      while (remaining > 0 && nextNode) {
-        if (nextNode.nodeType === Node.TEXT_NODE) {
-          const slice = nextNode.textContent?.slice(0, remaining) || "";
-          text = joinStrings(text, slice);
-          remaining -= slice.length;
-        }
-        nextNode = nextNode.nextSibling;
-      }
-      if (text.length > maxLength) {
-        text = text.slice(0, maxLength);
-      }
-      return normalize(text);
-    }
-    function joinStrings(left, right) {
-      if (!left)
-        return right;
-      if (!right)
-        return left;
-      const l = left[left.length - 1];
-      const r = right[0];
-      if (/\s/.test(l) || /\s/.test(r) || /[.,!?;:)]/.test(r)) {
-        return left + right;
-      }
-      return left + " " + right;
-    }
-  }
-  static \u0275fac = function ShadowDomService_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ShadowDomService)(\u0275\u0275inject(WebDiffService));
-  };
-  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _ShadowDomService, factory: _ShadowDomService.\u0275fac, providedIn: "root" });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ShadowDomService, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], () => [{ type: WebDiffService }], null);
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(PageToolsComponent, { className: "PageToolsComponent", filePath: "src/app/views/page-assistant/components/tools.component.ts", lineNumber: 33 });
 })();
 
 // src/app/views/page-assistant/page-assistant.component.ts
-var _c017 = ["liveContainer"];
-var _c121 = ["sourceContainer"];
-var _c214 = () => ({ "ariaLabel": "Accept selected changes" });
-var _c314 = () => ({ "ariaLabel": "More accept options" });
-var _c413 = () => ({ "ariaLabel": "Reject selected changes" });
+var _c018 = ["liveContainer"];
+var _c128 = ["sourceContainer"];
+var _c215 = () => ({ "ariaLabel": "Accept selected changes" });
+var _c315 = () => ({ "ariaLabel": "More accept options" });
+var _c414 = () => ({ "ariaLabel": "Reject selected changes" });
 var _c512 = () => ({ "ariaLabel": "More reject options" });
 var _c610 = (a0, a1) => ({ "background-color": a0, border: a1 });
 function PageAssistantCompareComponent_p_button_11_Template(rf, ctx) {
@@ -47416,9 +48560,9 @@ function PageAssistantCompareComponent_ng_template_34_ng_container_0_Template(rf
     \u0275\u0275advance(5);
     \u0275\u0275textInterpolate(ctx_r2.displayCounter);
     \u0275\u0275advance(2);
-    \u0275\u0275property("model", ctx_r2.acceptItems)("buttonProps", \u0275\u0275pureFunction0(8, _c214))("menuButtonProps", \u0275\u0275pureFunction0(9, _c314));
+    \u0275\u0275property("model", ctx_r2.acceptItems)("buttonProps", \u0275\u0275pureFunction0(8, _c215))("menuButtonProps", \u0275\u0275pureFunction0(9, _c315));
     \u0275\u0275advance();
-    \u0275\u0275property("model", ctx_r2.rejectItems)("buttonProps", \u0275\u0275pureFunction0(10, _c413))("menuButtonProps", \u0275\u0275pureFunction0(11, _c512));
+    \u0275\u0275property("model", ctx_r2.rejectItems)("buttonProps", \u0275\u0275pureFunction0(10, _c414))("menuButtonProps", \u0275\u0275pureFunction0(11, _c512));
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", ctx_r2.displayNumHighlighted);
   }
@@ -47505,25 +48649,16 @@ function PageAssistantCompareComponent_ng_template_38_Template(rf, ctx) {
   }
 }
 var PageAssistantCompareComponent = class _PageAssistantCompareComponent {
-  translate;
-  messageService;
-  confirmationService;
-  uploadState;
-  sourceDiffService;
-  shadowDomService;
-  urlDataService;
-  router;
-  locationStrategy;
-  constructor(translate, messageService, confirmationService, uploadState, sourceDiffService, shadowDomService, urlDataService, router, locationStrategy) {
-    this.translate = translate;
-    this.messageService = messageService;
-    this.confirmationService = confirmationService;
-    this.uploadState = uploadState;
-    this.sourceDiffService = sourceDiffService;
-    this.shadowDomService = shadowDomService;
-    this.urlDataService = urlDataService;
-    this.router = router;
-    this.locationStrategy = locationStrategy;
+  translate = inject(TranslateService);
+  messageService = inject(MessageService);
+  confirmationService = inject(ConfirmationService);
+  uploadState = inject(UploadStateService);
+  sourceDiffService = inject(SourceDiffService);
+  shadowDomService = inject(ShadowDomService);
+  urlDataService = inject(UrlDataService);
+  router = inject(Router);
+  locationStrategy = inject(LocationStrategy);
+  constructor() {
     effect(() => __async(this, null, function* () {
       const data = this.uploadState.getUploadData();
       const viewType = this.webSelectedView();
@@ -47771,12 +48906,12 @@ var PageAssistantCompareComponent = class _PageAssistantCompareComponent {
       return;
     const params = {};
     if (this.urlDataService.isValidUrl(data.originalUrl)) {
-      params.url = data.originalUrl;
+      params["url"] = data.originalUrl;
     } else if (this.urlDataService.isValidUrl(data.modifiedUrl)) {
-      params.url = data.modifiedUrl;
+      params["url"] = data.modifiedUrl;
     }
     if (this.urlDataService.isValidUrl(data.originalUrl) && this.urlDataService.isValidUrl(data.modifiedUrl) && data.originalUrl !== data.modifiedUrl) {
-      params.compareUrl = data.modifiedUrl;
+      params["compareUrl"] = data.modifiedUrl;
     }
     const treeLink = this.router.createUrlTree(["page-assistant/share"], { queryParams: params });
     const shareLink = `${window.location.origin}${this.baseHref}${this.router.serializeUrl(treeLink).replace(/^\//, "")}`;
@@ -47785,7 +48920,7 @@ var PageAssistantCompareComponent = class _PageAssistantCompareComponent {
         severity: "success",
         summary: "Copied share link to clipboard",
         detail: `${shareLink}`,
-        life: 2e3
+        life: 1e3
       });
     }).catch((err) => console.error("Clipboard copy failed:", err));
   }
@@ -47926,7 +49061,7 @@ ${base}`;
           console.log(`Your requested model may be down or you have exceeded the rate limit`);
           console.groupEnd();
           this.statusSeverity = "warn";
-          this.statusMessage = `Your selected AI model was unavailable. Used `, usedModel, ` instead.`;
+          this.statusMessage = `Your selected AI model was unavailable. Used "${usedModel}" instead.`;
           this.messageService.add({
             severity: "warn",
             summary: "Fallback Model Used",
@@ -48194,12 +49329,12 @@ ${base}`;
     }
   }
   static \u0275fac = function PageAssistantCompareComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _PageAssistantCompareComponent)(\u0275\u0275directiveInject(TranslateService), \u0275\u0275directiveInject(MessageService), \u0275\u0275directiveInject(ConfirmationService), \u0275\u0275directiveInject(UploadStateService), \u0275\u0275directiveInject(SourceDiffService), \u0275\u0275directiveInject(ShadowDomService), \u0275\u0275directiveInject(UrlDataService), \u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(LocationStrategy));
+    return new (__ngFactoryType__ || _PageAssistantCompareComponent)();
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _PageAssistantCompareComponent, selectors: [["ca-page-assistant-compare"]], viewQuery: function PageAssistantCompareComponent_Query(rf, ctx) {
     if (rf & 1) {
-      \u0275\u0275viewQuery(_c017, 5);
-      \u0275\u0275viewQuery(_c121, 5);
+      \u0275\u0275viewQuery(_c018, 5);
+      \u0275\u0275viewQuery(_c128, 5);
     }
     if (rf & 2) {
       let _t;
@@ -48456,7 +49591,7 @@ ${base}`;
 \r
     </p-tabpanels>\r
 </p-tabs>`, styles: ["/* src/app/views/page-assistant/page-assistant.component.css */\n.d2h-file-side-diff {\n  overflow-x: scroll;\n  overflow-y: scroll;\n  max-height: 75vh;\n}\n.d2h-file-diff {\n  overflow-x: scroll;\n  overflow-y: scroll;\n  max-height: 75vh;\n}\n.d2h-code-wrapper {\n  position: relative;\n}\n.d2h-file-name-wrapper {\n  display: none;\n}\n.live-container {\n  border: 1px solid #dee2e6;\n  border-radius: 4px;\n  padding: 1rem;\n  overflow-y: scroll;\n  height: 75vh;\n  position: relative;\n}\n.live-container.original {\n  border-color: #F3A59D;\n}\n.live-container.modified {\n  border-color: #83d5a8;\n}\n.source-container {\n  border: 1px solid #dee2e6;\n  border-radius: 4px;\n  padding: 1rem;\n  overflow-y: scroll;\n  height: 75vh;\n  position: relative;\n}\n.source-container.original {\n  border-color: #F3A59D;\n}\n.source-container.modified {\n  border-color: #83d5a8;\n}\n.slide-content {\n  display: flex;\n  justify-content: flex-end;\n  align-items: center;\n}\n.change-text {\n  margin: 0;\n  text-align: right;\n  padding: 10px;\n}\n.custom-prev,\n.custom-next {\n  background: #fff;\n  color: rgba(0, 0, 0, 0.5);\n  border: 1px solid rgba(0, 0, 0, 0.1);\n  cursor: pointer;\n  border-radius: 5px;\n  font-size: 14px;\n}\n.custom-prev {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.custom-next {\n  border-left: none;\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.custom-prev:hover,\n.custom-next:hover {\n  background: rgba(255, 255, 255, 0.5);\n}\n.loading-spinner {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  height: 100%;\n  font-size: 1.2rem;\n  color: #888;\n}\n.group-legend {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  flex-wrap: nowrap;\n  overflow-x: auto;\n  justify-content: flex-end;\n}\n.legend-item {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n}\n.legend-box {\n  width: 16px;\n  height: 16px;\n  border-radius: 4px;\n  flex-shrink: 0;\n}\n.loading-overlay {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.4);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  z-index: 10;\n  color: white;\n}\n.loading-spinner {\n  border: 4px solid rgba(255, 255, 255, 0.3);\n  border-top: 4px solid white;\n  border-radius: 50%;\n  width: 40px;\n  height: 40px;\n  animation: spin 1s linear infinite;\n  margin-right: 10px;\n}\n@keyframes spin {\n  from {\n    transform: rotate(0deg);\n  }\n  to {\n    transform: rotate(360deg);\n  }\n}\n.legend-box-modal {\n  display: inline-block;\n  width: 16px;\n  height: 16px;\n  margin-right: 5px;\n  vertical-align: middle;\n}\n.legend-red-modal {\n  background-color: rgb(243, 165, 157);\n}\n.legend-green-modal {\n  background-color: rgb(131, 213, 168);\n}\n.legend-yellow-modal {\n  background-color: rgb(255, 238, 140);\n}\n.legend-blue-modal {\n  background-color: transparent;\n  border: 2px solid rgb(111, 159, 255);\n}\n.legend-dashed-popup-modal {\n  background-color: transparent;\n  border: 2px dashed rgb(102, 102, 102);\n}\n.legend-dashed-dynamic-modal {\n  background-color: transparent;\n  border: 2px dashed rgb(251, 192, 47);\n}\n.no-bullet-points {\n  list-style: none;\n}\n::ng-deep .secondary-outline .p-splitbutton-button,\n::ng-deep .secondary-outline .p-splitbutton-dropdown {\n  border-color: var(--p-zinc-200) !important;\n}\n::ng-deep html.dark-mode .secondary-outline .p-splitbutton-button,\n::ng-deep html.dark-mode .secondary-outline .p-splitbutton-dropdown {\n  border-color: var(--p-zinc-600) !important;\n}\n/*# sourceMappingURL=page-assistant.component.css.map */\n"] }]
-  }], () => [{ type: TranslateService }, { type: MessageService }, { type: ConfirmationService }, { type: UploadStateService }, { type: SourceDiffService }, { type: ShadowDomService }, { type: UrlDataService }, { type: Router }, { type: LocationStrategy }], { liveContainer: [{
+  }], () => [], { liveContainer: [{
     type: ViewChild,
     args: ["liveContainer", { static: false }]
   }], sourceContainer: [{
@@ -48470,4 +49605,4 @@ ${base}`;
 export {
   PageAssistantCompareComponent
 };
-//# sourceMappingURL=chunk-PE6RSGQN.js.map
+//# sourceMappingURL=chunk-MMPZI6BT.js.map
