@@ -7,6 +7,7 @@ import {
   AccordionPanel,
   AiModel,
   AngleRightIcon,
+  ApiKeyService,
   ArrowDownIcon,
   ArrowUpIcon,
   AutoFocus,
@@ -26,7 +27,6 @@ import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  ChevronUpIcon,
   CommonModule,
   CompareTask,
   ConfirmEventType,
@@ -35,11 +35,13 @@ import {
   DOCUMENT,
   DefaultValueAccessor,
   DomHandler,
+  FetchService,
   FilterService,
   Footer,
   FormsModule,
   HorizontalRadioButtonsComponent,
   HttpClient,
+  HttpHeaders,
   IconField,
   IftaLabel,
   IftaLabelModule,
@@ -67,6 +69,8 @@ import {
   NgSwitchCase,
   NgSwitchDefault,
   NgTemplateOutlet,
+  OrganizationChart,
+  OrganizationChartModule,
   OverlayService,
   Paginator,
   PaginatorModule,
@@ -167,7 +171,7 @@ import {
   unblockBodyScroll,
   uuid,
   zindexutils
-} from "./chunk-TZBHCSEB.js";
+} from "./chunk-BPHZOI54.js";
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -233,6 +237,7 @@ import {
   ɵɵelementStart,
   ɵɵgetCurrentView,
   ɵɵgetInheritedFactory,
+  ɵɵinject,
   ɵɵlistener,
   ɵɵloadQuery,
   ɵɵnamespaceSVG,
@@ -1213,9 +1218,9 @@ var require_core = __commonJS({
         return options.noHighlightRe.test(languageName);
       }
       function blockLanguage(block) {
-        let classes14 = block.className + " ";
-        classes14 += block.parentNode ? block.parentNode.className : "";
-        const match = options.languageDetectRe.exec(classes14);
+        let classes13 = block.className + " ";
+        classes13 += block.parentNode ? block.parentNode.className : "";
+        const match = options.languageDetectRe.exec(classes13);
         if (match) {
           const language = getLanguage(match[1]);
           if (!language) {
@@ -1224,7 +1229,7 @@ var require_core = __commonJS({
           }
           return language ? match[1] : "no-highlight";
         }
-        return classes14.split(/\s+/).find((_class) => shouldNotHighlight(_class) || getLanguage(_class));
+        return classes13.split(/\s+/).find((_class) => shouldNotHighlight(_class) || getLanguage(_class));
       }
       function highlight2(codeOrLanguageName, optionsOrCode, ignoreIllegals) {
         let code = "";
@@ -31713,994 +31718,19 @@ var BreadcrumbModule = class _BreadcrumbModule {
   }], null, null);
 })();
 
-// node_modules/primeng/fesm2022/primeng-organizationchart.mjs
-var _c011 = ["pOrganizationChartNode", ""];
-var _c111 = (a0, a1) => ({
-  "p-organizationchart-node": true,
-  "p-organizationchart-node-selectable": a0,
-  "p-organizationchart-node-selected": a1
-});
-var _c29 = (a0) => ({
-  $implicit: a0
-});
-var _c39 = (a0) => ({
-  "p-organizationchart-connector-top": a0
-});
-function OrganizationChartNode_tbody_0_div_4_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div");
-    \u0275\u0275text(1);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const ctx_r1 = \u0275\u0275nextContext(2);
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate(ctx_r1.node.label);
-  }
-}
-function OrganizationChartNode_tbody_0_div_5_ng_container_1_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementContainer(0);
-  }
-}
-function OrganizationChartNode_tbody_0_div_5_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div");
-    \u0275\u0275template(1, OrganizationChartNode_tbody_0_div_5_ng_container_1_Template, 1, 0, "ng-container", 6);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const ctx_r1 = \u0275\u0275nextContext(2);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngTemplateOutlet", ctx_r1.chart.getTemplateForNode(ctx_r1.node))("ngTemplateOutletContext", \u0275\u0275pureFunction1(2, _c29, ctx_r1.node));
-  }
-}
-function OrganizationChartNode_tbody_0_ng_container_6_a_1_ng_container_1_ChevronDownIcon_1_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275element(0, "ChevronDownIcon", 11);
-  }
-  if (rf & 2) {
-    \u0275\u0275property("styleClass", "p-organizationchart-node-toggle-button-icon");
-    \u0275\u0275attribute("data-pc-section", "nodeTogglerIcon");
-  }
-}
-function OrganizationChartNode_tbody_0_ng_container_6_a_1_ng_container_1_ChevronUpIcon_2_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275element(0, "ChevronUpIcon", 11);
-  }
-  if (rf & 2) {
-    \u0275\u0275property("styleClass", "p-organizationchart-node-toggle-button-icon");
-    \u0275\u0275attribute("data-pc-section", "nodeTogglerIcon");
-  }
-}
-function OrganizationChartNode_tbody_0_ng_container_6_a_1_ng_container_1_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementContainerStart(0);
-    \u0275\u0275template(1, OrganizationChartNode_tbody_0_ng_container_6_a_1_ng_container_1_ChevronDownIcon_1_Template, 1, 2, "ChevronDownIcon", 10)(2, OrganizationChartNode_tbody_0_ng_container_6_a_1_ng_container_1_ChevronUpIcon_2_Template, 1, 2, "ChevronUpIcon", 10);
-    \u0275\u0275elementContainerEnd();
-  }
-  if (rf & 2) {
-    const ctx_r1 = \u0275\u0275nextContext(4);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ctx_r1.node.expanded);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", !ctx_r1.node.expanded);
-  }
-}
-function OrganizationChartNode_tbody_0_ng_container_6_a_1_span_2_1_ng_template_0_Template(rf, ctx) {
-}
-function OrganizationChartNode_tbody_0_ng_container_6_a_1_span_2_1_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275template(0, OrganizationChartNode_tbody_0_ng_container_6_a_1_span_2_1_ng_template_0_Template, 0, 0, "ng-template");
-  }
-}
-function OrganizationChartNode_tbody_0_ng_container_6_a_1_span_2_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 12);
-    \u0275\u0275template(1, OrganizationChartNode_tbody_0_ng_container_6_a_1_span_2_1_Template, 1, 0, null, 6);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const ctx_r1 = \u0275\u0275nextContext(4);
-    \u0275\u0275attribute("data-pc-section", "nodeTogglerIcon");
-    \u0275\u0275advance();
-    \u0275\u0275property("ngTemplateOutlet", ctx_r1.chart.togglerIconTemplate || ctx_r1.chart._togglerIconTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction1(3, _c29, ctx_r1.node.expanded));
-  }
-}
-function OrganizationChartNode_tbody_0_ng_container_6_a_1_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r3 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "a", 8);
-    \u0275\u0275listener("click", function OrganizationChartNode_tbody_0_ng_container_6_a_1_Template_a_click_0_listener($event) {
-      \u0275\u0275restoreView(_r3);
-      const ctx_r1 = \u0275\u0275nextContext(3);
-      return \u0275\u0275resetView(ctx_r1.toggleNode($event, ctx_r1.node));
-    })("keydown.enter", function OrganizationChartNode_tbody_0_ng_container_6_a_1_Template_a_keydown_enter_0_listener($event) {
-      \u0275\u0275restoreView(_r3);
-      const ctx_r1 = \u0275\u0275nextContext(3);
-      return \u0275\u0275resetView(ctx_r1.toggleNode($event, ctx_r1.node));
-    })("keydown.space", function OrganizationChartNode_tbody_0_ng_container_6_a_1_Template_a_keydown_space_0_listener($event) {
-      \u0275\u0275restoreView(_r3);
-      const ctx_r1 = \u0275\u0275nextContext(3);
-      return \u0275\u0275resetView(ctx_r1.toggleNode($event, ctx_r1.node));
-    });
-    \u0275\u0275template(1, OrganizationChartNode_tbody_0_ng_container_6_a_1_ng_container_1_Template, 3, 2, "ng-container", 0)(2, OrganizationChartNode_tbody_0_ng_container_6_a_1_span_2_Template, 2, 5, "span", 9);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const ctx_r1 = \u0275\u0275nextContext(3);
-    \u0275\u0275attribute("data-pc-section", "nodeToggler");
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", !ctx_r1.chart.togglerIconTemplate && !ctx_r1.chart._togglerIconTemplate);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ctx_r1.chart.togglerIconTemplate || ctx_r1.chart._togglerIconTemplate);
-  }
-}
-function OrganizationChartNode_tbody_0_ng_container_6_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementContainerStart(0);
-    \u0275\u0275template(1, OrganizationChartNode_tbody_0_ng_container_6_a_1_Template, 3, 3, "a", 7);
-    \u0275\u0275elementContainerEnd();
-  }
-  if (rf & 2) {
-    const ctx_r1 = \u0275\u0275nextContext(2);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", !ctx_r1.leaf);
-  }
-}
-function OrganizationChartNode_tbody_0_ng_container_11_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementContainerStart(0);
-    \u0275\u0275elementStart(1, "td");
-    \u0275\u0275element(2, "div", 3);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementContainerEnd();
-  }
-  if (rf & 2) {
-    const ctx_r1 = \u0275\u0275nextContext(2);
-    \u0275\u0275advance();
-    \u0275\u0275attribute("data-pc-section", "lineCell")("colspan", ctx_r1.colspan);
-    \u0275\u0275advance();
-    \u0275\u0275attribute("data-pc-section", "lineDown");
-  }
-}
-function OrganizationChartNode_tbody_0_ng_container_12_ng_template_1_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "td", 14);
-    \u0275\u0275text(1, "\xA0");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(2, "td", 15);
-    \u0275\u0275text(3, "\xA0");
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const first_r4 = ctx.first;
-    const last_r5 = ctx.last;
-    \u0275\u0275property("ngClass", \u0275\u0275pureFunction1(4, _c39, !first_r4));
-    \u0275\u0275attribute("data-pc-section", "lineLeft");
-    \u0275\u0275advance(2);
-    \u0275\u0275property("ngClass", \u0275\u0275pureFunction1(6, _c39, !last_r5));
-    \u0275\u0275attribute("data-pc-section", "lineRight");
-  }
-}
-function OrganizationChartNode_tbody_0_ng_container_12_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementContainerStart(0);
-    \u0275\u0275template(1, OrganizationChartNode_tbody_0_ng_container_12_ng_template_1_Template, 4, 8, "ng-template", 13);
-    \u0275\u0275elementContainerEnd();
-  }
-  if (rf & 2) {
-    const ctx_r1 = \u0275\u0275nextContext(2);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngForOf", ctx_r1.node.children);
-  }
-}
-function OrganizationChartNode_tbody_0_td_14_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "td", 16);
-    \u0275\u0275element(1, "table", 17);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const child_r6 = ctx.$implicit;
-    const ctx_r1 = \u0275\u0275nextContext(2);
-    \u0275\u0275attribute("data-pc-section", "nodeCell");
-    \u0275\u0275advance();
-    \u0275\u0275property("node", child_r6)("collapsible", ctx_r1.node.children && ctx_r1.node.children.length > 0 && ctx_r1.collapsible);
-  }
-}
-function OrganizationChartNode_tbody_0_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r1 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "tbody")(1, "tr")(2, "td")(3, "div", 1);
-    \u0275\u0275listener("click", function OrganizationChartNode_tbody_0_Template_div_click_3_listener($event) {
-      \u0275\u0275restoreView(_r1);
-      const ctx_r1 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r1.onNodeClick($event, ctx_r1.node));
-    });
-    \u0275\u0275template(4, OrganizationChartNode_tbody_0_div_4_Template, 2, 1, "div", 0)(5, OrganizationChartNode_tbody_0_div_5_Template, 2, 4, "div", 0)(6, OrganizationChartNode_tbody_0_ng_container_6_Template, 2, 1, "ng-container", 0);
-    \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(7, "tr", 2)(8, "td");
-    \u0275\u0275element(9, "div", 3);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(10, "tr", 2);
-    \u0275\u0275template(11, OrganizationChartNode_tbody_0_ng_container_11_Template, 3, 3, "ng-container", 0)(12, OrganizationChartNode_tbody_0_ng_container_12_Template, 2, 1, "ng-container", 0);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(13, "tr", 4);
-    \u0275\u0275template(14, OrganizationChartNode_tbody_0_td_14_Template, 2, 3, "td", 5);
-    \u0275\u0275elementEnd()();
-  }
-  if (rf & 2) {
-    const ctx_r1 = \u0275\u0275nextContext();
-    \u0275\u0275attribute("data-pc-section", "body");
-    \u0275\u0275advance();
-    \u0275\u0275attribute("data-pc-section", "row");
-    \u0275\u0275advance();
-    \u0275\u0275attribute("colspan", ctx_r1.colspan)("data-pc-section", "cell");
-    \u0275\u0275advance();
-    \u0275\u0275classMap(ctx_r1.node.styleClass);
-    \u0275\u0275property("ngClass", \u0275\u0275pureFunction2(26, _c111, ctx_r1.chart.selectionMode && ctx_r1.node.selectable !== false, ctx_r1.isSelected()));
-    \u0275\u0275attribute("data-pc-section", "node");
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", !ctx_r1.chart.getTemplateForNode(ctx_r1.node));
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ctx_r1.chart.getTemplateForNode(ctx_r1.node));
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ctx_r1.collapsible);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngStyle", ctx_r1.getChildStyle(ctx_r1.node))("@childState", "in");
-    \u0275\u0275attribute("data-pc-section", "lines");
-    \u0275\u0275advance();
-    \u0275\u0275attribute("data-pc-section", "lineCell")("colspan", ctx_r1.colspan);
-    \u0275\u0275advance();
-    \u0275\u0275attribute("data-pc-section", "lineDown");
-    \u0275\u0275advance();
-    \u0275\u0275property("ngStyle", ctx_r1.getChildStyle(ctx_r1.node))("@childState", "in");
-    \u0275\u0275attribute("data-pc-section", "lines");
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ctx_r1.node.children && ctx_r1.node.children.length === 1);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ctx_r1.node.children && ctx_r1.node.children.length > 1);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngStyle", ctx_r1.getChildStyle(ctx_r1.node))("@childState", "in");
-    \u0275\u0275attribute("data-pc-section", "nodes");
-    \u0275\u0275advance();
-    \u0275\u0275property("ngForOf", ctx_r1.node.children);
-  }
-}
-var _c49 = ["togglericon"];
-var _c58 = (a0) => ({
-  "p-organizationchart p-component": true,
-  "p-organizationchart-preservespace": a0
-});
-function OrganizationChart_table_1_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275element(0, "table", 2);
-  }
-  if (rf & 2) {
-    const ctx_r0 = \u0275\u0275nextContext();
-    \u0275\u0275property("collapsible", ctx_r0.collapsible)("node", ctx_r0.root);
-  }
-}
-var theme9 = ({
-  dt
-}) => `
-.p-organizationchart-table {
-    border-spacing: 0;
-    border-collapse: separate;
-    margin: 0 auto;
-}
-
-.p-organizationchart-table > tbody > tr > td {
-    text-align: center;
-    vertical-align: top;
-    padding: 0 ${dt("organizationchart.gutter")};
-}
-
-.p-organizationchart-node {
-    display: inline-block;
-    position: relative;
-    border: 1px solid ${dt("organizationchart.node.border.color")};
-    background: ${dt("organizationchart.node.background")};
-    color: ${dt("organizationchart.node.color")};
-    padding: ${dt("organizationchart.node.padding")};
-    border-radius: ${dt("organizationchart.node.border.radius")};
-    transition: background ${dt("organizationchart.transition.duration")}, border-color ${dt("organizationchart.transition.duration")}, color ${dt("organizationchart.transition.duration")}, box-shadow ${dt("organizationchart.transition.duration")};
-}
-
-.p-organizationchart-node:has(.p-organizationchart-node-toggle-button) {
-    padding: ${dt("organizationchart.node.toggleable.padding")};
-}
-
-.p-organizationchart-node.p-organizationchart-node-selectable:not(.p-organizationchart-node-selected):hover {
-    background: ${dt("organizationchart.node.hover.background")};
-    color: ${dt("organizationchart.node.hover.color")};
-}
-
-.p-organizationchart-node-selected {
-    background: ${dt("organizationchart.node.selected.background")};
-    color: ${dt("organizationchart.node.selected.color")};
-}
-
-.p-organizationchart-node-toggle-button {
-    position: absolute;
-    inset-block-end: calc(-1 * calc(${dt("organizationchart.node.toggle.button.size")} / 2));
-    margin-inline-start: calc(-1 * calc(${dt("organizationchart.node.toggle.button.size")} / 2));
-    z-index: 2;
-    inset-inline-start: 50%;
-    user-select: none;
-    cursor: pointer;
-    width: ${dt("organizationchart.node.toggle.button.size")};
-    height: ${dt("organizationchart.node.toggle.button.size")};
-    text-decoration: none;
-    background: ${dt("organizationchart.node.toggle.button.background")};
-    color: ${dt("organizationchart.node.toggle.button.color")};
-    border-radius: ${dt("organizationchart.node.toggle.button.border.radius")};
-    border: 1px solid ${dt("organizationchart.node.toggle.button.border.color")};
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    outline-color: transparent;
-    transition: background ${dt("organizationchart.transition.duration")}, color ${dt("organizationchart.transition.duration")}, border-color ${dt("organizationchart.transition.duration")}, outline-color ${dt("organizationchart.transition.duration")}, box-shadow ${dt("organizationchart.transition.duration")};
-}
-
-.p-organizationchart-node-toggle-button:hover {
-    background: ${dt("organizationchart.node.toggle.button.hover.background")};
-    color: ${dt("organizationchart.node.toggle.button.hover.color")};
-}
-
-.p-organizationchart-node-toggle-button:focus-visible {
-    box-shadow: ${dt("breadcrumb.item.focus.ring.shadow")};
-    outline: ${dt("breadcrumb.item.focus.ring.width")} ${dt("breadcrumb.item.focus.ring.style")} ${dt("breadcrumb.item.focus.ring.color")};
-    outline-offset: ${dt("breadcrumb.item.focus.ring.offset")};
-}
-
-.p-organizationchart-node-toggle-button-icon {
-    position: relative;
-    inset-block-start: 1px;
-}
-
-.p-organizationchart-connector-down {
-    margin: 0 auto;
-    height: ${dt("organizationchart.connector.height")};
-    width: 1px;
-    background: ${dt("organizationchart.connector.color")};
-}
-
-.p-organizationchart-connector-right {
-    border-radius: 0;
-}
-
-.p-organizationchart-connector-left {
-    border-radius: 0;
-    border-inline-end: 1px solid ${dt("organizationchart.connector.color")};
-}
-
-.p-organizationchart-connector-top {
-    border-block-start: 1px solid ${dt("organizationchart.connector.color")};
-}
-
-.p-organizationchart-node-selectable {
-    cursor: pointer;
-}
-
-.p-organizationchart-connectors :nth-child(1 of .p-organizationchart-connector-left) {
-    border-inline-end: 0 none;
-}
-
-.p-organizationchart-connectors :nth-last-child(1 of .p-organizationchart-connector-left) {
-    border-start-end-radius: ${dt("organizationchart.connector.border.radius")};
-}
-
-.p-organizationchart-connectors :nth-child(1 of .p-organizationchart-connector-right) {
-    border-inline-start: 1px solid ${dt("organizationchart.connector.color")};
-    border-start-start-radius: ${dt("organizationchart.connector.border.radius")};
-}
-`;
-var classes9 = {
-  root: "p-organizationchart p-component",
-  table: "p-organizationchart-table",
-  node: ({
-    instance
-  }) => ["p-organizationchart-node", {
-    "p-organizationchart-node-selectable": instance.selectable,
-    "p-organizationchart-node-selected": instance.selected
-  }],
-  nodeToggleButton: "p-organizationchart-node-toggle-button",
-  nodeToggleButtonIcon: "p-organizationchart-node-toggle-button-icon",
-  connectors: "p-organizationchart-connectors",
-  connectorDown: "p-organizationchart-connector-down",
-  connectorLeft: ({
-    index
-  }) => ["p-organizationchart-connector-left", {
-    "p-organizationchart-connector-top": !(index === 0)
-  }],
-  connectorRight: ({
-    props,
-    index
-  }) => ["p-organizationchart-connector-right", {
-    "p-organizationchart-connector-top": !(index === props.node.children.length - 1)
-  }],
-  nodeChildren: "p-organizationchart-node-children"
-};
-var OrganizationChartStyle = class _OrganizationChartStyle extends BaseStyle {
-  name = "organizationchart";
-  theme = theme9;
-  classes = classes9;
-  static \u0275fac = /* @__PURE__ */ (() => {
-    let \u0275OrganizationChartStyle_BaseFactory;
-    return function OrganizationChartStyle_Factory(__ngFactoryType__) {
-      return (\u0275OrganizationChartStyle_BaseFactory || (\u0275OrganizationChartStyle_BaseFactory = \u0275\u0275getInheritedFactory(_OrganizationChartStyle)))(__ngFactoryType__ || _OrganizationChartStyle);
-    };
-  })();
-  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
-    token: _OrganizationChartStyle,
-    factory: _OrganizationChartStyle.\u0275fac
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(OrganizationChartStyle, [{
-    type: Injectable
-  }], null, null);
-})();
-var OrganizationChartClasses;
-(function(OrganizationChartClasses2) {
-  OrganizationChartClasses2["root"] = "p-organizationchart";
-  OrganizationChartClasses2["table"] = "p-organizationchart-table";
-  OrganizationChartClasses2["node"] = "p-organizationchart-node";
-  OrganizationChartClasses2["nodeToggleButton"] = "p-organizationchart-node-toggle-button";
-  OrganizationChartClasses2["nodeToggleButtonIcon"] = "p-organizationchart-node-toggle-button-icon";
-  OrganizationChartClasses2["connectors"] = "p-organizationchart-connectors";
-  OrganizationChartClasses2["connectorDown"] = "p-organizationchart-connector-down";
-  OrganizationChartClasses2["connectorLeft"] = "p-organizationchart-connector-left";
-  OrganizationChartClasses2["connectorRight"] = "p-organizationchart-connector-right";
-  OrganizationChartClasses2["nodeChildren"] = "p-organizationchart-node-children";
-})(OrganizationChartClasses || (OrganizationChartClasses = {}));
-var OrganizationChartNode = class _OrganizationChartNode {
-  cd;
-  node;
-  root;
-  first;
-  last;
-  collapsible;
-  chart;
-  subscription;
-  constructor(chart, cd) {
-    this.cd = cd;
-    this.chart = chart;
-    this.subscription = this.chart.selectionSource$.subscribe(() => {
-      this.cd.markForCheck();
-    });
-  }
-  get leaf() {
-    if (this.node) {
-      return this.node.leaf == false ? false : !(this.node.children && this.node.children.length);
-    }
-  }
-  get colspan() {
-    if (this.node) {
-      return this.node.children && this.node.children.length ? this.node.children.length * 2 : null;
-    }
-  }
-  getChildStyle(node) {
-    return {
-      visibility: !this.leaf && node.expanded ? "inherit" : "hidden"
-    };
-  }
-  onNodeClick(event, node) {
-    this.chart.onNodeClick(event, node);
-  }
-  toggleNode(event, node) {
-    node.expanded = !node.expanded;
-    if (node.expanded) this.chart.onNodeExpand.emit({
-      originalEvent: event,
-      node: this.node
-    });
-    else this.chart.onNodeCollapse.emit({
-      originalEvent: event,
-      node: this.node
-    });
-    event.preventDefault();
-  }
-  isSelected() {
-    return this.chart.isSelected(this.node);
-  }
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
-  static \u0275fac = function OrganizationChartNode_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _OrganizationChartNode)(\u0275\u0275directiveInject(forwardRef(() => OrganizationChart)), \u0275\u0275directiveInject(ChangeDetectorRef));
-  };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
-    type: _OrganizationChartNode,
-    selectors: [["", "pOrganizationChartNode", ""]],
-    inputs: {
-      node: "node",
-      root: [2, "root", "root", booleanAttribute],
-      first: [2, "first", "first", booleanAttribute],
-      last: [2, "last", "last", booleanAttribute],
-      collapsible: [2, "collapsible", "collapsible", booleanAttribute]
-    },
-    attrs: _c011,
-    decls: 1,
-    vars: 1,
-    consts: [[4, "ngIf"], [3, "click", "ngClass"], [1, "p-organizationchart-connectors", 3, "ngStyle"], [1, "p-organizationchart-connector-down"], [1, "p-organizationchart-node-children", 3, "ngStyle"], ["colspan", "2", 4, "ngFor", "ngForOf"], [4, "ngTemplateOutlet", "ngTemplateOutletContext"], ["tabindex", "0", "class", "p-organizationchart-node-toggle-button", 3, "click", "keydown.enter", "keydown.space", 4, "ngIf"], ["tabindex", "0", 1, "p-organizationchart-node-toggle-button", 3, "click", "keydown.enter", "keydown.space"], ["class", "p-organizationchart-node-toggle-button-icon", 4, "ngIf"], [3, "styleClass", 4, "ngIf"], [3, "styleClass"], [1, "p-organizationchart-node-toggle-button-icon"], ["ngFor", "", 3, "ngForOf"], [1, "p-organizationchart-connector-left", 3, "ngClass"], [1, "p-organizationchart-connector-right", 3, "ngClass"], ["colspan", "2"], ["pOrganizationChartNode", "", 1, "p-organizationchart-table", 3, "node", "collapsible"]],
-    template: function OrganizationChartNode_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275template(0, OrganizationChartNode_tbody_0_Template, 15, 29, "tbody", 0);
-      }
-      if (rf & 2) {
-        \u0275\u0275property("ngIf", ctx.node);
-      }
-    },
-    dependencies: [_OrganizationChartNode, CommonModule, NgClass, NgForOf, NgIf, NgTemplateOutlet, NgStyle, ChevronDownIcon, ChevronUpIcon, SharedModule],
-    encapsulation: 2,
-    data: {
-      animation: [trigger("childState", [state("in", style({
-        opacity: 1
-      })), transition("void => *", [style({
-        opacity: 0
-      }), animate(150)]), transition("* => void", [animate(150, style({
-        opacity: 0
-      }))])])]
-    }
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(OrganizationChartNode, [{
-    type: Component,
-    args: [{
-      selector: "[pOrganizationChartNode]",
-      standalone: true,
-      imports: [CommonModule, ChevronDownIcon, ChevronUpIcon, SharedModule],
-      template: `
-        <tbody *ngIf="node" [attr.data-pc-section]="'body'">
-            <tr [attr.data-pc-section]="'row'">
-                <td [attr.colspan]="colspan" [attr.data-pc-section]="'cell'">
-                    <div
-                        [class]="node.styleClass"
-                        [ngClass]="{
-                            'p-organizationchart-node': true,
-                            'p-organizationchart-node-selectable': chart.selectionMode && node.selectable !== false,
-                            'p-organizationchart-node-selected': isSelected()
-                        }"
-                        (click)="onNodeClick($event, node)"
-                        [attr.data-pc-section]="'node'"
-                    >
-                        <div *ngIf="!chart.getTemplateForNode(node)">{{ node.label }}</div>
-                        <div *ngIf="chart.getTemplateForNode(node)">
-                            <ng-container *ngTemplateOutlet="chart.getTemplateForNode(node); context: { $implicit: node }"></ng-container>
-                        </div>
-                        <ng-container *ngIf="collapsible">
-                            <a
-                                *ngIf="!leaf"
-                                tabindex="0"
-                                class="p-organizationchart-node-toggle-button"
-                                (click)="toggleNode($event, node)"
-                                (keydown.enter)="toggleNode($event, node)"
-                                (keydown.space)="toggleNode($event, node)"
-                                [attr.data-pc-section]="'nodeToggler'"
-                            >
-                                <ng-container *ngIf="!chart.togglerIconTemplate && !chart._togglerIconTemplate">
-                                    <ChevronDownIcon *ngIf="node.expanded" [styleClass]="'p-organizationchart-node-toggle-button-icon'" [attr.data-pc-section]="'nodeTogglerIcon'" />
-                                    <ChevronUpIcon *ngIf="!node.expanded" [styleClass]="'p-organizationchart-node-toggle-button-icon'" [attr.data-pc-section]="'nodeTogglerIcon'" />
-                                </ng-container>
-                                <span class="p-organizationchart-node-toggle-button-icon" *ngIf="chart.togglerIconTemplate || chart._togglerIconTemplate" [attr.data-pc-section]="'nodeTogglerIcon'">
-                                    <ng-template *ngTemplateOutlet="chart.togglerIconTemplate || chart._togglerIconTemplate; context: { $implicit: node.expanded }"></ng-template>
-                                </span>
-                            </a>
-                        </ng-container>
-                    </div>
-                </td>
-            </tr>
-            <tr [ngStyle]="getChildStyle(node)" class="p-organizationchart-connectors" [@childState]="'in'" [attr.data-pc-section]="'lines'">
-                <td [attr.data-pc-section]="'lineCell'" [attr.colspan]="colspan">
-                    <div [attr.data-pc-section]="'lineDown'" class="p-organizationchart-connector-down"></div>
-                </td>
-            </tr>
-            <tr [ngStyle]="getChildStyle(node)" class="p-organizationchart-connectors" [@childState]="'in'" [attr.data-pc-section]="'lines'">
-                <ng-container *ngIf="node.children && node.children.length === 1">
-                    <td [attr.data-pc-section]="'lineCell'" [attr.colspan]="colspan">
-                        <div [attr.data-pc-section]="'lineDown'" class="p-organizationchart-connector-down"></div>
-                    </td>
-                </ng-container>
-                <ng-container *ngIf="node.children && node.children.length > 1">
-                    <ng-template ngFor let-child [ngForOf]="node.children" let-first="first" let-last="last">
-                        <td [attr.data-pc-section]="'lineLeft'" class="p-organizationchart-connector-left" [ngClass]="{ 'p-organizationchart-connector-top': !first }">&nbsp;</td>
-                        <td [attr.data-pc-section]="'lineRight'" class="p-organizationchart-connector-right" [ngClass]="{ 'p-organizationchart-connector-top': !last }">&nbsp;</td>
-                    </ng-template>
-                </ng-container>
-            </tr>
-            <tr [ngStyle]="getChildStyle(node)" class="p-organizationchart-node-children" [@childState]="'in'" [attr.data-pc-section]="'nodes'">
-                <td *ngFor="let child of node.children" colspan="2" [attr.data-pc-section]="'nodeCell'">
-                    <table class="p-organizationchart-table" pOrganizationChartNode [node]="child" [collapsible]="node.children && node.children.length > 0 && collapsible"></table>
-                </td>
-            </tr>
-        </tbody>
-    `,
-      animations: [trigger("childState", [state("in", style({
-        opacity: 1
-      })), transition("void => *", [style({
-        opacity: 0
-      }), animate(150)]), transition("* => void", [animate(150, style({
-        opacity: 0
-      }))])])],
-      encapsulation: ViewEncapsulation.None,
-      changeDetection: ChangeDetectionStrategy.Default
-    }]
-  }], () => [{
-    type: OrganizationChart,
-    decorators: [{
-      type: Inject,
-      args: [forwardRef(() => OrganizationChart)]
-    }]
-  }, {
-    type: ChangeDetectorRef
-  }], {
-    node: [{
-      type: Input
-    }],
-    root: [{
-      type: Input,
-      args: [{
-        transform: booleanAttribute
-      }]
-    }],
-    first: [{
-      type: Input,
-      args: [{
-        transform: booleanAttribute
-      }]
-    }],
-    last: [{
-      type: Input,
-      args: [{
-        transform: booleanAttribute
-      }]
-    }],
-    collapsible: [{
-      type: Input,
-      args: [{
-        transform: booleanAttribute
-      }]
-    }]
-  });
-})();
-var OrganizationChart = class _OrganizationChart extends BaseComponent {
-  el;
-  cd;
-  /**
-   * An array of nested TreeNodes.
-   * @group Props
-   */
-  value;
-  /**
-   * Inline style of the component.
-   * @group Props
-   */
-  style;
-  /**
-   * Style class of the component.
-   * @group Props
-   */
-  styleClass;
-  /**
-   * Defines the selection mode.
-   * @group Props
-   */
-  selectionMode;
-  /**
-   * Whether the nodes can be expanded or toggled.
-   * @group Props
-   */
-  collapsible;
-  /**
-   * Whether the space allocated by a node is preserved when hidden.
-   * @group Props
-   */
-  preserveSpace = true;
-  /**
-   * A single treenode instance or an array to refer to the selections.
-   * @group Props
-   */
-  get selection() {
-    return this._selection;
-  }
-  set selection(val) {
-    this._selection = val;
-    if (this.initialized) this.selectionSource.next(null);
-  }
-  /**
-   * Callback to invoke on selection change.
-   * @param {*} any - selected value.
-   * @group Emits
-   */
-  selectionChange = new EventEmitter();
-  /**
-   * Callback to invoke when a node is selected.
-   * @param {OrganizationChartNodeSelectEvent} event - custom node select event.
-   * @group Emits
-   */
-  onNodeSelect = new EventEmitter();
-  /**
-   * Callback to invoke when a node is unselected.
-   * @param {OrganizationChartNodeUnSelectEvent} event - custom node unselect event.
-   * @group Emits
-   */
-  onNodeUnselect = new EventEmitter();
-  /**
-   * Callback to invoke when a node is expanded.
-   * @param {OrganizationChartNodeExpandEvent} event - custom node expand event.
-   * @group Emits
-   */
-  onNodeExpand = new EventEmitter();
-  /**
-   * Callback to invoke when a node is collapsed.
-   * @param {OrganizationChartNodeCollapseEvent} event - custom node collapse event.
-   * @group Emits
-   */
-  onNodeCollapse = new EventEmitter();
-  templates;
-  togglerIconTemplate;
-  templateMap;
-  _togglerIconTemplate;
-  selectionSource = new Subject();
-  _selection;
-  initialized;
-  selectionSource$ = this.selectionSource.asObservable();
-  _componentStyle = inject(OrganizationChartStyle);
-  constructor(el, cd) {
-    super();
-    this.el = el;
-    this.cd = cd;
-  }
-  get root() {
-    return this.value && this.value.length ? this.value[0] : null;
-  }
-  ngAfterContentInit() {
-    if (this.templates.length) {
-      this.templateMap = {};
-    }
-    this.templates.forEach((item) => {
-      if (item.getType() === "togglericon") {
-        this._togglerIconTemplate = item.template;
-      } else {
-        this.templateMap[item.getType()] = item.template;
-      }
-    });
-    this.initialized = true;
-  }
-  getTemplateForNode(node) {
-    if (this.templateMap) return node.type ? this.templateMap[node.type] : this.templateMap["default"];
-    else return null;
-  }
-  onNodeClick(event, node) {
-    let eventTarget = event.target;
-    if (eventTarget.className && (hasClass(eventTarget, "p-organizationchart-node-toggle-button") || hasClass(eventTarget, "p-organizationchart-node-toggle-button-icon"))) {
-      return;
-    } else if (this.selectionMode) {
-      if (node.selectable === false) {
-        return;
-      }
-      let index = this.findIndexInSelection(node);
-      let selected = index >= 0;
-      if (this.selectionMode === "single") {
-        if (selected) {
-          this.selection = null;
-          this.onNodeUnselect.emit({
-            originalEvent: event,
-            node
-          });
-        } else {
-          this.selection = node;
-          this.onNodeSelect.emit({
-            originalEvent: event,
-            node
-          });
-        }
-      } else if (this.selectionMode === "multiple") {
-        if (selected) {
-          this.selection = this.selection.filter((val, i) => i != index);
-          this.onNodeUnselect.emit({
-            originalEvent: event,
-            node
-          });
-        } else {
-          this.selection = [...this.selection || [], node];
-          this.onNodeSelect.emit({
-            originalEvent: event,
-            node
-          });
-        }
-      }
-      this.selectionChange.emit(this.selection);
-      this.selectionSource.next(null);
-    }
-  }
-  findIndexInSelection(node) {
-    let index = -1;
-    if (this.selectionMode && this.selection) {
-      if (this.selectionMode === "single") {
-        index = this.selection == node ? 0 : -1;
-      } else if (this.selectionMode === "multiple") {
-        for (let i = 0; i < this.selection.length; i++) {
-          if (this.selection[i] == node) {
-            index = i;
-            break;
-          }
-        }
-      }
-    }
-    return index;
-  }
-  isSelected(node) {
-    return this.findIndexInSelection(node) != -1;
-  }
-  static \u0275fac = function OrganizationChart_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _OrganizationChart)(\u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(ChangeDetectorRef));
-  };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
-    type: _OrganizationChart,
-    selectors: [["p-organizationChart"], ["p-organization-chart"], ["p-organizationchart"]],
-    contentQueries: function OrganizationChart_ContentQueries(rf, ctx, dirIndex) {
-      if (rf & 1) {
-        \u0275\u0275contentQuery(dirIndex, _c49, 4);
-        \u0275\u0275contentQuery(dirIndex, PrimeTemplate, 4);
-      }
-      if (rf & 2) {
-        let _t;
-        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.togglerIconTemplate = _t.first);
-        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.templates = _t);
-      }
-    },
-    inputs: {
-      value: "value",
-      style: "style",
-      styleClass: "styleClass",
-      selectionMode: "selectionMode",
-      collapsible: [2, "collapsible", "collapsible", booleanAttribute],
-      preserveSpace: [2, "preserveSpace", "preserveSpace", booleanAttribute],
-      selection: "selection"
-    },
-    outputs: {
-      selectionChange: "selectionChange",
-      onNodeSelect: "onNodeSelect",
-      onNodeUnselect: "onNodeUnselect",
-      onNodeExpand: "onNodeExpand",
-      onNodeCollapse: "onNodeCollapse"
-    },
-    features: [\u0275\u0275ProvidersFeature([OrganizationChartStyle]), \u0275\u0275InheritDefinitionFeature],
-    decls: 2,
-    vars: 8,
-    consts: [[3, "ngStyle", "ngClass"], ["class", "p-organizationchart-table", "pOrganizationChartNode", "", 3, "collapsible", "node", 4, "ngIf"], ["pOrganizationChartNode", "", 1, "p-organizationchart-table", 3, "collapsible", "node"]],
-    template: function OrganizationChart_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0);
-        \u0275\u0275template(1, OrganizationChart_table_1_Template, 1, 2, "table", 1);
-        \u0275\u0275elementEnd();
-      }
-      if (rf & 2) {
-        \u0275\u0275classMap(ctx.styleClass);
-        \u0275\u0275property("ngStyle", ctx.style)("ngClass", \u0275\u0275pureFunction1(6, _c58, ctx.preserveSpace));
-        \u0275\u0275attribute("data-pc-section", "root");
-        \u0275\u0275advance();
-        \u0275\u0275property("ngIf", ctx.root);
-      }
-    },
-    dependencies: [CommonModule, NgClass, NgIf, NgStyle, OrganizationChartNode, SharedModule],
-    encapsulation: 2
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(OrganizationChart, [{
-    type: Component,
-    args: [{
-      selector: "p-organizationChart, p-organization-chart, p-organizationchart",
-      standalone: true,
-      imports: [CommonModule, OrganizationChartNode, SharedModule],
-      template: `
-        <div [ngStyle]="style" [class]="styleClass" [ngClass]="{ 'p-organizationchart p-component': true, 'p-organizationchart-preservespace': preserveSpace }" [attr.data-pc-section]="'root'">
-            <table class="p-organizationchart-table" [collapsible]="collapsible" pOrganizationChartNode [node]="root" *ngIf="root"></table>
-        </div>
-    `,
-      changeDetection: ChangeDetectionStrategy.Default,
-      providers: [OrganizationChartStyle]
-    }]
-  }], () => [{
-    type: ElementRef
-  }, {
-    type: ChangeDetectorRef
-  }], {
-    value: [{
-      type: Input
-    }],
-    style: [{
-      type: Input
-    }],
-    styleClass: [{
-      type: Input
-    }],
-    selectionMode: [{
-      type: Input
-    }],
-    collapsible: [{
-      type: Input,
-      args: [{
-        transform: booleanAttribute
-      }]
-    }],
-    preserveSpace: [{
-      type: Input,
-      args: [{
-        transform: booleanAttribute
-      }]
-    }],
-    selection: [{
-      type: Input
-    }],
-    selectionChange: [{
-      type: Output
-    }],
-    onNodeSelect: [{
-      type: Output
-    }],
-    onNodeUnselect: [{
-      type: Output
-    }],
-    onNodeExpand: [{
-      type: Output
-    }],
-    onNodeCollapse: [{
-      type: Output
-    }],
-    templates: [{
-      type: ContentChildren,
-      args: [PrimeTemplate]
-    }],
-    togglerIconTemplate: [{
-      type: ContentChild,
-      args: ["togglericon", {
-        descendants: false
-      }]
-    }]
-  });
-})();
-var OrganizationChartModule = class _OrganizationChartModule {
-  static \u0275fac = function OrganizationChartModule_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _OrganizationChartModule)();
-  };
-  static \u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
-    type: _OrganizationChartModule,
-    imports: [OrganizationChart, OrganizationChartNode, SharedModule],
-    exports: [OrganizationChart, OrganizationChartNode, SharedModule]
-  });
-  static \u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({
-    imports: [OrganizationChart, OrganizationChartNode, SharedModule, SharedModule]
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(OrganizationChartModule, [{
-    type: NgModule,
-    args: [{
-      imports: [OrganizationChart, OrganizationChartNode, SharedModule],
-      exports: [OrganizationChart, OrganizationChartNode, SharedModule]
-    }]
-  }], null, null);
-})();
-
 // node_modules/primeng/fesm2022/primeng-treetable.mjs
-var _c012 = ["colgroup"];
-var _c114 = ["caption"];
-var _c210 = ["header"];
-var _c310 = ["body"];
-var _c410 = ["footer"];
-var _c59 = ["summary"];
+var _c011 = ["colgroup"];
+var _c111 = ["caption"];
+var _c29 = ["header"];
+var _c39 = ["body"];
+var _c49 = ["footer"];
+var _c58 = ["summary"];
 var _c67 = ["emptymessage"];
 var _c77 = ["paginatorleft"];
 var _c87 = ["paginatorright"];
 var _c96 = ["paginatordropdownitem"];
 var _c105 = ["frozenheader"];
-var _c115 = ["frozenbody"];
+var _c114 = ["frozenbody"];
 var _c124 = ["frozenfooter"];
 var _c132 = ["frozencolgroup"];
 var _c142 = ["loadingicon"];
@@ -33582,7 +32612,7 @@ function TreeTableToggler_2_Template(rf, ctx) {
     \u0275\u0275template(0, TreeTableToggler_2_ng_template_0_Template, 0, 0, "ng-template");
   }
 }
-var theme10 = ({
+var theme9 = ({
   dt
 }) => `
 /* For PrimeNG */
@@ -34033,7 +33063,7 @@ p-tree-table-toggler + p-tree-table-checkbox + span {
     vertical-align: middle;
 }
 `;
-var classes10 = {
+var classes9 = {
   root: ({
     instance
   }) => ({
@@ -34123,8 +33153,8 @@ var inlineStyles4 = {
 };
 var TreeTableStyle = class _TreeTableStyle extends BaseStyle {
   name = "treetable";
-  theme = theme10;
-  classes = classes10;
+  theme = theme9;
+  classes = classes9;
   inlineStyles = inlineStyles4;
   static \u0275fac = /* @__PURE__ */ (() => {
     let \u0275TreeTableStyle_BaseFactory;
@@ -36034,18 +35064,18 @@ var TreeTable = class _TreeTable extends BaseComponent {
     selectors: [["p-treeTable"], ["p-treetable"], ["p-tree-table"]],
     contentQueries: function TreeTable_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        \u0275\u0275contentQuery(dirIndex, _c012, 4);
-        \u0275\u0275contentQuery(dirIndex, _c114, 4);
-        \u0275\u0275contentQuery(dirIndex, _c210, 4);
-        \u0275\u0275contentQuery(dirIndex, _c310, 4);
-        \u0275\u0275contentQuery(dirIndex, _c410, 4);
-        \u0275\u0275contentQuery(dirIndex, _c59, 4);
+        \u0275\u0275contentQuery(dirIndex, _c011, 4);
+        \u0275\u0275contentQuery(dirIndex, _c111, 4);
+        \u0275\u0275contentQuery(dirIndex, _c29, 4);
+        \u0275\u0275contentQuery(dirIndex, _c39, 4);
+        \u0275\u0275contentQuery(dirIndex, _c49, 4);
+        \u0275\u0275contentQuery(dirIndex, _c58, 4);
         \u0275\u0275contentQuery(dirIndex, _c67, 4);
         \u0275\u0275contentQuery(dirIndex, _c77, 4);
         \u0275\u0275contentQuery(dirIndex, _c87, 4);
         \u0275\u0275contentQuery(dirIndex, _c96, 4);
         \u0275\u0275contentQuery(dirIndex, _c105, 4);
-        \u0275\u0275contentQuery(dirIndex, _c115, 4);
+        \u0275\u0275contentQuery(dirIndex, _c114, 4);
         \u0275\u0275contentQuery(dirIndex, _c124, 4);
         \u0275\u0275contentQuery(dirIndex, _c132, 4);
         \u0275\u0275contentQuery(dirIndex, _c142, 4);
@@ -39106,22 +38136,22 @@ var TreeTableModule = class _TreeTableModule {
 })();
 
 // node_modules/primeng/fesm2022/primeng-tree.mjs
-var _c013 = (a0) => ({
+var _c012 = (a0) => ({
   height: a0
 });
-var _c116 = (a0) => ({
+var _c115 = (a0) => ({
   "p-tree-node-droppoint-active": a0
 });
-var _c211 = (a0, a1) => ({
+var _c210 = (a0, a1) => ({
   $implicit: a0,
   loading: a1
 });
-var _c311 = (a0, a1) => ({
+var _c310 = (a0, a1) => ({
   $implicit: a0,
   partialSelected: a1,
   class: "p-tree-node-checkbox"
 });
-var _c411 = (a0) => ({
+var _c410 = (a0) => ({
   $implicit: a0
 });
 function UITreeNode_Conditional_0_li_0_Template(rf, ctx) {
@@ -39149,7 +38179,7 @@ function UITreeNode_Conditional_0_li_0_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r2 = \u0275\u0275nextContext(2);
-    \u0275\u0275property("ngClass", \u0275\u0275pureFunction1(2, _c116, ctx_r2.draghoverPrev));
+    \u0275\u0275property("ngClass", \u0275\u0275pureFunction1(2, _c115, ctx_r2.draghoverPrev));
     \u0275\u0275attribute("aria-hidden", true);
   }
 }
@@ -39224,7 +38254,7 @@ function UITreeNode_Conditional_0_span_5_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r2 = \u0275\u0275nextContext(2);
     \u0275\u0275advance();
-    \u0275\u0275property("ngTemplateOutlet", ctx_r2.tree.togglerIconTemplate || ctx_r2.tree._togglerIconTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction2(2, _c211, ctx_r2.node.expanded, ctx_r2.node.loading));
+    \u0275\u0275property("ngTemplateOutlet", ctx_r2.tree.togglerIconTemplate || ctx_r2.tree._togglerIconTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction2(2, _c210, ctx_r2.node.expanded, ctx_r2.node.loading));
   }
 }
 function UITreeNode_Conditional_0_p_checkbox_6_ng_container_1_ng_template_1_0_ng_template_0_Template(rf, ctx) {
@@ -39240,7 +38270,7 @@ function UITreeNode_Conditional_0_p_checkbox_6_ng_container_1_ng_template_1_Temp
   }
   if (rf & 2) {
     const ctx_r2 = \u0275\u0275nextContext(4);
-    \u0275\u0275property("ngTemplateOutlet", ctx_r2.tree.checkboxIconTemplate || ctx_r2.tree._checkboxIconTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction2(2, _c311, ctx_r2.isSelected(), ctx_r2.node.partialSelected));
+    \u0275\u0275property("ngTemplateOutlet", ctx_r2.tree.checkboxIconTemplate || ctx_r2.tree._checkboxIconTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction2(2, _c310, ctx_r2.isSelected(), ctx_r2.node.partialSelected));
   }
 }
 function UITreeNode_Conditional_0_p_checkbox_6_ng_container_1_Template(rf, ctx) {
@@ -39304,7 +38334,7 @@ function UITreeNode_Conditional_0_span_10_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r2 = \u0275\u0275nextContext(2);
     \u0275\u0275advance();
-    \u0275\u0275property("ngTemplateOutlet", ctx_r2.tree.getTemplateForNode(ctx_r2.node))("ngTemplateOutletContext", \u0275\u0275pureFunction1(2, _c411, ctx_r2.node));
+    \u0275\u0275property("ngTemplateOutlet", ctx_r2.tree.getTemplateForNode(ctx_r2.node))("ngTemplateOutletContext", \u0275\u0275pureFunction1(2, _c410, ctx_r2.node));
   }
 }
 function UITreeNode_Conditional_0_ul_11_p_treeNode_1_Template(rf, ctx) {
@@ -39358,7 +38388,7 @@ function UITreeNode_Conditional_0_li_12_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r2 = \u0275\u0275nextContext(2);
-    \u0275\u0275property("ngClass", \u0275\u0275pureFunction1(2, _c116, ctx_r2.draghoverNext));
+    \u0275\u0275property("ngClass", \u0275\u0275pureFunction1(2, _c115, ctx_r2.draghoverNext));
     \u0275\u0275attribute("aria-hidden", true);
   }
 }
@@ -39436,7 +38466,7 @@ function UITreeNode_Conditional_0_Template(rf, ctx) {
     \u0275\u0275advance();
     \u0275\u0275styleMap(ctx_r2.node.style);
     \u0275\u0275classMap(ctx_r2.node.styleClass);
-    \u0275\u0275property("ngClass", ctx_r2.nodeClass)("ngStyle", \u0275\u0275pureFunction1(29, _c013, ctx_r2.itemSize + "px"));
+    \u0275\u0275property("ngClass", ctx_r2.nodeClass)("ngStyle", \u0275\u0275pureFunction1(29, _c012, ctx_r2.itemSize + "px"));
     \u0275\u0275attribute("aria-label", ctx_r2.node.label)("aria-checked", ctx_r2.checked)("aria-setsize", ctx_r2.node.children ? ctx_r2.node.children.length : 0)("aria-selected", ctx_r2.selected)("aria-expanded", ctx_r2.node.expanded)("aria-posinset", ctx_r2.index + 1)("aria-level", ctx_r2.level + 1)("tabindex", ctx_r2.index === 0 ? 0 : -1)("data-id", ctx_r2.node.key);
     \u0275\u0275advance();
     \u0275\u0275styleProp("padding-left", ctx_r2.level * ctx_r2.indentation + "rem");
@@ -39461,13 +38491,13 @@ function UITreeNode_Conditional_0_Template(rf, ctx) {
     \u0275\u0275property("ngIf", ctx_r2.tree.droppableNodes && ctx_r2.lastChild);
   }
 }
-var _c510 = ["filter"];
+var _c59 = ["filter"];
 var _c68 = ["node"];
 var _c78 = ["header"];
 var _c88 = ["footer"];
 var _c97 = ["loader"];
 var _c106 = ["empty"];
-var _c117 = ["togglericon"];
+var _c116 = ["togglericon"];
 var _c125 = ["checkboxicon"];
 var _c133 = ["loadingicon"];
 var _c143 = ["filtericon"];
@@ -39556,7 +38586,7 @@ function Tree_Conditional_3_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext();
-    \u0275\u0275property("ngTemplateOutlet", ctx_r0.filterTemplate || ctx_r0._filterTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction1(2, _c411, ctx_r0.filterOptions));
+    \u0275\u0275property("ngTemplateOutlet", ctx_r0.filterTemplate || ctx_r0._filterTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction1(2, _c410, ctx_r0.filterOptions));
   }
 }
 function Tree_Conditional_4_p_iconField_0_SearchIcon_4_Template(rf, ctx) {
@@ -39705,7 +38735,7 @@ function Tree_ng_container_5_p_scroller_1_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext(2);
-    \u0275\u0275styleMap(\u0275\u0275pureFunction1(9, _c013, ctx_r0.scrollHeight !== "flex" ? ctx_r0.scrollHeight : void 0));
+    \u0275\u0275styleMap(\u0275\u0275pureFunction1(9, _c012, ctx_r0.scrollHeight !== "flex" ? ctx_r0.scrollHeight : void 0));
     \u0275\u0275property("items", ctx_r0.serializedValue)("tabindex", -1)("scrollHeight", ctx_r0.scrollHeight !== "flex" ? void 0 : "100%")("itemSize", ctx_r0.virtualScrollItemSize || ctx_r0._virtualNodeHeight)("lazy", ctx_r0.lazy)("options", ctx_r0.virtualScrollOptions);
     \u0275\u0275advance(4);
     \u0275\u0275property("ngIf", ctx_r0.loaderTemplate || ctx_r0._loaderTemplate);
@@ -39805,7 +38835,7 @@ function Tree_ng_container_7_Template(rf, ctx) {
     \u0275\u0275elementContainer(0);
   }
 }
-var theme11 = ({
+var theme10 = ({
   dt
 }) => `
 .p-tree {
@@ -40030,7 +39060,7 @@ var theme11 = ({
     height: 0;
 }
 `;
-var classes11 = {
+var classes10 = {
   root: ({
     instance
   }) => ({
@@ -40070,8 +39100,8 @@ var classes11 = {
 };
 var TreeStyle = class _TreeStyle extends BaseStyle {
   name = "tree";
-  theme = theme11;
-  classes = classes11;
+  theme = theme10;
+  classes = classes10;
   static \u0275fac = /* @__PURE__ */ (() => {
     let \u0275TreeStyle_BaseFactory;
     return function TreeStyle_Factory(__ngFactoryType__) {
@@ -41698,13 +40728,13 @@ var Tree = class _Tree extends BaseComponent {
     selectors: [["p-tree"]],
     contentQueries: function Tree_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        \u0275\u0275contentQuery(dirIndex, _c510, 4);
+        \u0275\u0275contentQuery(dirIndex, _c59, 4);
         \u0275\u0275contentQuery(dirIndex, _c68, 4);
         \u0275\u0275contentQuery(dirIndex, _c78, 4);
         \u0275\u0275contentQuery(dirIndex, _c88, 4);
         \u0275\u0275contentQuery(dirIndex, _c97, 4);
         \u0275\u0275contentQuery(dirIndex, _c106, 4);
-        \u0275\u0275contentQuery(dirIndex, _c117, 4);
+        \u0275\u0275contentQuery(dirIndex, _c116, 4);
         \u0275\u0275contentQuery(dirIndex, _c125, 4);
         \u0275\u0275contentQuery(dirIndex, _c133, 4);
         \u0275\u0275contentQuery(dirIndex, _c143, 4);
@@ -41727,7 +40757,7 @@ var Tree = class _Tree extends BaseComponent {
     },
     viewQuery: function Tree_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuery(_c510, 5);
+        \u0275\u0275viewQuery(_c59, 5);
         \u0275\u0275viewQuery(_c153, 5);
         \u0275\u0275viewQuery(_c163, 5);
       }
@@ -42250,21 +41280,21 @@ var TreeModule = class _TreeModule {
 })();
 
 // node_modules/primeng/fesm2022/primeng-contextmenu.mjs
-var _c014 = ["sublist"];
-var _c118 = (a0, a1) => ({
+var _c013 = ["sublist"];
+var _c117 = (a0, a1) => ({
   "p-contextmenu-submenu": a0,
   "p-contextmenu-root-list": a1
 });
-var _c212 = () => ({
+var _c211 = () => ({
   "p-contextmenu-item-link": true
 });
-var _c312 = () => ({
+var _c311 = () => ({
   class: "p-contextmenu-submenu-icon"
 });
-var _c412 = () => ({
+var _c411 = () => ({
   exact: false
 });
-var _c511 = (a0) => ({
+var _c510 = (a0) => ({
   "p-contextmenu-item-link": true,
   "p-disabled": a0
 });
@@ -42359,7 +41389,7 @@ function ContextMenuSub_ul_0_ng_template_2_li_1_ng_container_3_a_1_ng_container_
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", !ctx_r2.contextMenu.submenuIconTemplate && !ctx_r2.contextMenu._submenuIconTemplate);
     \u0275\u0275advance();
-    \u0275\u0275property("ngTemplateOutlet", ctx_r2.contextMenu.submenuIconTemplate || ctx_r2.contextMenu._submenuIconTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction0(3, _c312));
+    \u0275\u0275property("ngTemplateOutlet", ctx_r2.contextMenu.submenuIconTemplate || ctx_r2.contextMenu._submenuIconTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction0(3, _c311));
   }
 }
 function ContextMenuSub_ul_0_ng_template_2_li_1_ng_container_3_a_1_Template(rf, ctx) {
@@ -42372,7 +41402,7 @@ function ContextMenuSub_ul_0_ng_template_2_li_1_ng_container_3_a_1_Template(rf, 
     const htmlLabel_r6 = \u0275\u0275reference(4);
     const processedItem_r4 = \u0275\u0275nextContext(3).$implicit;
     const ctx_r2 = \u0275\u0275nextContext(2);
-    \u0275\u0275property("target", ctx_r2.getItemProp(processedItem_r4, "target"))("ngClass", \u0275\u0275pureFunction0(12, _c212));
+    \u0275\u0275property("target", ctx_r2.getItemProp(processedItem_r4, "target"))("ngClass", \u0275\u0275pureFunction0(12, _c211));
     \u0275\u0275attribute("href", ctx_r2.getItemProp(processedItem_r4, "url"), \u0275\u0275sanitizeUrl)("aria-hidden", true)("data-automationid", ctx_r2.getItemProp(processedItem_r4, "automationId"))("data-pc-section", "action")("tabindex", -1);
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", ctx_r2.getItemProp(processedItem_r4, "icon"));
@@ -42460,7 +41490,7 @@ function ContextMenuSub_ul_0_ng_template_2_li_1_ng_container_3_a_2_ng_container_
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", !ctx_r2.contextMenu.submenuIconTemplate && !ctx_r2.contextMenu._submenuIconTemplate);
     \u0275\u0275advance();
-    \u0275\u0275property("ngTemplateOutlet", !ctx_r2.contextMenu.submenuIconTemplate || !ctx_r2.contextMenu._submenuIconTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction0(3, _c312));
+    \u0275\u0275property("ngTemplateOutlet", !ctx_r2.contextMenu.submenuIconTemplate || !ctx_r2.contextMenu._submenuIconTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction0(3, _c311));
   }
 }
 function ContextMenuSub_ul_0_ng_template_2_li_1_ng_container_3_a_2_Template(rf, ctx) {
@@ -42473,7 +41503,7 @@ function ContextMenuSub_ul_0_ng_template_2_li_1_ng_container_3_a_2_Template(rf, 
     const htmlLabel_r7 = \u0275\u0275reference(4);
     const processedItem_r4 = \u0275\u0275nextContext(3).$implicit;
     const ctx_r2 = \u0275\u0275nextContext(2);
-    \u0275\u0275property("routerLink", ctx_r2.getItemProp(processedItem_r4, "routerLink"))("queryParams", ctx_r2.getItemProp(processedItem_r4, "queryParams"))("routerLinkActiveOptions", ctx_r2.getItemProp(processedItem_r4, "routerLinkActiveOptions") || \u0275\u0275pureFunction0(20, _c412))("target", ctx_r2.getItemProp(processedItem_r4, "target"))("ngClass", \u0275\u0275pureFunction1(21, _c511, ctx_r2.getItemProp(processedItem_r4, "disabled")))("fragment", ctx_r2.getItemProp(processedItem_r4, "fragment"))("queryParamsHandling", ctx_r2.getItemProp(processedItem_r4, "queryParamsHandling"))("preserveFragment", ctx_r2.getItemProp(processedItem_r4, "preserveFragment"))("skipLocationChange", ctx_r2.getItemProp(processedItem_r4, "skipLocationChange"))("replaceUrl", ctx_r2.getItemProp(processedItem_r4, "replaceUrl"))("state", ctx_r2.getItemProp(processedItem_r4, "state"));
+    \u0275\u0275property("routerLink", ctx_r2.getItemProp(processedItem_r4, "routerLink"))("queryParams", ctx_r2.getItemProp(processedItem_r4, "queryParams"))("routerLinkActiveOptions", ctx_r2.getItemProp(processedItem_r4, "routerLinkActiveOptions") || \u0275\u0275pureFunction0(20, _c411))("target", ctx_r2.getItemProp(processedItem_r4, "target"))("ngClass", \u0275\u0275pureFunction1(21, _c510, ctx_r2.getItemProp(processedItem_r4, "disabled")))("fragment", ctx_r2.getItemProp(processedItem_r4, "fragment"))("queryParamsHandling", ctx_r2.getItemProp(processedItem_r4, "queryParamsHandling"))("preserveFragment", ctx_r2.getItemProp(processedItem_r4, "preserveFragment"))("skipLocationChange", ctx_r2.getItemProp(processedItem_r4, "skipLocationChange"))("replaceUrl", ctx_r2.getItemProp(processedItem_r4, "replaceUrl"))("state", ctx_r2.getItemProp(processedItem_r4, "state"));
     \u0275\u0275attribute("data-automationid", ctx_r2.getItemProp(processedItem_r4, "automationId"))("tabindex", -1)("aria-hidden", true)("data-pc-section", "action");
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", ctx_r2.getItemProp(processedItem_r4, "icon"));
@@ -42621,7 +41651,7 @@ function ContextMenuSub_ul_0_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r2 = \u0275\u0275nextContext();
-    \u0275\u0275property("ngClass", \u0275\u0275pureFunction2(10, _c118, !ctx_r2.root, ctx_r2.root))("@overlayAnimation", ctx_r2.visible)("tabindex", ctx_r2.tabindex);
+    \u0275\u0275property("ngClass", \u0275\u0275pureFunction2(10, _c117, !ctx_r2.root, ctx_r2.root))("@overlayAnimation", ctx_r2.visible)("tabindex", ctx_r2.tabindex);
     \u0275\u0275attribute("id", ctx_r2.menuId + "_list")("aria-label", ctx_r2.ariaLabel)("aria-labelledBy", ctx_r2.ariaLabelledBy)("aria-activedescendant", ctx_r2.focusedItemId)("aria-orientation", "vertical")("data-pc-section", "menu");
     \u0275\u0275advance(2);
     \u0275\u0275property("ngForOf", ctx_r2.items);
@@ -42631,7 +41661,7 @@ var _c79 = ["item"];
 var _c89 = ["submenuicon"];
 var _c98 = ["rootmenu"];
 var _c107 = ["container"];
-var _c119 = (a0) => ({
+var _c118 = (a0) => ({
   "p-contextmenu p-component": true,
   "p-contextmenu-mobile": a0
 });
@@ -42678,13 +41708,13 @@ function ContextMenu_div_0_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275classMap(ctx_r1.styleClass);
-    \u0275\u0275property("ngClass", \u0275\u0275pureFunction1(20, _c119, ctx_r1.queryMatches))("ngStyle", ctx_r1.style)("@overlayAnimation", \u0275\u0275pureFunction0(22, _c126));
+    \u0275\u0275property("ngClass", \u0275\u0275pureFunction1(20, _c118, ctx_r1.queryMatches))("ngStyle", ctx_r1.style)("@overlayAnimation", \u0275\u0275pureFunction0(22, _c126));
     \u0275\u0275attribute("data-pc-section", "root")("data-pc-name", "contextmenu")("id", ctx_r1.id);
     \u0275\u0275advance(2);
     \u0275\u0275property("root", true)("items", ctx_r1.processedItems)("itemTemplate", ctx_r1.itemTemplate || ctx_r1._itemTemplate)("menuId", ctx_r1.id)("tabindex", !ctx_r1.disabled ? ctx_r1.tabindex : -1)("ariaLabel", ctx_r1.ariaLabel)("ariaLabelledBy", ctx_r1.ariaLabelledBy)("baseZIndex", ctx_r1.baseZIndex)("autoZIndex", ctx_r1.autoZIndex)("visible", ctx_r1.submenuVisible())("focusedItemId", ctx_r1.focused ? ctx_r1.focusedItemId : void 0)("activeItemPath", ctx_r1.activeItemPath());
   }
 }
-var theme12 = ({
+var theme11 = ({
   dt
 }) => `
 .p-contextmenu {
@@ -42844,7 +41874,7 @@ var theme12 = ({
     margin-right: auto;
 }
 `;
-var classes12 = {
+var classes11 = {
   root: "p-contextmenu p-component",
   rootList: "p-contextmenu-root-list",
   item: ({
@@ -42865,8 +41895,8 @@ var classes12 = {
 };
 var ContextMenuStyle = class _ContextMenuStyle extends BaseStyle {
   name = "contextmenu";
-  theme = theme12;
-  classes = classes12;
+  theme = theme11;
+  classes = classes11;
   static \u0275fac = /* @__PURE__ */ (() => {
     let \u0275ContextMenuStyle_BaseFactory;
     return function ContextMenuStyle_Factory(__ngFactoryType__) {
@@ -43018,7 +42048,7 @@ var ContextMenuSub = class _ContextMenuSub extends BaseComponent {
     selectors: [["p-contextMenuSub"], ["p-contextmenu-sub"]],
     viewQuery: function ContextMenuSub_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuery(_c014, 5);
+        \u0275\u0275viewQuery(_c013, 5);
       }
       if (rf & 2) {
         let _t;
@@ -44335,10 +43365,10 @@ var ContextMenuModule = class _ContextMenuModule {
 })();
 
 // src/app/views/page-assistant/components/tools/ia-structure.component.ts
-var _c015 = ["chartContainer"];
-var _c120 = ["cm"];
-var _c213 = () => ({ "height": "1rem" });
-var _c313 = () => ({ "min-width": "50rem" });
+var _c014 = ["chartContainer"];
+var _c119 = ["cm"];
+var _c212 = () => ({ "height": "1rem" });
+var _c312 = () => ({ "min-width": "50rem" });
 function IaStructureComponent_p_button_6_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -44357,7 +43387,7 @@ function IaStructureComponent_p_progressbar_7_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext();
-    \u0275\u0275styleMap(\u0275\u0275pureFunction0(4, _c213));
+    \u0275\u0275styleMap(\u0275\u0275pureFunction0(4, _c212));
     \u0275\u0275property("value", ctx_r1.iaProgress)("showValue", false);
   }
 }
@@ -44727,7 +43757,7 @@ function IaStructureComponent_ng_container_12_p_table_4_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext(2);
-    \u0275\u0275property("value", ctx_r1.brokenLinks)("tableStyle", \u0275\u0275pureFunction0(2, _c313));
+    \u0275\u0275property("value", ctx_r1.brokenLinks)("tableStyle", \u0275\u0275pureFunction0(2, _c312));
   }
 }
 function IaStructureComponent_ng_container_12_Template(rf, ctx) {
@@ -45431,8 +44461,8 @@ var IaStructureComponent = class _IaStructureComponent {
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _IaStructureComponent, selectors: [["ca-ia-structure"]], viewQuery: function IaStructureComponent_Query(rf, ctx) {
     if (rf & 1) {
-      \u0275\u0275viewQuery(_c015, 5);
-      \u0275\u0275viewQuery(_c120, 5);
+      \u0275\u0275viewQuery(_c014, 5);
+      \u0275\u0275viewQuery(_c119, 5);
     }
     if (rf & 2) {
       let _t;
@@ -46287,12 +45317,12 @@ var ComponentGuidanceComponent = class _ComponentGuidanceComponent {
     return __async(this, null, function* () {
       const css = yield firstValueFrom(this.http.get(url, { responseType: "text" }));
       const classPattern = /\.([a-zA-Z0-9_-]+)/g;
-      const classes14 = /* @__PURE__ */ new Set();
+      const classes13 = /* @__PURE__ */ new Set();
       let match;
       while ((match = classPattern.exec(css)) !== null) {
-        classes14.add(match[1]);
+        classes13.add(match[1]);
       }
-      return [...classes14].sort();
+      return [...classes13].sort();
     });
   }
   static \u0275fac = function ComponentGuidanceComponent_Factory(__ngFactoryType__) {
@@ -46672,64 +45702,68 @@ var UserInsightsComponent = class _UserInsightsComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(UserInsightsComponent, { className: "UserInsightsComponent", filePath: "src/app/views/page-assistant/components/tools/user-insights.component.ts", lineNumber: 19 });
 })();
 
-// node_modules/primeng/fesm2022/primeng-overlaypanel.mjs
-var _c016 = ["content"];
-var _c121 = ["closeicon"];
-var _c214 = ["*"];
-var _c314 = (a0, a1) => ({
+// node_modules/primeng/fesm2022/primeng-popover.mjs
+var _c015 = ["content"];
+var _c120 = ["*"];
+var _c213 = (a0, a1) => ({
   showTransitionParams: a0,
   hideTransitionParams: a1
 });
-var _c413 = (a0, a1) => ({
+var _c313 = (a0, a1) => ({
   value: a0,
   params: a1
 });
-function OverlayPanel_div_0_ng_container_3_Template(rf, ctx) {
+var _c412 = (a0) => ({
+  closeCallback: a0
+});
+function Popover_div_0_3_ng_template_0_Template(rf, ctx) {
+}
+function Popover_div_0_3_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementContainer(0);
+    \u0275\u0275template(0, Popover_div_0_3_ng_template_0_Template, 0, 0, "ng-template");
   }
 }
-function OverlayPanel_div_0_Template(rf, ctx) {
+function Popover_div_0_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "div", 1);
-    \u0275\u0275listener("click", function OverlayPanel_div_0_Template_div_click_0_listener($event) {
+    \u0275\u0275listener("click", function Popover_div_0_Template_div_click_0_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.onOverlayClick($event));
-    })("@animation.start", function OverlayPanel_div_0_Template_div_animation_animation_start_0_listener($event) {
+    })("@animation.start", function Popover_div_0_Template_div_animation_animation_start_0_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.onAnimationStart($event));
-    })("@animation.done", function OverlayPanel_div_0_Template_div_animation_animation_done_0_listener($event) {
+    })("@animation.done", function Popover_div_0_Template_div_animation_animation_done_0_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.onAnimationEnd($event));
     });
     \u0275\u0275elementStart(1, "div", 2);
-    \u0275\u0275listener("click", function OverlayPanel_div_0_Template_div_click_1_listener($event) {
+    \u0275\u0275listener("click", function Popover_div_0_Template_div_click_1_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.onContentClick($event));
-    })("mousedown", function OverlayPanel_div_0_Template_div_mousedown_1_listener($event) {
+    })("mousedown", function Popover_div_0_Template_div_mousedown_1_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.onContentClick($event));
     });
     \u0275\u0275projection(2);
-    \u0275\u0275template(3, OverlayPanel_div_0_ng_container_3_Template, 1, 0, "ng-container", 3);
+    \u0275\u0275template(3, Popover_div_0_3_Template, 1, 0, null, 3);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275classMap(ctx_r1.styleClass);
-    \u0275\u0275property("ngClass", "p-popover p-component")("ngStyle", ctx_r1.style)("@animation", \u0275\u0275pureFunction2(12, _c413, ctx_r1.overlayVisible ? "open" : "close", \u0275\u0275pureFunction2(9, _c314, ctx_r1.showTransitionOptions, ctx_r1.hideTransitionOptions)));
+    \u0275\u0275property("ngClass", "p-popover p-component")("ngStyle", ctx_r1.style)("@animation", \u0275\u0275pureFunction2(13, _c313, ctx_r1.overlayVisible ? "open" : "close", \u0275\u0275pureFunction2(10, _c213, ctx_r1.showTransitionOptions, ctx_r1.hideTransitionOptions)));
     \u0275\u0275attribute("aria-modal", ctx_r1.overlayVisible)("aria-label", ctx_r1.ariaLabel)("aria-labelledBy", ctx_r1.ariaLabelledBy);
     \u0275\u0275advance(3);
-    \u0275\u0275property("ngTemplateOutlet", ctx_r1.contentTemplate || ctx_r1._contentTemplate);
+    \u0275\u0275property("ngTemplateOutlet", ctx_r1.contentTemplate || ctx_r1._contentTemplate)("ngTemplateOutletContext", \u0275\u0275pureFunction1(16, _c412, ctx_r1.onCloseClick.bind(ctx_r1)));
   }
 }
-var theme13 = ({
+var theme12 = ({
   dt
 }) => `
 .p-popover {
@@ -46812,14 +45846,14 @@ var theme13 = ({
 }
 
 `;
-var classes13 = {
+var classes12 = {
   root: "p-popover p-component",
   content: "p-popover-content"
 };
 var PopoverStyle = class _PopoverStyle extends BaseStyle {
   name = "popover";
-  theme = theme13;
-  classes = classes13;
+  theme = theme12;
+  classes = classes12;
   static \u0275fac = /* @__PURE__ */ (() => {
     let \u0275PopoverStyle_BaseFactory;
     return function PopoverStyle_Factory(__ngFactoryType__) {
@@ -46836,14 +45870,7 @@ var PopoverStyle = class _PopoverStyle extends BaseStyle {
     type: Injectable
   }], null, null);
 })();
-var PopoverClasses;
-(function(PopoverClasses2) {
-  PopoverClasses2["root"] = "p-popover";
-  PopoverClasses2["content"] = "p-popover-content";
-})(PopoverClasses || (PopoverClasses = {}));
-var OverlayPanel = class _OverlayPanel extends BaseComponent {
-  zone;
-  overlayService;
+var Popover = class _Popover extends BaseComponent {
   /**
    * Defines a string that labels the input for accessibility.
    * @group Props
@@ -46860,11 +45887,6 @@ var OverlayPanel = class _OverlayPanel extends BaseComponent {
    */
   dismissable = true;
   /**
-   * When enabled, displays a close icon at top right corner.
-   * @group Props
-   */
-  showCloseIcon;
-  /**
    * Inline style of the component.
    * @group Props
    */
@@ -46875,7 +45897,7 @@ var OverlayPanel = class _OverlayPanel extends BaseComponent {
    */
   styleClass;
   /**
-   *  Target element to attach the panel, valid values are "body" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]="mydiv" for a div element having #mydiv as variable name).
+   * Target element to attach the panel, valid values are "body" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]="mydiv" for a div element having #mydiv as variable name).
    * @group Props
    */
   appendTo = "body";
@@ -46929,31 +45951,26 @@ var OverlayPanel = class _OverlayPanel extends BaseComponent {
   willHide;
   scrollHandler;
   documentResizeListener;
+  /**
+   * Custom content template.
+   * @group Templates
+   */
   contentTemplate;
-  closeIconTemplate;
   templates;
   _contentTemplate;
   destroyCallback;
   overlayEventListener;
   overlaySubscription;
   _componentStyle = inject(PopoverStyle);
-  constructor(zone, overlayService) {
-    super();
-    this.zone = zone;
-    this.overlayService = overlayService;
-    console.log("OverlayPanel is deprecated. Use Popover instead.");
-  }
+  zone = inject(NgZone);
+  overlayService = inject(OverlayService);
   ngAfterContentInit() {
-    this.templates?.forEach((item) => {
+    this.templates.forEach((item) => {
       switch (item.getType()) {
         case "content":
           this._contentTemplate = item.template;
           break;
-        default:
-          this._contentTemplate = item.template;
-          break;
       }
-      this.cd.markForCheck();
     });
   }
   bindDocumentClickListener() {
@@ -47059,14 +46076,12 @@ var OverlayPanel = class _OverlayPanel extends BaseComponent {
     if (containerOffset.top < targetOffset.top) {
       this.container.setAttribute("data-p-popover-flipped", "true");
       addClass(this.container, "p-popover-flipped");
-      if (this.showCloseIcon) {
-        this.renderer.setStyle(this.container, "margin-top", "-30px");
-      }
     }
   }
   onAnimationStart(event) {
     if (event.toState === "open") {
       this.container = event.element;
+      this.container?.setAttribute(this.attrSelector, "");
       this.appendContainer();
       this.align();
       this.bindDocumentClickListener();
@@ -47198,28 +46213,29 @@ var OverlayPanel = class _OverlayPanel extends BaseComponent {
     }
     super.ngOnDestroy();
   }
-  static \u0275fac = function OverlayPanel_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _OverlayPanel)(\u0275\u0275directiveInject(NgZone), \u0275\u0275directiveInject(OverlayService));
-  };
+  static \u0275fac = /* @__PURE__ */ (() => {
+    let \u0275Popover_BaseFactory;
+    return function Popover_Factory(__ngFactoryType__) {
+      return (\u0275Popover_BaseFactory || (\u0275Popover_BaseFactory = \u0275\u0275getInheritedFactory(_Popover)))(__ngFactoryType__ || _Popover);
+    };
+  })();
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
-    type: _OverlayPanel,
-    selectors: [["p-overlayPanel"], ["p-overlaypanel"]],
-    contentQueries: function OverlayPanel_ContentQueries(rf, ctx, dirIndex) {
+    type: _Popover,
+    selectors: [["p-popover"]],
+    contentQueries: function Popover_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        \u0275\u0275contentQuery(dirIndex, _c016, 4);
-        \u0275\u0275contentQuery(dirIndex, _c121, 4);
+        \u0275\u0275contentQuery(dirIndex, _c015, 4);
         \u0275\u0275contentQuery(dirIndex, PrimeTemplate, 4);
       }
       if (rf & 2) {
         let _t;
         \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.contentTemplate = _t.first);
-        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.closeIconTemplate = _t.first);
         \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.templates = _t);
       }
     },
-    hostBindings: function OverlayPanel_HostBindings(rf, ctx) {
+    hostBindings: function Popover_HostBindings(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275listener("keydown.escape", function OverlayPanel_keydown_escape_HostBindingHandler($event) {
+        \u0275\u0275listener("keydown.escape", function Popover_keydown_escape_HostBindingHandler($event) {
           return ctx.onEscapeKeydown($event);
         }, false, \u0275\u0275resolveDocument);
       }
@@ -47228,7 +46244,6 @@ var OverlayPanel = class _OverlayPanel extends BaseComponent {
       ariaLabel: "ariaLabel",
       ariaLabelledBy: "ariaLabelledBy",
       dismissable: [2, "dismissable", "dismissable", booleanAttribute],
-      showCloseIcon: [2, "showCloseIcon", "showCloseIcon", booleanAttribute],
       style: "style",
       styleClass: "styleClass",
       appendTo: "appendTo",
@@ -47243,22 +46258,21 @@ var OverlayPanel = class _OverlayPanel extends BaseComponent {
       onShow: "onShow",
       onHide: "onHide"
     },
-    standalone: false,
     features: [\u0275\u0275ProvidersFeature([PopoverStyle]), \u0275\u0275InheritDefinitionFeature],
-    ngContentSelectors: _c214,
+    ngContentSelectors: _c120,
     decls: 1,
     vars: 1,
-    consts: [["role", "dialog", 3, "ngClass", "ngStyle", "class", "click", 4, "ngIf"], ["role", "dialog", 3, "click", "ngClass", "ngStyle"], [1, "p-popover-content", 3, "click", "mousedown"], [4, "ngTemplateOutlet"]],
-    template: function OverlayPanel_Template(rf, ctx) {
+    consts: [["role", "dialog", 3, "ngClass", "ngStyle", "class", "click", 4, "ngIf"], ["role", "dialog", 3, "click", "ngClass", "ngStyle"], [1, "p-popover-content", 3, "click", "mousedown"], [4, "ngTemplateOutlet", "ngTemplateOutletContext"]],
+    template: function Popover_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275projectionDef();
-        \u0275\u0275template(0, OverlayPanel_div_0_Template, 4, 15, "div", 0);
+        \u0275\u0275template(0, Popover_div_0_Template, 4, 18, "div", 0);
       }
       if (rf & 2) {
         \u0275\u0275property("ngIf", ctx.render);
       }
     },
-    dependencies: [NgClass, NgIf, NgTemplateOutlet, NgStyle],
+    dependencies: [CommonModule, NgClass, NgIf, NgTemplateOutlet, NgStyle, SharedModule],
     encapsulation: 2,
     data: {
       animation: [trigger("animation", [state("void", style({
@@ -47275,11 +46289,12 @@ var OverlayPanel = class _OverlayPanel extends BaseComponent {
   });
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(OverlayPanel, [{
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Popover, [{
     type: Component,
     args: [{
-      selector: "p-overlayPanel, p-overlaypanel",
-      standalone: false,
+      selector: "p-popover",
+      standalone: true,
+      imports: [CommonModule, SharedModule],
       template: `
         <div
             *ngIf="render"
@@ -47300,7 +46315,7 @@ var OverlayPanel = class _OverlayPanel extends BaseComponent {
         >
             <div class="p-popover-content" (click)="onContentClick($event)" (mousedown)="onContentClick($event)">
                 <ng-content></ng-content>
-                <ng-container *ngTemplateOutlet="contentTemplate || _contentTemplate"></ng-container>
+                <ng-template *ngTemplateOutlet="contentTemplate || _contentTemplate; context: { closeCallback: onCloseClick.bind(this) }"></ng-template>
             </div>
         </div>
     `,
@@ -47317,11 +46332,7 @@ var OverlayPanel = class _OverlayPanel extends BaseComponent {
       encapsulation: ViewEncapsulation.None,
       providers: [PopoverStyle]
     }]
-  }], () => [{
-    type: NgZone
-  }, {
-    type: OverlayService
-  }], {
+  }], null, {
     ariaLabel: [{
       type: Input
     }],
@@ -47329,12 +46340,6 @@ var OverlayPanel = class _OverlayPanel extends BaseComponent {
       type: Input
     }],
     dismissable: [{
-      type: Input,
-      args: [{
-        transform: booleanAttribute
-      }]
-    }],
-    showCloseIcon: [{
       type: Input,
       args: [{
         transform: booleanAttribute
@@ -47388,12 +46393,6 @@ var OverlayPanel = class _OverlayPanel extends BaseComponent {
         descendants: false
       }]
     }],
-    closeIconTemplate: [{
-      type: ContentChild,
-      args: ["closeicon", {
-        descendants: false
-      }]
-    }],
     templates: [{
       type: ContentChildren,
       args: [PrimeTemplate]
@@ -47404,38 +46403,420 @@ var OverlayPanel = class _OverlayPanel extends BaseComponent {
     }]
   });
 })();
-var OverlayPanelModule = class _OverlayPanelModule {
-  static \u0275fac = function OverlayPanelModule_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _OverlayPanelModule)();
+var PopoverModule = class _PopoverModule {
+  static \u0275fac = function PopoverModule_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _PopoverModule)();
   };
   static \u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
-    type: _OverlayPanelModule,
-    declarations: [OverlayPanel],
-    imports: [CommonModule, Ripple, SharedModule, TimesIcon],
-    exports: [OverlayPanel, SharedModule]
+    type: _PopoverModule,
+    imports: [Popover, SharedModule],
+    exports: [Popover, SharedModule]
   });
   static \u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({
-    imports: [CommonModule, SharedModule, TimesIcon, SharedModule]
+    imports: [Popover, SharedModule, SharedModule]
   });
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(OverlayPanelModule, [{
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(PopoverModule, [{
     type: NgModule,
     args: [{
-      imports: [CommonModule, Ripple, SharedModule, TimesIcon],
-      exports: [OverlayPanel, SharedModule],
-      declarations: [OverlayPanel]
+      imports: [Popover, SharedModule],
+      exports: [Popover, SharedModule]
     }]
   }], null, null);
 })();
 
+// src/app/views/page-assistant/services/link-ai.service.ts
+var LinkAiService = class _LinkAiService {
+  http;
+  apiKeyService;
+  openRouterApiUrl = "https://openrouter.ai/api/v1/chat/completions";
+  // Reuse your model rotation style
+  models = [
+    "meta-llama/llama-3.3-70b-instruct:free",
+    "google/gemini-2.0-flash-exp:free",
+    "google/gemini-exp-1206:free",
+    "cognitivecomputations/dolphin3.0-mistral-24b:free",
+    "cognitivecomputations/dolphin3.0-r1-mistral-24b:free",
+    "nvidia/llama-3.1-nemotron-70b-instruct:free",
+    "deepseek/deepseek-r1:free"
+  ];
+  constructor(http, apiKeyService) {
+    this.http = http;
+    this.apiKeyService = apiKeyService;
+  }
+  /**
+   * Ask the model whether a link label matches the destination page content.
+   * Returns a structured verdict or null if all models fail.
+   */
+  judge(linkText, meta) {
+    return __async(this, null, function* () {
+      const systemPrompt = `You judge if a link label matches its destination page.
+Use ONLY the provided extracted fields (h1,h2,h3, meta description,bodyPreview).
+Consider abbreviations and synonyms.Respond with a single compact JSON object and nothing else:
+{"verdict":"match|mismatch|uncertain","confidence":0..1,}`;
+      const userPayload = {
+        linkText,
+        destination: {
+          url: meta.finalUrl,
+          h1: meta.h1,
+          title: meta.title,
+          ogTitle: meta.ogTitle,
+          metaDescription: meta.metaDescription,
+          headings: meta.headings?.slice(0, 10),
+          bodyPreview: meta.bodyPreview
+        }
+      };
+      const messages = [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: JSON.stringify(userPayload) }
+      ];
+      for (const model2 of this.models) {
+        const resp = yield this.callOpenRouter(model2, messages, 0);
+        const text = resp?.choices?.[0]?.message?.content;
+        if (!text)
+          continue;
+        const cleaned = this.stripCodeFences(text);
+        const parsed = this.looseJsonParse(cleaned);
+        const verdict = this.toVerdict(parsed);
+        if (verdict)
+          return verdict;
+      }
+      return null;
+    });
+  }
+  // ------- OpenRouter plumbing (matches your TranslationService approach) -------
+  callOpenRouter(model2, messages, temperature = 0) {
+    return __async(this, null, function* () {
+      const apiKey = this.apiKeyService.getCurrentKey();
+      if (!apiKey)
+        throw new Error("API key is required.");
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-Title": "Content Assistant - Link Report"
+      });
+      const payload = { model: model2, messages, temperature };
+      try {
+        const resp = yield this.http.post(this.openRouterApiUrl, payload, {
+          headers,
+          responseType: "text",
+          // IMPORTANT: prevents Angular JSON parser errors on non-JSON
+          observe: "response"
+        }).toPromise();
+        const ct = resp?.headers.get("content-type") || "";
+        if (ct.includes("application/json")) {
+          return JSON.parse(resp.body);
+        } else {
+          console.error(`OpenRouter non-JSON (status ${resp?.status}, ${ct}):
+`, (resp?.body || "").slice(0, 500));
+          return void 0;
+        }
+      } catch (err) {
+        const status = err?.status;
+        const bodySnippet = typeof err?.error === "string" ? err.error.slice(0, 500) : JSON.stringify(err?.error);
+        console.error(`OpenRouter HTTP error (model: ${model2}) status=${status}: ${bodySnippet}`);
+        return void 0;
+      }
+    });
+  }
+  // ------- Output hygiene -------
+  /** Remove ``` fences if a model adds them. */
+  stripCodeFences(s) {
+    return s.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+  }
+  /**
+   * Try to parse JSON even if the model wraps it with text.
+   * - First try direct JSON.parse
+   * - Then try the first {...} block via regex
+   */
+  looseJsonParse(s) {
+    try {
+      return JSON.parse(s);
+    } catch {
+    }
+    const m = s.match(/\{[\s\S]*\}/);
+    if (m) {
+      try {
+        return JSON.parse(m[0]);
+      } catch {
+      }
+    }
+    return null;
+  }
+  /** Validate & coerce to AiVerdict */
+  toVerdict(j) {
+    if (!j || typeof j !== "object")
+      return null;
+    const verdict = j.verdict;
+    if (!["match", "mismatch", "uncertain"].includes(verdict))
+      return null;
+    let confidence = Number(j.confidence);
+    if (!isFinite(confidence))
+      confidence = 0;
+    confidence = Math.max(0, Math.min(1, confidence));
+    let matchedFields;
+    if (Array.isArray(j.matchedFields)) {
+      matchedFields = j.matchedFields.filter((x) => [
+        "h1",
+        "title",
+        "ogTitle",
+        "metaDescription",
+        "headings",
+        "bodyPreview"
+      ].includes(x));
+    }
+    const out = { verdict, confidence };
+    if (typeof j.rationale === "string")
+      out.rationale = j.rationale;
+    if (matchedFields && matchedFields.length)
+      out.matchedFields = matchedFields;
+    return out;
+  }
+  static \u0275fac = function LinkAiService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _LinkAiService)(\u0275\u0275inject(HttpClient), \u0275\u0275inject(ApiKeyService));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _LinkAiService, factory: _LinkAiService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(LinkAiService, [{
+    type: Injectable,
+    args: [{ providedIn: "root" }]
+  }], () => [{ type: HttpClient }, { type: ApiKeyService }], null);
+})();
+
+// src/app/views/page-assistant/services/content-extractor.service.ts
+var ContentExtractorService = class _ContentExtractorService {
+  fetchService;
+  CANADA_ORIGIN = "https://www.canada.ca";
+  constructor(fetchService) {
+    this.fetchService = fetchService;
+  }
+  // ========== PUBLIC API ==========
+  /** Fetch & extract from a Canada.ca page (H1 + intro) */
+  extractCanada(absUrl, opts) {
+    return __async(this, null, function* () {
+      const retries = opts?.retries ?? 3;
+      const delay = opts?.delay ?? "none";
+      try {
+        const doc = yield this.fetchService.fetchContent(absUrl, "prod", retries, delay);
+        return this.fromCanadaDoc(doc);
+      } catch {
+        return null;
+      }
+    });
+  }
+  /** Fetch & extract from an external page allowed by your fetchService */
+  extractExternal(absUrl, opts) {
+    return __async(this, null, function* () {
+      const retries = opts?.retries ?? 3;
+      const delay = opts?.delay ?? "none";
+      try {
+        const doc = yield this.fetchService.fetchContent(absUrl, "none", retries, delay);
+        return this.fromExternalDoc(doc);
+      } catch (e) {
+        console.warn("extractExternal CORS/Fetch error for", absUrl, e);
+        return null;
+      }
+    });
+  }
+  /** Extract from a same-page #anchor using the already-uploaded page Document (no network). */
+  extractAnchor(sourceDoc, hashHref) {
+    const id = (hashHref || "").replace(/^#/, "").trim();
+    const target = this.findAnchorTarget(sourceDoc, id);
+    if (!target) {
+      return { source: "anchor", title: null, intro: null };
+    }
+    const heading = this.closestHeading(target);
+    const title = this.cleanText(heading?.textContent || target.textContent || null);
+    const intro = this.cleanText(this.firstParagraphInSection(heading || target));
+    return { source: "anchor", title, intro };
+  }
+  /** Combine title + intro into a single candidate string you can feed your smartMatch() */
+  buildCandidateText(res) {
+    if (!res)
+      return "";
+    return [res.title || "", res.intro || ""].filter(Boolean).join(" ").trim();
+  }
+  // ========== CANADA.CA RULES ==========
+  fromCanadaDoc(doc) {
+    const main = doc.querySelector("main") || doc.body;
+    let titleSource = void 0;
+    let h1Text = main.querySelector("h1")?.textContent?.trim() || doc.querySelector("h1")?.textContent?.trim() || null;
+    if (main.querySelector("h1"))
+      titleSource = "main>h1";
+    else if (doc.querySelector("h1"))
+      titleSource = "document h1";
+    let introEl = main.querySelector(".gc-lead, .lead, .pagetagline, p.lead") || null;
+    let introSource = null;
+    if (introEl) {
+      const cls = introEl.classList;
+      if (cls.contains("gc-lead"))
+        introSource = "gc-lead";
+      else if (cls.contains("pagetagline"))
+        introSource = "pagetagline";
+      else if (cls.contains("lead") && introEl.tagName === "P")
+        introSource = "p.lead";
+      else
+        introSource = "lead";
+    } else {
+      const beforeH2 = this.firstMeaningfulPBeforeHeading(main, /^H2$/i);
+      if (beforeH2) {
+        introEl = beforeH2;
+        introSource = "firstMeaningfulPBeforeH2";
+      } else {
+        const firstP = this.firstMeaningfulP(main);
+        introEl = firstP;
+        introSource = firstP ? "firstMeaningfulP" : null;
+      }
+    }
+    const title = this.cleanText(h1Text);
+    const intro = this.cleanText(introEl?.textContent || null);
+    return {
+      source: "canada",
+      title,
+      intro,
+      titleSource,
+      introSource
+    };
+  }
+  // ========== EXTERNAL RULES ==========
+  fromExternalDoc(doc) {
+    let titleSource = void 0;
+    let h1 = doc.querySelector("h1")?.textContent?.trim() || doc.querySelector("title")?.textContent?.trim() || null;
+    if (doc.querySelector("h1"))
+      titleSource = "h1";
+    else if (doc.querySelector("title"))
+      titleSource = "title";
+    const metaDesc = doc.querySelector('meta[name="description"]')?.getAttribute("content")?.trim() || null;
+    const paras = Array.from(doc.querySelectorAll("p")).map((p) => (p.textContent || "").trim()).filter((t) => this.isMeaningful(t)).slice(0, 2);
+    const introSource = metaDesc ? "metaDescription" : paras.length ? "firstParas" : null;
+    return {
+      source: "external",
+      title: this.cleanText(h1),
+      intro: this.cleanText(metaDesc) || this.cleanText(paras.join("  ")) || null,
+      contentText: this.cleanText(paras.join("  ")) || null,
+      titleSource,
+      introSource
+    };
+  }
+  buildDestMetaFromDoc(doc, finalUrl) {
+    const h1 = doc.querySelector("h1")?.textContent?.trim() || null;
+    const title = doc.querySelector("title")?.textContent?.trim() || null;
+    const ogTitle = doc.querySelector('meta[property="og:title"]')?.getAttribute("content")?.trim() || null;
+    const metaDescription = doc.querySelector('meta[name="description"]')?.getAttribute("content")?.trim() || null;
+    const headings = Array.from(doc.querySelectorAll("h2, h3")).map((h) => (h.textContent || "").trim()).filter(Boolean).slice(0, 10).map((t) => this.cleanText(t) || "").filter(Boolean);
+    const paras = Array.from(doc.querySelectorAll("p")).map((p) => (p.textContent || "").trim()).filter((t) => this.isMeaningful(t)).slice(0, 2).join("  ");
+    return {
+      finalUrl,
+      h1: this.cleanText(h1),
+      title: this.cleanText(title),
+      ogTitle: this.cleanText(ogTitle),
+      metaDescription: this.cleanText(metaDescription),
+      headings,
+      bodyPreview: this.cleanText(paras) || null
+    };
+  }
+  /** Build a DestMeta from a same-page #anchor (no network). */
+  buildDestMetaFromAnchor(sourceDoc, hashHref) {
+    const res = this.extractAnchor(sourceDoc, hashHref);
+    return {
+      finalUrl: hashHref || null,
+      h1: res.title,
+      title: res.title,
+      metaDescription: res.intro,
+      headings: res.title ? [res.title] : [],
+      bodyPreview: res.intro || null
+    };
+  }
+  // ========== ANCHOR HELPERS ==========
+  findAnchorTarget(doc, id) {
+    if (!id)
+      return null;
+    const safe = window.CSS?.escape ? window.CSS.escape(id) : id.replace(/["\\]/g, "\\$&");
+    return doc.getElementById(id) || doc.querySelector(`[name="${safe}"]`);
+  }
+  closestHeading(start) {
+    if (/^H[2-4]$/i.test(start.tagName))
+      return start;
+    const direct = start.querySelector(":scope > h2, :scope > h3, :scope > h4");
+    if (direct)
+      return direct;
+    let sib = start;
+    while (sib = sib.previousElementSibling || null) {
+      if (/^H[2-4]$/i.test(sib.tagName))
+        return sib;
+      const inner = sib.querySelector("h2, h3, h4");
+      if (inner)
+        return inner;
+    }
+    let el = start.parentElement;
+    while (el && !/^MAIN|ARTICLE|BODY$/i.test(el.tagName)) {
+      const h = el.querySelector(":scope > h2, :scope > h3, :scope > h4");
+      if (h)
+        return h;
+      el = el.parentElement;
+    }
+    return null;
+  }
+  firstParagraphInSection(sectionRoot) {
+    let el = sectionRoot.nextElementSibling;
+    while (el) {
+      if (/^H[2-4]$/i.test(el.tagName))
+        break;
+      if (el.tagName === "P" && this.isMeaningful(el.textContent || "")) {
+        return el.textContent?.trim() || null;
+      }
+      el = el.nextElementSibling;
+    }
+    return null;
+  }
+  // ========== GENERIC HELPERS ==========
+  cleanText(s) {
+    if (!s)
+      return null;
+    return s.replace(/\[\d+\]/g, "").replace(/(?:^|\s)\(\s*footnote\s*\d+\s*\)/gi, "").replace(/[*†‡§¶]+/g, "").replace(/\s+/g, " ").trim();
+  }
+  isMeaningful(t) {
+    if (!t)
+      return false;
+    const s = t.replace(/\s+/g, " ").trim();
+    return s.length >= 40;
+  }
+  firstMeaningfulP(root) {
+    return Array.from(root.querySelectorAll("p")).find((p) => this.isMeaningful(p.textContent || "")) || null;
+  }
+  firstMeaningfulPBeforeHeading(root, stopAt) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+    while (walker.nextNode()) {
+      const el = walker.currentNode;
+      if (stopAt.test(el.tagName))
+        break;
+      if (el.tagName === "P" && this.isMeaningful(el.textContent || ""))
+        return el;
+    }
+    return null;
+  }
+  static \u0275fac = function ContentExtractorService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _ContentExtractorService)(\u0275\u0275inject(FetchService));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _ContentExtractorService, factory: _ContentExtractorService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ContentExtractorService, [{
+    type: Injectable,
+    args: [{ providedIn: "root" }]
+  }], () => [{ type: FetchService }], null);
+})();
+
 // src/app/views/page-assistant/components/tools/link-report.component.ts
-var _c017 = ["typePanel"];
-var _c127 = () => ({ "min-width": "50rem" });
+var _c016 = ["typePanel"];
+var _c121 = () => ({ "min-width": "50rem" });
 function LinkReportComponent_ng_template_1_th_2_button_4_Template(rf, ctx) {
   if (rf & 1) {
     const _r2 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 16);
+    \u0275\u0275elementStart(0, "button", 17);
     \u0275\u0275listener("click", function LinkReportComponent_ng_template_1_th_2_button_4_Template_button_click_0_listener($event) {
       \u0275\u0275restoreView(_r2);
       \u0275\u0275nextContext(3);
@@ -47447,10 +46828,10 @@ function LinkReportComponent_ng_template_1_th_2_button_4_Template(rf, ctx) {
 }
 function LinkReportComponent_ng_template_1_th_2_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "th")(1, "div", 14)(2, "span");
+    \u0275\u0275elementStart(0, "th")(1, "div", 15)(2, "span");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
-    \u0275\u0275template(4, LinkReportComponent_ng_template_1_th_2_button_4_Template, 1, 0, "button", 15);
+    \u0275\u0275template(4, LinkReportComponent_ng_template_1_th_2_button_4_Template, 1, 0, "button", 16);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -47464,8 +46845,8 @@ function LinkReportComponent_ng_template_1_th_2_Template(rf, ctx) {
 function LinkReportComponent_ng_template_1_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "tr");
-    \u0275\u0275element(1, "th", 12);
-    \u0275\u0275template(2, LinkReportComponent_ng_template_1_th_2_Template, 5, 2, "th", 13);
+    \u0275\u0275element(1, "th", 13);
+    \u0275\u0275template(2, LinkReportComponent_ng_template_1_th_2_Template, 5, 2, "th", 14);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -47500,7 +46881,7 @@ function LinkReportComponent_ng_template_2_td_3_span_3_Template(rf, ctx) {
 }
 function LinkReportComponent_ng_template_2_td_3_span_4_div_2_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 27);
+    \u0275\u0275elementStart(0, "div", 28);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
@@ -47512,9 +46893,9 @@ function LinkReportComponent_ng_template_2_td_3_span_4_div_2_Template(rf, ctx) {
 }
 function LinkReportComponent_ng_template_2_td_3_span_4_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 25);
+    \u0275\u0275elementStart(0, "span", 26);
     \u0275\u0275text(1);
-    \u0275\u0275template(2, LinkReportComponent_ng_template_2_td_3_span_4_div_2_Template, 2, 1, "div", 26);
+    \u0275\u0275template(2, LinkReportComponent_ng_template_2_td_3_span_4_div_2_Template, 2, 1, "div", 27);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -47529,7 +46910,7 @@ function LinkReportComponent_ng_template_2_td_3_span_4_Template(rf, ctx) {
 }
 function LinkReportComponent_ng_template_2_td_3_span_5_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 28);
+    \u0275\u0275elementStart(0, "span", 29);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
@@ -47541,23 +46922,23 @@ function LinkReportComponent_ng_template_2_td_3_span_5_Template(rf, ctx) {
 }
 function LinkReportComponent_ng_template_2_td_3_span_6_i_1_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "i", 33);
+    \u0275\u0275element(0, "i", 34);
   }
 }
 function LinkReportComponent_ng_template_2_td_3_span_6_i_2_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "i", 34);
+    \u0275\u0275element(0, "i", 35);
   }
 }
 function LinkReportComponent_ng_template_2_td_3_span_6_i_3_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "i", 35);
+    \u0275\u0275element(0, "i", 36);
   }
 }
 function LinkReportComponent_ng_template_2_td_3_span_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 29);
-    \u0275\u0275template(1, LinkReportComponent_ng_template_2_td_3_span_6_i_1_Template, 1, 0, "i", 30)(2, LinkReportComponent_ng_template_2_td_3_span_6_i_2_Template, 1, 0, "i", 31)(3, LinkReportComponent_ng_template_2_td_3_span_6_i_3_Template, 1, 0, "i", 32);
+    \u0275\u0275elementStart(0, "span", 30);
+    \u0275\u0275template(1, LinkReportComponent_ng_template_2_td_3_span_6_i_1_Template, 1, 0, "i", 31)(2, LinkReportComponent_ng_template_2_td_3_span_6_i_2_Template, 1, 0, "i", 32)(3, LinkReportComponent_ng_template_2_td_3_span_6_i_3_Template, 1, 0, "i", 33);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -47586,8 +46967,8 @@ function LinkReportComponent_ng_template_2_td_3_span_7_Template(rf, ctx) {
 function LinkReportComponent_ng_template_2_td_3_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "td");
-    \u0275\u0275elementContainerStart(1, 19);
-    \u0275\u0275template(2, LinkReportComponent_ng_template_2_td_3_span_2_Template, 2, 1, "span", 20)(3, LinkReportComponent_ng_template_2_td_3_span_3_Template, 2, 1, "span", 20)(4, LinkReportComponent_ng_template_2_td_3_span_4_Template, 3, 4, "span", 21)(5, LinkReportComponent_ng_template_2_td_3_span_5_Template, 2, 1, "span", 22)(6, LinkReportComponent_ng_template_2_td_3_span_6_Template, 4, 3, "span", 23)(7, LinkReportComponent_ng_template_2_td_3_span_7_Template, 2, 1, "span", 24);
+    \u0275\u0275elementContainerStart(1, 20);
+    \u0275\u0275template(2, LinkReportComponent_ng_template_2_td_3_span_2_Template, 2, 1, "span", 21)(3, LinkReportComponent_ng_template_2_td_3_span_3_Template, 2, 1, "span", 21)(4, LinkReportComponent_ng_template_2_td_3_span_4_Template, 3, 4, "span", 22)(5, LinkReportComponent_ng_template_2_td_3_span_5_Template, 2, 1, "span", 23)(6, LinkReportComponent_ng_template_2_td_3_span_6_Template, 4, 3, "span", 24)(7, LinkReportComponent_ng_template_2_td_3_span_7_Template, 2, 1, "span", 25);
     \u0275\u0275elementContainerEnd();
     \u0275\u0275elementEnd();
   }
@@ -47609,10 +46990,10 @@ function LinkReportComponent_ng_template_2_td_3_Template(rf, ctx) {
 }
 function LinkReportComponent_ng_template_2_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "tr", 17)(1, "td");
-    \u0275\u0275element(2, "span", 18);
+    \u0275\u0275elementStart(0, "tr", 18)(1, "td");
+    \u0275\u0275element(2, "span", 19);
     \u0275\u0275elementEnd();
-    \u0275\u0275template(3, LinkReportComponent_ng_template_2_td_3_Template, 8, 6, "td", 13);
+    \u0275\u0275template(3, LinkReportComponent_ng_template_2_td_3_Template, 8, 6, "td", 14);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -47624,24 +47005,24 @@ function LinkReportComponent_ng_template_2_Template(rf, ctx) {
     \u0275\u0275property("ngForOf", ctx_r4.cols);
   }
 }
-function LinkReportComponent_div_11_Template(rf, ctx) {
+function LinkReportComponent_div_12_Template(rf, ctx) {
   if (rf & 1) {
     const _r9 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 6)(1, "p-checkbox", 36);
-    \u0275\u0275twoWayListener("ngModelChange", function LinkReportComponent_div_11_Template_p_checkbox_ngModelChange_1_listener($event) {
+    \u0275\u0275elementStart(0, "div", 7)(1, "p-checkbox", 37);
+    \u0275\u0275twoWayListener("ngModelChange", function LinkReportComponent_div_12_Template_p_checkbox_ngModelChange_1_listener($event) {
       const t_r10 = \u0275\u0275restoreView(_r9).$implicit;
       const ctx_r4 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r4.typeChecks[t_r10], $event) || (ctx_r4.typeChecks[t_r10] = $event);
       return \u0275\u0275resetView($event);
     });
-    \u0275\u0275listener("onChange", function LinkReportComponent_div_11_Template_p_checkbox_onChange_1_listener() {
+    \u0275\u0275listener("onChange", function LinkReportComponent_div_12_Template_p_checkbox_onChange_1_listener() {
       const t_r10 = \u0275\u0275restoreView(_r9).$implicit;
       const ctx_r4 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r4.onTypeToggle(t_r10));
     });
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(2, "label", 37);
-    \u0275\u0275listener("click", function LinkReportComponent_div_11_Template_label_click_2_listener() {
+    \u0275\u0275elementStart(2, "label", 38);
+    \u0275\u0275listener("click", function LinkReportComponent_div_12_Template_label_click_2_listener() {
       const t_r10 = \u0275\u0275restoreView(_r9).$implicit;
       const ctx_r4 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r4.toggleType(t_r10));
@@ -47662,9 +47043,9 @@ function LinkReportComponent_div_11_Template(rf, ctx) {
     \u0275\u0275textInterpolate1(" ", t_r10, " ");
   }
 }
-function LinkReportComponent_div_12_Template(rf, ctx) {
+function LinkReportComponent_div_13_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 38);
+    \u0275\u0275elementStart(0, "div", 39);
     \u0275\u0275text(1, " All types are currently included. ");
     \u0275\u0275elementEnd();
   }
@@ -47710,10 +47091,13 @@ function stripFootnoteText(text) {
 }
 var LinkReportComponent = class _LinkReportComponent {
   uploadState;
-  constructor(uploadState) {
+  linkAi;
+  extractor;
+  constructor(uploadState, linkAi, extractor) {
     this.uploadState = uploadState;
+    this.linkAi = linkAi;
+    this.extractor = extractor;
   }
-  // Expose the overlay panel referenced as #typePanel in the template
   typePanel;
   // data & selection
   headings = [];
@@ -47728,6 +47112,84 @@ var LinkReportComponent = class _LinkReportComponent {
     { field: "searchTerm", header: "Search term" },
     { field: "clicks", header: "Clicks" }
   ];
+  // --- DEBUG LOGGING HELPERS ---
+  COLLAPSE_GROUPS = false;
+  // Turn logging on/off
+  DEBUG_LOG = true;
+  // Helper to keep logs readable
+  truncate(s, n = 200) {
+    if (s == null)
+      return "";
+    const t = String(s).trim();
+    return t.length > n ? t.slice(0, n) + "\u2026" : t;
+  }
+  logRowExtraction(row, source, result, meta, candidate, heuristic, ai, finalStatus, err) {
+    if (!this.DEBUG_LOG)
+      return;
+    const r = result;
+    const header = `[Link#${row.order}] ${row.type} \u2014 ${row.text}  \u2192  ${row.absUrl || row.href || ""}`;
+    if (this.COLLAPSE_GROUPS)
+      console.groupCollapsed(header);
+    else
+      console.group(header);
+    console.log("Type:", row.type);
+    console.log("href:", row.href);
+    console.log("absUrl:", row.absUrl);
+    if (source === "canada" && result) {
+      console.log(`CANADA H1 (titleSource=${r?.titleSource ?? "-"}) ::`);
+      console.log(this.truncate(result.title, 1e3));
+      console.log(`CANADA Intro (introSource=${r?.introSource ?? "-"}) ::`);
+      console.log(this.truncate(result.intro, 1e3));
+    } else if (source === "anchor" && result) {
+      console.log("ANCHOR id:", r?.anchorMeta?.id || "(none)");
+      console.log("ANCHOR heading tag:", r?.anchorMeta?.headingTag || "(none)");
+      console.log(`Section heading (titleSource=${r?.titleSource ?? "-"}) ::`);
+      console.log(this.truncate(result.title, 1e3));
+      console.log(`First paragraph in section (introSource=${r?.introSource ?? "-"}) ::`);
+      console.log(this.truncate(result.intro, 1e3));
+    } else if (source === "external" && result) {
+      console.log(`EXTERNAL Title (titleSource=${r?.titleSource ?? "-"}) ::`);
+      console.log(this.truncate(result.title, 1e3));
+      console.log(`EXTERNAL Intro (introSource=${r?.introSource ?? "-"}) ::`);
+      console.log(this.truncate(result.intro, 1e3));
+      if (r?.contentText) {
+        console.log("EXTERNAL Body preview ::");
+        console.log(this.truncate(r.contentText, 1e3));
+      }
+    } else if (row.type === "mailto" || row.type === "tel" || row.type === "download") {
+      console.log("No extract (mailto/tel/download).");
+    } else {
+      console.log("No extract \u2014 likely blocked host or fetch failure.");
+    }
+    if (meta) {
+      console.log("AI meta sent \u2192", meta);
+    }
+    console.log("Candidate (title + intro) \u2192");
+    console.log(this.truncate(candidate, 1e3));
+    console.log("Heuristic:", heuristic);
+    console.log("AI verdict:", ai);
+    console.log("Final matchStatus:", finalStatus);
+    if (err)
+      console.warn("Extract/AI error:", err);
+    console.groupEnd();
+  }
+  logSummaryTable() {
+    if (!this.DEBUG_LOG)
+      return;
+    const rows = this.headings.map((r) => ({
+      order: r.order,
+      type: r.type,
+      text: this.truncate(r.text, 80),
+      url: r.absUrl || r.href,
+      // show the exact extracted strings in the summary too
+      extractedTitle: this.truncate(r.extractedTitle, 200),
+      extractedIntro: this.truncate(r.extractedIntro, 200),
+      match: r.matchStatus,
+      ai: r.aiVerdict || "",
+      conf: r.aiConfidence ?? ""
+    }));
+    console.table(rows);
+  }
   sourceVersion = "original";
   // ----- Filter state (dropdown with ALL + 6 types) -----
   linkTypes = [
@@ -47749,28 +47211,23 @@ var LinkReportComponent = class _LinkReportComponent {
     mailto: false,
     download: false
   };
-  /** Toggle ALL; when turning ALL on, keep individuals unchecked but ignored. */
   onAllToggle() {
   }
-  /** Toggle an individual type; any individual selection disables ALL. */
   onTypeToggle(_t) {
     if (this.allSelected)
       this.allSelected = false;
   }
-  /** Optional: click label to toggle (if your HTML uses a label click handler). */
   toggleType(t) {
     if (this.allSelected)
       this.allSelected = false;
     this.typeChecks[t] = !this.typeChecks[t];
   }
-  /** Active set used by the table. */
   activeTypes() {
     if (this.allSelected)
       return new Set(this.linkTypes);
     const picked = this.linkTypes.filter((t) => this.typeChecks[t]);
     return new Set(picked);
   }
-  /** Table feeds from filtered rows */
   get filteredHeadings() {
     const active = this.activeTypes();
     return this.headings.filter((r) => active.has(r.type));
@@ -47815,11 +47272,112 @@ var LinkReportComponent = class _LinkReportComponent {
           destH1,
           matchStatus,
           searchTerm: "",
-          // placeholder
           clicks: null
-          // placeholder
         };
       });
+      yield this.enrichWithExtractedContent(doc);
+    });
+  }
+  /**
+   * For each row, use ContentExtractorService to fetch a better "candidate text"
+   * (title + intro), ask AI, and re-evaluate matchStatus. Logs the exact content used.
+   */
+  enrichWithExtractedContent(sourceDoc) {
+    return __async(this, null, function* () {
+      const rows = this.headings;
+      const CONCURRENCY = Math.min(4, rows.length);
+      let idx = 0;
+      const worker = () => __async(this, null, function* () {
+        while (true) {
+          const i = idx++;
+          if (i >= rows.length)
+            break;
+          const row = rows[i];
+          if (row.type === "mailto" || row.type === "tel" || row.type === "download") {
+            this.logRowExtraction(row, row.type, null, null, null, row.matchStatus, null, row.matchStatus);
+            continue;
+          }
+          let result = null;
+          let source = null;
+          let lastError = null;
+          try {
+            if (row.type === "anchor") {
+              const res = this.extractor.extractAnchor(sourceDoc, row.href);
+              result = res;
+              source = "anchor";
+            } else if (row.absUrl) {
+              let isCanada = false;
+              try {
+                const u = new URL(row.absUrl);
+                isCanada = isCanadaHost(u);
+              } catch {
+              }
+              if (isCanada) {
+                result = yield this.extractor.extractCanada(row.absUrl, {
+                  retries: 2,
+                  delay: "none"
+                });
+                source = "canada";
+              } else {
+                result = yield this.extractor.extractExternal(row.absUrl, {
+                  retries: 2,
+                  delay: "none"
+                });
+                source = "external";
+              }
+            }
+          } catch (err) {
+            lastError = err;
+          }
+          if (result) {
+            const candidate = this.extractor.buildCandidateText(result);
+            const meta = {
+              finalUrl: row.absUrl ?? row.href ?? null,
+              h1: result.title ?? null,
+              title: result.title ?? null,
+              metaDescription: result.intro ?? null,
+              headings: row.destH1 ? [row.destH1] : [],
+              bodyPreview: result.contentText || result.intro || null
+            };
+            let ai = null;
+            try {
+              ai = yield this.linkAi.judge(row.text, meta);
+            } catch (err) {
+              lastError = lastError || err;
+            }
+            const heuristic = this.smartMatch(row.text, candidate);
+            const blend = (v, fallback) => {
+              if (!v)
+                return fallback;
+              if (v.verdict === "match" && v.confidence >= 0.7)
+                return "match";
+              if (v.verdict === "mismatch" && v.confidence >= 0.7)
+                return "mismatch";
+              return fallback;
+            };
+            const base = heuristic === "unknown" ? row.matchStatus : heuristic;
+            const finalStatus = blend(ai, base);
+            rows[i] = __spreadProps(__spreadValues({}, row), {
+              extractedSource: source || void 0,
+              extractedTitle: result.title ?? null,
+              extractedIntro: result.intro ?? null,
+              extractedCandidate: candidate || null,
+              destH1: result.title ?? row.destH1,
+              matchStatus: finalStatus,
+              aiVerdict: ai?.verdict,
+              aiConfidence: ai?.confidence,
+              aiMatchedFields: ai?.matchedFields,
+              aiRationale: ai?.rationale
+            });
+            this.logRowExtraction(rows[i], source || "none", result, meta, candidate, heuristic, ai, finalStatus, lastError);
+          } else {
+            this.logRowExtraction(row, source || "none", null, null, null, row.matchStatus, null, row.matchStatus, lastError);
+          }
+        }
+      });
+      yield Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
+      this.headings = [...rows];
+      this.logSummaryTable();
     });
   }
   // ---------- helpers ----------
@@ -47846,8 +47404,9 @@ var LinkReportComponent = class _LinkReportComponent {
     try {
       if (!href)
         return null;
-      if (href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:"))
+      if (href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) {
         return href;
+      }
       if (/^\/(?:content\/canadasite|en|fr)\//i.test(href)) {
         const canon = canonicalizeCanadaHref(href);
         return new URL(canon, CANADA_ORIGIN).toString();
@@ -47855,9 +47414,16 @@ var LinkReportComponent = class _LinkReportComponent {
       if (/^https?:\/\/(?:www\.)?canada\.ca\/content\/canadasite/i.test(href)) {
         return canonicalizeCanadaHref(href);
       }
+      let out;
       if (baseUrl)
-        return new URL(href, baseUrl).toString();
-      return new URL(href).toString();
+        out = new URL(href, baseUrl);
+      else
+        out = new URL(href);
+      const hostLc = out.hostname.toLowerCase().replace(/^www\./, "");
+      if (hostLc === "canada.ca") {
+        out.hostname = "www.canada.ca";
+      }
+      return out.toString();
     } catch {
       return null;
     }
@@ -47999,17 +47565,17 @@ var LinkReportComponent = class _LinkReportComponent {
     return {};
   }
   static \u0275fac = function LinkReportComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _LinkReportComponent)(\u0275\u0275directiveInject(UploadStateService));
+    return new (__ngFactoryType__ || _LinkReportComponent)(\u0275\u0275directiveInject(UploadStateService), \u0275\u0275directiveInject(LinkAiService), \u0275\u0275directiveInject(ContentExtractorService));
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _LinkReportComponent, selectors: [["ca-link-report"]], viewQuery: function LinkReportComponent_Query(rf, ctx) {
     if (rf & 1) {
-      \u0275\u0275viewQuery(_c017, 5);
+      \u0275\u0275viewQuery(_c016, 5);
     }
     if (rf & 2) {
       let _t;
       \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.typePanel = _t.first);
     }
-  }, decls: 13, vars: 10, consts: [["typePanel", ""], ["size", "small", "stripedRows", "", "selectionMode", "single", "dataKey", "order", "metaKeySelection", "false", 3, "selectionChange", "value", "tableStyle", "selection"], ["pTemplate", "header"], ["pTemplate", "body"], [3, "dismissable", "showCloseIcon", "appendTo"], [1, "filter-panel"], [1, "filter-row"], ["inputId", "allTypes", "binary", "true", 3, "ngModelChange", "onChange", "ngModel"], ["for", "allTypes", 1, "filter-label"], [1, "divider"], ["class", "filter-row", 4, "ngFor", "ngForOf"], ["class", "filter-muted", 4, "ngIf"], [2, "width", "3rem"], [4, "ngFor", "ngForOf"], [1, "header-with-filter"], ["pButton", "", "type", "button", "class", "p-button-text p-button-sm", "icon", "pi pi-chevron-down", "aria-label", "Filter link types", 3, "click", 4, "ngIf"], ["pButton", "", "type", "button", "icon", "pi pi-chevron-down", "aria-label", "Filter link types", 1, "p-button-text", "p-button-sm", 3, "click"], [3, "pReorderableRow", "pSelectableRow"], ["pReorderableRowHandle", "", 1, "pi", "pi-bars"], [3, "ngSwitch"], [4, "ngSwitchCase"], [3, "ngClass", "ngStyle", 4, "ngSwitchCase"], ["class", "break-all", 4, "ngSwitchCase"], ["class", "flex justify-center", 4, "ngSwitchCase"], [4, "ngSwitchDefault"], [3, "ngClass", "ngStyle"], ["class", "muted", 4, "ngIf"], [1, "muted"], [1, "break-all"], [1, "flex", "justify-center"], ["class", "pi pi-check-circle text-ok", "title", "Match", 4, "ngIf"], ["class", "pi pi-times-circle text-bad", "title", "Mismatch", 4, "ngIf"], ["class", "pi pi-question-circle text-unk", "title", "Unknown", 4, "ngIf"], ["title", "Match", 1, "pi", "pi-check-circle", "text-ok"], ["title", "Mismatch", 1, "pi", "pi-times-circle", "text-bad"], ["title", "Unknown", 1, "pi", "pi-question-circle", "text-unk"], ["binary", "true", 3, "ngModelChange", "onChange", "ngModel", "disabled", "inputId"], [1, "filter-label", 3, "click"], [1, "filter-muted"]], template: function LinkReportComponent_Template(rf, ctx) {
+  }, decls: 14, vars: 10, consts: [["typePanel", ""], ["size", "small", "stripedRows", "", "selectionMode", "single", "dataKey", "order", "metaKeySelection", "false", 3, "selectionChange", "value", "tableStyle", "selection"], ["pTemplate", "header"], ["pTemplate", "body"], [3, "dismissable", "appendTo", "styleClass"], [1, "filter-panel"], ["pButton", "", "type", "button", "icon", "pi pi-times", "aria-label", "Close filter", 1, "p-button-text", "p-button-sm", "close-btn", 3, "click"], [1, "filter-row"], ["inputId", "allTypes", "binary", "true", 3, "ngModelChange", "onChange", "ngModel"], ["for", "allTypes", 1, "filter-label"], [1, "divider"], ["class", "filter-row", 4, "ngFor", "ngForOf"], ["class", "filter-muted", 4, "ngIf"], [2, "width", "3rem"], [4, "ngFor", "ngForOf"], [1, "header-with-filter"], ["pButton", "", "type", "button", "class", "p-button-text p-button-sm", "icon", "pi pi-chevron-down", "aria-label", "Filter link types", 3, "click", 4, "ngIf"], ["pButton", "", "type", "button", "icon", "pi pi-chevron-down", "aria-label", "Filter link types", 1, "p-button-text", "p-button-sm", 3, "click"], [3, "pReorderableRow", "pSelectableRow"], ["pReorderableRowHandle", "", 1, "pi", "pi-bars"], [3, "ngSwitch"], [4, "ngSwitchCase"], [3, "ngClass", "ngStyle", 4, "ngSwitchCase"], ["class", "break-all", 4, "ngSwitchCase"], ["class", "flex justify-center", 4, "ngSwitchCase"], [4, "ngSwitchDefault"], [3, "ngClass", "ngStyle"], ["class", "muted", 4, "ngIf"], [1, "muted"], [1, "break-all"], [1, "flex", "justify-center"], ["class", "pi pi-check-circle text-ok", "title", "Match", 4, "ngIf"], ["class", "pi pi-times-circle text-bad", "title", "Mismatch", 4, "ngIf"], ["class", "pi pi-question-circle text-unk", "title", "Unknown", 4, "ngIf"], ["title", "Match", 1, "pi", "pi-check-circle", "text-ok"], ["title", "Mismatch", 1, "pi", "pi-times-circle", "text-bad"], ["title", "Unknown", 1, "pi", "pi-question-circle", "text-unk"], ["binary", "true", 3, "ngModelChange", "onChange", "ngModel", "disabled", "inputId"], [1, "filter-label", 3, "click"], [1, "filter-muted"]], template: function LinkReportComponent_Template(rf, ctx) {
     if (rf & 1) {
       const _r1 = \u0275\u0275getCurrentView();
       \u0275\u0275elementStart(0, "p-table", 1);
@@ -48020,37 +47586,44 @@ var LinkReportComponent = class _LinkReportComponent {
       });
       \u0275\u0275template(1, LinkReportComponent_ng_template_1_Template, 3, 1, "ng-template", 2)(2, LinkReportComponent_ng_template_2_Template, 4, 3, "ng-template", 3);
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(3, "p-overlayPanel", 4, 0)(5, "div", 5)(6, "div", 6)(7, "p-checkbox", 7);
-      \u0275\u0275twoWayListener("ngModelChange", function LinkReportComponent_Template_p_checkbox_ngModelChange_7_listener($event) {
+      \u0275\u0275elementStart(3, "p-popover", 4, 0)(5, "div", 5)(6, "button", 6);
+      \u0275\u0275listener("click", function LinkReportComponent_Template_button_click_6_listener() {
+        \u0275\u0275restoreView(_r1);
+        const typePanel_r3 = \u0275\u0275reference(4);
+        return \u0275\u0275resetView(typePanel_r3.hide());
+      });
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(7, "div", 7)(8, "p-checkbox", 8);
+      \u0275\u0275twoWayListener("ngModelChange", function LinkReportComponent_Template_p_checkbox_ngModelChange_8_listener($event) {
         \u0275\u0275restoreView(_r1);
         \u0275\u0275twoWayBindingSet(ctx.allSelected, $event) || (ctx.allSelected = $event);
         return \u0275\u0275resetView($event);
       });
-      \u0275\u0275listener("onChange", function LinkReportComponent_Template_p_checkbox_onChange_7_listener() {
+      \u0275\u0275listener("onChange", function LinkReportComponent_Template_p_checkbox_onChange_8_listener() {
         \u0275\u0275restoreView(_r1);
         return \u0275\u0275resetView(ctx.onAllToggle());
       });
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(8, "label", 8);
-      \u0275\u0275text(9, "ALL");
+      \u0275\u0275elementStart(9, "label", 9);
+      \u0275\u0275text(10, "ALL");
       \u0275\u0275elementEnd()();
-      \u0275\u0275element(10, "div", 9);
-      \u0275\u0275template(11, LinkReportComponent_div_11_Template, 4, 5, "div", 10)(12, LinkReportComponent_div_12_Template, 2, 0, "div", 11);
+      \u0275\u0275element(11, "div", 10);
+      \u0275\u0275template(12, LinkReportComponent_div_12_Template, 4, 5, "div", 11)(13, LinkReportComponent_div_13_Template, 2, 0, "div", 12);
       \u0275\u0275elementEnd()();
     }
     if (rf & 2) {
-      \u0275\u0275property("value", ctx.filteredHeadings)("tableStyle", \u0275\u0275pureFunction0(9, _c127));
+      \u0275\u0275property("value", ctx.filteredHeadings)("tableStyle", \u0275\u0275pureFunction0(9, _c121));
       \u0275\u0275twoWayProperty("selection", ctx.selectedHeading);
       \u0275\u0275advance(3);
-      \u0275\u0275property("dismissable", true)("showCloseIcon", true)("appendTo", "body");
-      \u0275\u0275advance(4);
+      \u0275\u0275property("dismissable", true)("appendTo", "body")("styleClass", "link-type-popover");
+      \u0275\u0275advance(5);
       \u0275\u0275twoWayProperty("ngModel", ctx.allSelected);
       \u0275\u0275advance(4);
       \u0275\u0275property("ngForOf", ctx.linkTypes);
       \u0275\u0275advance();
       \u0275\u0275property("ngIf", ctx.allSelected);
     }
-  }, dependencies: [CommonModule, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, NgControlStatus, NgModel, TableModule, Table, PrimeTemplate, SelectableRow, ReorderableRowHandle, ReorderableRow, OverlayPanelModule, OverlayPanel, CheckboxModule, Checkbox, ButtonModule, ButtonDirective], styles: ["\n\n.text-ok[_ngcontent-%COMP%] {\n  color: #16a34a;\n}\n.text-bad[_ngcontent-%COMP%] {\n  color: #dc2626;\n}\n.text-unk[_ngcontent-%COMP%] {\n  color: #64748b;\n}\n.break-all[_ngcontent-%COMP%] {\n  word-break: break-all;\n}\n.muted[_ngcontent-%COMP%] {\n  color: #6b7280;\n  font-size: 12px;\n}\n.flex[_ngcontent-%COMP%] {\n  display: flex;\n}\n.justify-center[_ngcontent-%COMP%] {\n  justify-content: center;\n}\n.header-with-filter[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.p-button-sm[_ngcontent-%COMP%] {\n  padding: 0.15rem 0.35rem;\n  height: 1.6rem;\n  width: 1.6rem;\n}\n.filter-panel[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.25rem;\n  padding: 0.25rem 0.25rem 0.1rem;\n}\n.filter-row[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  line-height: 1.2;\n}\n.divider[_ngcontent-%COMP%] {\n  height: 1px;\n  background: #e5e7eb;\n  margin: 0.25rem 0;\n}\n.filter-label[_ngcontent-%COMP%] {\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n}\n.filter-muted[_ngcontent-%COMP%] {\n  color: #6b7280;\n  font-size: 12px;\n}\n/*# sourceMappingURL=link-report.component.css.map */"] });
+  }, dependencies: [CommonModule, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, NgControlStatus, NgModel, TableModule, Table, PrimeTemplate, SelectableRow, ReorderableRowHandle, ReorderableRow, PopoverModule, Popover, CheckboxModule, Checkbox, ButtonModule, ButtonDirective], styles: ["\n\n.text-ok[_ngcontent-%COMP%] {\n  color: #16a34a;\n}\n.text-bad[_ngcontent-%COMP%] {\n  color: #dc2626;\n}\n.text-unk[_ngcontent-%COMP%] {\n  color: #64748b;\n}\n.break-all[_ngcontent-%COMP%] {\n  word-break: break-all;\n}\n.muted[_ngcontent-%COMP%] {\n  color: #6b7280;\n  font-size: 12px;\n}\n.flex[_ngcontent-%COMP%] {\n  display: flex;\n}\n.justify-center[_ngcontent-%COMP%] {\n  justify-content: center;\n}\n.header-with-filter[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.p-button-sm[_ngcontent-%COMP%] {\n  padding: 0.15rem 0.35rem;\n  height: 1.6rem;\n  width: 1.6rem;\n}\n.filter-panel[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.25rem;\n  padding: 0.25rem 0.25rem 0.1rem;\n}\n.filter-row[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  line-height: 1.2;\n}\n.divider[_ngcontent-%COMP%] {\n  height: 1px;\n  background: #e5e7eb;\n  margin: 0.25rem 0;\n}\n.filter-label[_ngcontent-%COMP%] {\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n}\n.filter-muted[_ngcontent-%COMP%] {\n  color: #6b7280;\n  font-size: 12px;\n}\n/*# sourceMappingURL=link-report.component.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(LinkReportComponent, [{
@@ -48059,7 +47632,7 @@ var LinkReportComponent = class _LinkReportComponent {
       CommonModule,
       FormsModule,
       TableModule,
-      OverlayPanelModule,
+      PopoverModule,
       CheckboxModule,
       ButtonModule
     ], template: `<p-table\r
@@ -48148,14 +47721,24 @@ var LinkReportComponent = class _LinkReportComponent {
 </p-table>\r
 \r
 <!-- Move the overlay OUTSIDE the table to avoid table parser issues -->\r
-<p-overlayPanel\r
+<p-popover\r
   #typePanel\r
   [dismissable]="true"\r
-  [showCloseIcon]="true"\r
   [appendTo]="'body'"\r
+  [styleClass]="'link-type-popover'"\r
 >\r
   <div class="filter-panel">\r
-    <!-- ALL (default checked) -->\r
+    <!-- custom close button -->\r
+    <button\r
+      pButton\r
+      type="button"\r
+      class="p-button-text p-button-sm close-btn"\r
+      icon="pi pi-times"\r
+      (click)="typePanel.hide()"\r
+      aria-label="Close filter"\r
+    ></button>\r
+\r
+    <!-- ALL / types UI stays the same -->\r
     <div class="filter-row">\r
       <p-checkbox\r
         [(ngModel)]="allSelected"\r
@@ -48168,7 +47751,6 @@ var LinkReportComponent = class _LinkReportComponent {
 \r
     <div class="divider"></div>\r
 \r
-    <!-- Six types (default unchecked; disabled while ALL is checked) -->\r
     <div class="filter-row" *ngFor="let t of linkTypes; let i = index">\r
       <p-checkbox\r
         [(ngModel)]="typeChecks[t]"\r
@@ -48190,15 +47772,15 @@ var LinkReportComponent = class _LinkReportComponent {
       All types are currently included.\r
     </div>\r
   </div>\r
-</p-overlayPanel>\r
+</p-popover>\r
 `, styles: ["/* angular:styles/component:css;f867ed4ff822b366cb9432ca0b7c19af5afc1fceac7a7483c72da2155928f42a;C:/Users/rosaz/translation-assistant/content-assistant/src/app/views/page-assistant/components/tools/link-report.component.ts */\n.text-ok {\n  color: #16a34a;\n}\n.text-bad {\n  color: #dc2626;\n}\n.text-unk {\n  color: #64748b;\n}\n.break-all {\n  word-break: break-all;\n}\n.muted {\n  color: #6b7280;\n  font-size: 12px;\n}\n.flex {\n  display: flex;\n}\n.justify-center {\n  justify-content: center;\n}\n.header-with-filter {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.p-button-sm {\n  padding: 0.15rem 0.35rem;\n  height: 1.6rem;\n  width: 1.6rem;\n}\n.filter-panel {\n  display: flex;\n  flex-direction: column;\n  gap: 0.25rem;\n  padding: 0.25rem 0.25rem 0.1rem;\n}\n.filter-row {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  line-height: 1.2;\n}\n.divider {\n  height: 1px;\n  background: #e5e7eb;\n  margin: 0.25rem 0;\n}\n.filter-label {\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n}\n.filter-muted {\n  color: #6b7280;\n  font-size: 12px;\n}\n/*# sourceMappingURL=link-report.component.css.map */\n"] }]
-  }], () => [{ type: UploadStateService }], { typePanel: [{
+  }], () => [{ type: UploadStateService }, { type: LinkAiService }, { type: ContentExtractorService }], { typePanel: [{
     type: ViewChild,
     args: ["typePanel"]
   }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(LinkReportComponent, { className: "LinkReportComponent", filePath: "src/app/views/page-assistant/components/tools/link-report.component.ts", lineNumber: 197 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(LinkReportComponent, { className: "LinkReportComponent", filePath: "src/app/views/page-assistant/components/tools/link-report.component.ts", lineNumber: 214 });
 })();
 
 // src/app/views/page-assistant/components/tools/template-conversion.component.ts
@@ -48462,12 +48044,12 @@ var PageToolsComponent = class _PageToolsComponent {
 })();
 
 // src/app/views/page-assistant/page-assistant.component.ts
-var _c018 = ["liveContainer"];
-var _c128 = ["sourceContainer"];
-var _c215 = () => ({ "ariaLabel": "Accept selected changes" });
-var _c315 = () => ({ "ariaLabel": "More accept options" });
-var _c414 = () => ({ "ariaLabel": "Reject selected changes" });
-var _c512 = () => ({ "ariaLabel": "More reject options" });
+var _c017 = ["liveContainer"];
+var _c127 = ["sourceContainer"];
+var _c214 = () => ({ "ariaLabel": "Accept selected changes" });
+var _c314 = () => ({ "ariaLabel": "More accept options" });
+var _c413 = () => ({ "ariaLabel": "Reject selected changes" });
+var _c511 = () => ({ "ariaLabel": "More reject options" });
 var _c610 = (a0, a1) => ({ "background-color": a0, border: a1 });
 function PageAssistantCompareComponent_p_button_11_Template(rf, ctx) {
   if (rf & 1) {
@@ -48560,9 +48142,9 @@ function PageAssistantCompareComponent_ng_template_34_ng_container_0_Template(rf
     \u0275\u0275advance(5);
     \u0275\u0275textInterpolate(ctx_r2.displayCounter);
     \u0275\u0275advance(2);
-    \u0275\u0275property("model", ctx_r2.acceptItems)("buttonProps", \u0275\u0275pureFunction0(8, _c215))("menuButtonProps", \u0275\u0275pureFunction0(9, _c315));
+    \u0275\u0275property("model", ctx_r2.acceptItems)("buttonProps", \u0275\u0275pureFunction0(8, _c214))("menuButtonProps", \u0275\u0275pureFunction0(9, _c314));
     \u0275\u0275advance();
-    \u0275\u0275property("model", ctx_r2.rejectItems)("buttonProps", \u0275\u0275pureFunction0(10, _c414))("menuButtonProps", \u0275\u0275pureFunction0(11, _c512));
+    \u0275\u0275property("model", ctx_r2.rejectItems)("buttonProps", \u0275\u0275pureFunction0(10, _c413))("menuButtonProps", \u0275\u0275pureFunction0(11, _c511));
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", ctx_r2.displayNumHighlighted);
   }
@@ -49333,8 +48915,8 @@ ${base}`;
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _PageAssistantCompareComponent, selectors: [["ca-page-assistant-compare"]], viewQuery: function PageAssistantCompareComponent_Query(rf, ctx) {
     if (rf & 1) {
-      \u0275\u0275viewQuery(_c018, 5);
-      \u0275\u0275viewQuery(_c128, 5);
+      \u0275\u0275viewQuery(_c017, 5);
+      \u0275\u0275viewQuery(_c127, 5);
     }
     if (rf & 2) {
       let _t;
@@ -49605,4 +49187,4 @@ ${base}`;
 export {
   PageAssistantCompareComponent
 };
-//# sourceMappingURL=chunk-MMPZI6BT.js.map
+//# sourceMappingURL=chunk-TAN6LYEC.js.map
